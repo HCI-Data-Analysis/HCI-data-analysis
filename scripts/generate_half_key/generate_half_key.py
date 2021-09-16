@@ -1,26 +1,29 @@
 from random import randint
-import math
 import csv
 
-isFull = False
+def half_key_generation(student):
+    is_full = False
 
-DevID = set()
-DevKey = list()
-DevKey.append("Data448ID")
+    dev_id = set()
+    dev_key = list()
+    dev_key.append("Data448ID")
 
-while isFull == False:
-    randomID = randint(1000000, 9999999)
+    while is_full == False:
+        randomID = randint(1000000, 9999999)
 
-    DevID.add(randomID)
+        dev_id.add(randomID)
 
-    if len(DevID) == 161:
-        isFull = True
+        if len(dev_id) == student:
+            is_full = True
 
-for id in DevID:
-    DevKey.append(str(id))
+    for id in dev_id:
+        dev_key.append(str(id))
 
-with open("HalfKey.csv", "w") as f:
-    writer = csv.writer(f, lineterminator='\n')
-    for id in DevKey:
-        writer.writerow([id])
-f.close()
+    with open("../../keys/HalfKey.csv", "w") as f: 
+        writer = csv.writer(f, lineterminator='\n')
+        for id in dev_key:
+            writer.writerow([id])
+    f.close()
+
+if __name__ == "__main__":
+    half_key_generation(161) 
