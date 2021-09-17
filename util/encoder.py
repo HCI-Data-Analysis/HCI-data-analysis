@@ -58,7 +58,7 @@ def decode(data448_id: int) -> (int, int):
 
 def decode_to_canvas_id(data448_id: int) -> int:
     """Helper function to decode a data448_id into a canvas_id"""
-    canvas_id, student_id = decode(data448_id)
+    canvas_id, _ = decode(data448_id)
     if not canvas_id:
         raise EncoderException('This student does not have a canvas_id')
     return canvas_id
@@ -66,7 +66,7 @@ def decode_to_canvas_id(data448_id: int) -> int:
 
 def decode_to_student_id(data448_id: int) -> int:
     """Helper function to decode a data448_id into a student_id"""
-    canvas_id, student_id = decode(data448_id)
+    _, student_id = decode(data448_id)
     if not student_id:
         raise EncoderException('This student does not have a student_id')
     return student_id
