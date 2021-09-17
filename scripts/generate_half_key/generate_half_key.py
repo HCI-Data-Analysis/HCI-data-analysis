@@ -1,7 +1,7 @@
 from random import randint
 import csv
 
-def half_key_generation(student):
+def half_key_generation(num_students):
     is_full = False
 
     dev_id = set()
@@ -9,11 +9,11 @@ def half_key_generation(student):
     dev_key.append("Data448ID")
 
     while is_full == False:
-        randomID = randint(1000000, 9999999)
+        random_id = randint(1000000, 9999999)
 
-        dev_id.add(randomID)
+        dev_id.add(random_id)
 
-        if len(dev_id) == student:
+        if len(dev_id) == num_students:
             is_full = True
 
     for id in dev_id:
