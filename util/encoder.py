@@ -80,7 +80,3 @@ def _retrieve_value_from_row(row, col_name):
         return value[0]
     else:
         raise EncoderException('More than 1 student found matching the given parameters.')
-
-
-if __name__ == '__main__':
-    print(encode(student_id=79034))
