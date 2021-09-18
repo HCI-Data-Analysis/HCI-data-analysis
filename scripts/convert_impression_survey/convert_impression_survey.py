@@ -15,8 +15,8 @@ def convert_impression_survey():
             converted_survey_df.at[i, 'id'] = student_id
         except EncoderException:
             converted_survey_df.drop(i, inplace=True)
-    print(converted_survey_df)
+    return converted_survey_df
 
 
 if __name__ == "__main__":
-    convert_impression_survey()
+    print(convert_impression_survey())
