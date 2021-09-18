@@ -3,6 +3,7 @@ from util import Encoder, EncoderException
 
 KEY_PATH = '../../keys/Key.csv'
 SURVEY_PATH = '../../data/Your_Impression_of_HCI__10_min_Header.csv'
+EXPORT_PATH = '../../data/impression_survey.csv'
 survey_df = pd.read_csv(SURVEY_PATH)
 
 
@@ -15,8 +16,8 @@ def convert_impression_survey():
             converted_survey_df.at[i, 'id'] = student_id
         except EncoderException:
             converted_survey_df.drop(i, inplace=True)
-    return converted_survey_df
+    converted_survey_df.to_csv(EXPORT_PATH, index=False)
 
 
 if __name__ == "__main__":
-    print(convert_impression_survey())
+    convert_impression_survey()
