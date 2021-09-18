@@ -23,3 +23,6 @@ def generate_key(sample_filepath, output_path, filename):
     sample_file.to_csv(output_path, columns=["id", "name", "data448id"])
 
     print(sample_file)
+
+
+#generate_key('data/341_Background_Survey_Header.csv', 'keys', 'keys')
