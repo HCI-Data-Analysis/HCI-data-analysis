@@ -1,2 +1,2 @@
 from .key import KeySchema
-from.survey import SurveySchema
+from .survey import SurveySchema
