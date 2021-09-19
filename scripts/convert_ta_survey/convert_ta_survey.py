@@ -2,8 +2,8 @@ import pandas as pd
 from schemas import TASurveySchema
 
 KEY_PATH = '../../keys/Key.csv'
-IMPRESSION_SURVEY_PATH = '../../data/341_TA_resources_survey_W2020T2_September_13_2021_12.36.csv'
-IMPRESSION_EXPORT_PATH = '../../data/ta_survey.csv'
+TA_SURVEY_PATH = '../../data/341_TA_resources_survey_W2020T2_September_13_2021_12.36.csv'
+TA_EXPORT_PATH = '../../data/ta_survey.csv'
 
 
 def convert_ta_survey(csv_path):
@@ -24,5 +24,5 @@ def convert_ta_survey(csv_path):
 
 
 if __name__ == "__main__":
-    survey = convert_ta_survey(IMPRESSION_SURVEY_PATH)
-    survey.to_csv(IMPRESSION_EXPORT_PATH, index=False)
+    survey = convert_ta_survey(TA_SURVEY_PATH)
+    survey.to_csv(TA_EXPORT_PATH, index=False)
