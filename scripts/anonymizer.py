@@ -12,7 +12,7 @@ eel.expose(zip_anonymize)
 
 
 def start_eel():
-    eel.init('anonymizer')
+    eel.init('web/anonymizer')
     eel.start('main.html')
 
 
