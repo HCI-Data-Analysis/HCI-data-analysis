@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Anonymizer</title>
+    <link rel="stylesheet" href="https://unpkg.com/turretcss/dist/turretcss.min.css" crossorigin="anonymous">
+
+</head>
+<body class="min-height-100vh">
+<main>
+    <div class="position-sticky position-top padding-s width-100 background-primary border-bottom border-color-primary-700 box-shadow-l">
+        <h1 class="display-title display-title-l color-white">Data 448 Anonymizer</h1>
+    </div>
+    <div class="container padding-m border-bottom border-color-grey-50 background-light-50">
+        <h2 class="display-title display-title-s">Files Uploaded:</h2>
+    </div>
+    <div class="container padding-top-m">
+        <ul id="filesUploaded"></ul>
+    </div>
+</main>
+<div class="position-fixed position-bottom width-100">
+    <div class="container padding-s flex flex-row justify-content-center">
+        <input class="display-none" type="file" id="fileUploader" accept="text/csv" multiple>
+        <label for="fileUploader"
+               class="margin-left-auto button button-square button-xl background-primary color-white box-shadow-xl flex flex-row align-items-center">
+            <svg class="margin-right-xs" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/>
+            </svg>
+            Add File
+        </label>
+    </div>
+    <div class="container padding-s border-top border-color-grey-50">
+        <div class="button-group button-group-block">
+            <button id="anonSurveysTab" class="button-primary">Anonymize as Surveys</button>
+            <button id="anonGradebookTab">Anonymize as Gradebook</button>
+            <button id="anonZIPTab">Anonymize as ZIP</button>
+        </div>
+    </div>
+    <div class="container padding-bottom-s">
+        <button class="button button-block button-primary" id="anonymizeFilesButton">
+            Anonymize Files
+        </button>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="/eel.js"></script>
+<script>
+    let newFile = document.getElementById("fileUploader");
+    let filesList = document.getElementById("filesUploaded");
+    let anonymizeFilesButton = document.getElementById("anonymizeFilesButton");
+    let files = [];
+    let anonType = 'surveys';
+    let surveysTabButton = document.getElementById("anonSurveysTab");
+    let gradebookTabButton = document.getElementById("anonGradebookTab");
+    let zipTabButton = document.getElementById("anonZIPTab");
+
+    surveysTabButton.addEventListener("click", () => {
+        anonType = 'surveys';
+        surveysTabButton.classList.add("button-primary");
+        gradebookTabButton.classList.remove("button-primary");
+        zipTabButton.classList.remove("button-primary");
+    });
+    gradebookTabButton.addEventListener("click", () => {
+        anonType = 'gradebook';
+        surveysTabButton.classList.remove("button-primary");
+        gradebookTabButton.classList.add("button-primary");
+        zipTabButton.classList.remove("button-primary");
+    });
+    zipTabButton.addEventListener("click", () => {
+        anonType = 'zip';
+        surveysTabButton.classList.remove("button-primary");
+        gradebookTabButton.classList.remove("button-primary");
+        zipTabButton.classList.add("button-primary");
+    });
+
+    const fileToDataUrl = (file) => {
+        let reader = new FileReader();
+        return new Promise(((resolve, reject) => {
+            reader.onload = function (event) {
+                const fileData = event.target
+                resolve(fileData.result);
+                files.push({
+                    data: fileData.result,
+                    name: fileData.fileName
+                });
+            }
+            reader.fileName = file.name;
+            reader.readAsDataURL(file);
+        }));
+    }
+
+    const uploadFile = () => {
+        if ('files' in newFile) {
+            if (newFile.files.length > 0) {
+                return Promise.all([...newFile.files].map(fileToDataUrl));
+            }
+        }
+    }
+
+    newFile.addEventListener('change', async () => {
+        await uploadFile();
+        filesList.innerHTML = files.map(file => ("<li>" + file.name + "</li>")).join("");
+    });
+
+    const generate_decoded_files = async () => {
+        return Promise.all(files.map(async file => await eel.generate_decoded_file(file.data, `temp/${file.name}`)()));
+    }
+
+    anonymizeFilesButton.addEventListener("click", async () => {
+        anonymizeFilesButton.disabled = true;
+        anonymizeFilesButton.innerHTML = "";
+        anonymizeFilesButton.classList.add("spinner");
+        setTimeout(async () => {
+            await generate_decoded_files();
+            files = [];
+            filesList.innerHTML = "All files anonymized!";
+            anonymizeFilesButton.disabled = false;
+            anonymizeFilesButton.innerHTML = 'Anonymize Files';
+            anonymizeFilesButton.classList.remove("spinner");
+        }, 200);
+    });
+</script>
+</html>
