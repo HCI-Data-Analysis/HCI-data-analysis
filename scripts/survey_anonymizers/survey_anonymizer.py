@@ -25,8 +25,3 @@ def survey_anonymize(survey_filepath, output_path, filename, keys_filepath):
     output_path = os.path.join(output_path, filename + ".csv")
 
     survey.to_csv(output_path)
-
-    print(survey)
-
-# survey_anonymize('data/341_Background_Survey_Header.csv', 'data', 'anonymized_bg_survey', 'keys/keys.csv')
-# survey_anonymize('data/Your_Impression_of_HCI__10_min_Header.csv', 'data', 'anonymized_impressions_survey', 'keys/keys.csv')
