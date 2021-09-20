@@ -156,17 +156,18 @@
 
     generateKeyButton.addEventListener("change", async () => {
         await uploadNewKey();
-        const folder = 'anonymizer/temp/key';
+        const folder = 'web/anonymizer/temp/key';
         await generate_decoded_files(newKeys, folder);
         const newKey = newKeys[0];
-        const keyFolder = 'anonymizer/key';
         const keyName = 'data448-key';
-        await eel.generate_key(`${folder}/${newKey.name}`, keyFolder, keyName)();
-        downloadFile(`${window.location.protocol + "//" + window.location.host}/key/${keyName}.csv`, `${keyName}.csv`);
+        await eel.generate_key(`${folder}/${newKey.name}`, folder, keyName)();
+        downloadFile(`${window.location.protocol + "//" + window.location.host}/temp/key/${keyName}.csv`, `${keyName}.csv`);
     });
 
     uploadKeyButton.addEventListener("change", async () => {
         await uploadKey();
+        const folder = 'web/anonymizer/key';
+        await generate_decoded_files(keys, folder);
         document.getElementById("displayKey").innerText = keys[0].name;
     });
 
@@ -179,17 +180,21 @@
         anonymizeFilesButton.innerHTML = "";
         anonymizeFilesButton.classList.add("spinner");
         setTimeout(async () => {
-            await generate_decoded_files(files, 'anonymizer/temp');
+            await generate_decoded_files(files, 'web/anonymizer/temp');
+            if (anonType === 'zip') {
+                fileNames = await eel.zip_anonymize(`web/anonymizer/temp/`, 'web/anonymizer/anonymized', `web/anonymizer/key/${keys[0].name}`)();
+                fileNames.forEach(name => {
+                    downloadFile(`${window.location.protocol + "//" + window.location.host}/anonymized/${name}`, `${name}`);
+                })
+            }
             for (const file of files) {
-                const newName = `[${file.name}]_anonymized`;
+                const newName = `${file.name}_anonymized`;
                 if (anonType === 'surveys') {
-                    await eel.survey_anonymize(`anonymizer/temp/${file.name}`, 'anonymizer/anonymized', newName, `anonymizer/key/${keys[0].name}`)();
+                    await eel.survey_anonymize(`web/anonymizer/temp/${file.name}`, 'web/anonymizer/anonymized', newName, `web/anonymizer/key/${keys[0].name}`)();
                     downloadFile(`${window.location.protocol + "//" + window.location.host}/anonymized/${newName}.csv`, `${newName}.csv`);
                 } else if (anonType === 'gradebook') {
-
-                } else if (anonType === 'zip') {
-                    await eel.zip_anonymize(`anonymizer/temp/${file.name}`, 'anonymizer/anonymized', `anonymizer/key/${keys[0].name}`)();
-                    downloadFile(`${window.location.protocol + "//" + window.location.host}/anonymized/${newName}.zip`, `${newName}.zip`);
+                    await eel.gradebook_anonymize(`web/anonymizer/temp/${file.name}`, 'web/anonymizer/anonymized', newName, `web/anonymizer/key/${keys[0].name}`)();
+                    downloadFile(`${window.location.protocol + "//" + window.location.host}/anonymized/${newName}.csv`, `${newName}.csv`);
                 }
             }
             files = [];

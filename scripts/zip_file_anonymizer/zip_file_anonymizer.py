@@ -23,6 +23,7 @@ def zip_anonymize(zip_filepath, output_path, keys_filepath):
     :param keys_filepath: A string containing the filepath of the keys file containing all of the DATA448 IDs
     """
     keys = pd.read_csv(keys_filepath)
+    new_zip_names = []
 
     for root, dirs, files in os.walk(zip_filepath):
         for file in files:
@@ -30,7 +31,10 @@ def zip_anonymize(zip_filepath, output_path, keys_filepath):
                 filename = file.split('_')
                 data448id = np.where(filename[0] == convert_name(keys.name.str), keys.data448id, 0)
                 new_filename = str(data448id[0]) + "_" + filename[-1]
+                new_zip_names.append(new_filename)
                 filepath = os.sep.join([root, file])
-                new_filepath = os.sep.join([output_path, root, new_filename])
+                new_filepath = os.sep.join([output_path, new_filename])
                 os.makedirs(os.path.dirname(new_filepath), exist_ok=True)
                 shutil.copy(filepath, new_filepath)
+
+    return new_zip_names
