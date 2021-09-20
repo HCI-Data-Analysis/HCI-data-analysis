@@ -1,6 +1,7 @@
 # convert_survey.py
 
 ## This is a script to convert the impression of hci and background survey's into a format that removes all identifying information of the students in the class.
+Removes the fields `name`. Also encodes the `id` field, anonymizing it with a key only supervisors have access to.
 
 ## Structure
 📜convert_survey.py  

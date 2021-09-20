@@ -1,6 +1,7 @@
 # convert_ta_survey.py
 
 ## This is a script to convert the TA survey into a format that removes all identifying information of the TAs in the class.
+Removes the fields `TODO`. Also encodes the `id` field, anonymizing it with a key only supervisors have access to.
 
 ## Structure
 📜convert_ta_survey.py  

@@ -1,6 +1,7 @@
 # convert_gradebook.py
 
 ## This is a script to convert the gradebook into a format that removes all identifying information of the students in the class.
+Removes the fields `student name`, `student_id`, & `SIS Login ID`. Also encodes the `id` field, anonymizing it with a key only supervisors have access to.
 
 ## Structure
 📜convert_survey.py  

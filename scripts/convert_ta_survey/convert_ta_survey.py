@@ -1,13 +1,9 @@
-import pandas as pd
+from pandas import DataFrame
 from schemas import TASurveySchema
-
-KEY_PATH = '../../keys/Key.csv'
-TA_SURVEY_PATH = '../../data/341_TA_resources_survey_W2020T2_September_13_2021_12.36.csv'
-TA_EXPORT_PATH = '../../data/ta_survey.csv'
+from util import Encoder
 
 
-def convert_ta_survey(csv_path):
-    survey_df = pd.read_csv(csv_path)
+def convert_ta_survey(survey_df: DataFrame, encoder: Encoder) -> DataFrame:
     converted_survey_df = survey_df.drop(columns=[
         TASurveySchema.STATUS,
         TASurveySchema.IP_ADDRESS,
@@ -21,8 +17,3 @@ def convert_ta_survey(csv_path):
         TASurveySchema.DISTRIBUTION_CHANNEL
     ]).drop(labels=[0, 1], axis=0)
     return converted_survey_df
-
-
-if __name__ == "__main__":
-    survey = convert_ta_survey(TA_SURVEY_PATH)
-    survey.to_csv(TA_EXPORT_PATH, index=False)
