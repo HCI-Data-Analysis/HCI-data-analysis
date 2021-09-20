@@ -2,8 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 
-
-from scripts.utils import data_cleaner
+from .utils import data_cleaner
 
 
 def gradebook_anonymize(gradebook_filepath, output_path, filename, keys_filepath):
