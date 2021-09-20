@@ -21,3 +21,8 @@ def generate_key(sample_filepath, output_path, filename):
     output_path = os.path.join(output_path, filename + ".csv")
 
     sample_file.to_csv(output_path, columns=["id", "name", "data448id"])
+
+
+if __name__ == '__main__':
+    generate_key("C:\\Users\\novia\\Documents\\SCHOOL\\COSC448\\data\\341_Background_Survey_Header.csv",
+                 "C:\\Users\\novia\\Documents\\SCHOOL\\COSC448\\data", "keys")
