@@ -13,6 +13,9 @@
     <div class="position-sticky position-top padding-s width-100 background-primary border-bottom border-color-primary-700 box-shadow-l">
         <h1 class="display-title display-title-l color-white">Data 448 Anonymizer</h1>
     </div>
+    <div class="container padding-top-s padding-bottom-s padding-left-m padding-right-m border-bottom border-color-grey-50 background-light-50">
+        <h2 class="display-title display-title-xs overflow-wrap-anywhere">Key:&nbsp;<span id="displayKey"></span></h2>
+    </div>
     <div class="container padding-m border-bottom border-color-grey-50 background-light-50">
         <h2 class="display-title display-title-s">Files Uploaded:</h2>
     </div>
@@ -21,8 +24,8 @@
     </div>
 </main>
 <div class="position-fixed position-bottom width-100">
-    <div class="container padding-s flex flex-row justify-content-center">
-        <input class="display-none" type="file" id="fileUploader" accept="text/csv" multiple>
+    <div class="container flex flex-row justify-content-center">
+        <input class="display-none" type="file" id="fileUploader" multiple>
         <label for="fileUploader"
                class="margin-left-auto button button-square button-xl background-primary color-white box-shadow-xl flex flex-row align-items-center">
             <svg class="margin-right-xs" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -31,11 +34,31 @@
             Add File
         </label>
     </div>
+    <div class="container flex flex-row justify-content-center">
+        <input class="display-none" type="file" id="keyGenerator">
+        <label for="keyGenerator"
+               class="margin-left-auto button button-square button-xl background-primary color-white box-shadow-xl flex flex-row align-items-center">
+            <svg class="margin-right-xs" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/>
+            </svg>
+            Generate Key
+        </label>
+    </div>
+    <div class="container flex padding-bottom-s flex-row justify-content-center">
+        <input class="display-none" type="file" id="keyUploader">
+        <label for="keyUploader"
+               class="margin-left-auto button button-square button-xl background-primary color-white box-shadow-xl flex flex-row align-items-center">
+            <svg class="margin-right-xs" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/>
+            </svg>
+            Upload Key
+        </label>
+    </div>
     <div class="container padding-s border-top border-color-grey-50">
         <div class="button-group button-group-block">
-            <button id="anonSurveysTab" class="button-primary">Anonymize as Surveys</button>
-            <button id="anonGradebookTab">Anonymize as Gradebook</button>
-            <button id="anonZIPTab">Anonymize as ZIP</button>
+            <button id="anonSurveysTab" class="button-primary">Anonymize Surveys</button>
+            <button id="anonGradebookTab">Anonymize Gradebooks</button>
+            <button id="anonZIPTab">Anonymize ZIPs</button>
         </div>
     </div>
     <div class="container padding-bottom-s">
@@ -47,10 +70,14 @@
 </body>
 <script type="text/javascript" src="/eel.js"></script>
 <script>
-    let newFile = document.getElementById("fileUploader");
+    let newFileButton = document.getElementById("fileUploader");
+    let generateKeyButton = document.getElementById("keyGenerator");
+    let uploadKeyButton = document.getElementById("keyUploader");
     let filesList = document.getElementById("filesUploaded");
     let anonymizeFilesButton = document.getElementById("anonymizeFilesButton");
     let files = [];
+    let keys = [];
+    let newKeys = [];
     let anonType = 'surveys';
     let surveysTabButton = document.getElementById("anonSurveysTab");
     let gradebookTabButton = document.getElementById("anonGradebookTab");
@@ -75,16 +102,16 @@
         zipTabButton.classList.add("button-primary");
     });
 
-    const fileToDataUrl = (file) => {
+    const fileToDataUrl = (file, array) => {
         let reader = new FileReader();
         return new Promise(((resolve, reject) => {
             reader.onload = function (event) {
                 const fileData = event.target
-                resolve(fileData.result);
-                files.push({
+                array.push({
                     data: fileData.result,
                     name: fileData.fileName
                 });
+                resolve(fileData.result);
             }
             reader.fileName = file.name;
             reader.readAsDataURL(file);
@@ -92,20 +119,59 @@
     }
 
     const uploadFile = () => {
-        if ('files' in newFile) {
-            if (newFile.files.length > 0) {
-                return Promise.all([...newFile.files].map(fileToDataUrl));
+        if ('files' in newFileButton) {
+            if (newFileButton.files.length > 0) {
+                return Promise.all([...newFileButton.files].map(file => fileToDataUrl(file, files)));
             }
         }
     }
 
-    newFile.addEventListener('change', async () => {
+    const uploadKey = () => {
+        if ('files' in uploadKeyButton) {
+            if (uploadKeyButton.files.length > 0) {
+                return Promise.all([...uploadKeyButton.files].map(file => fileToDataUrl(file, keys)));
+            }
+        }
+    }
+
+    const uploadNewKey = () => {
+        if ('files' in generateKeyButton) {
+            if (generateKeyButton.files.length > 0) {
+                return Promise.all([...generateKeyButton.files].map(file => fileToDataUrl(file, newKeys)));
+            }
+        }
+    }
+
+    const downloadFile = (fileUrl, fileName) => {
+        let file = document.createElement("a");
+        file.href = fileUrl;
+        file.setAttribute("download", fileName);
+        file.click();
+    }
+
+    newFileButton.addEventListener("change", async () => {
         await uploadFile();
         filesList.innerHTML = files.map(file => ("<li>" + file.name + "</li>")).join("");
     });
 
-    const generate_decoded_files = async () => {
-        return Promise.all(files.map(async file => await eel.generate_decoded_file(file.data, `temp/${file.name}`)()));
+    generateKeyButton.addEventListener("change", async () => {
+        await uploadNewKey();
+        const folder = 'anonymizer/temp/key';
+        await generate_decoded_files(newKeys, folder);
+        const newKey = newKeys[0];
+        const keyFolder = 'anonymizer/key';
+        const keyName = 'data448-key';
+        await eel.generate_key(`${folder}/${newKey.name}`, keyFolder, keyName)();
+        downloadFile(`${window.location.protocol + "//" + window.location.host}/key/${keyName}.csv`, `${keyName}.csv`);
+    });
+
+    uploadKeyButton.addEventListener("change", async () => {
+        await uploadKey();
+        document.getElementById("displayKey").innerText = keys[0].name;
+    });
+
+    const generate_decoded_files = async (files, folderPath) => {
+        return Promise.all(files.map(async file => await eel.generate_decoded_file(file.data, `${folderPath}/${file.name}`)()));
     }
 
     anonymizeFilesButton.addEventListener("click", async () => {
@@ -113,7 +179,19 @@
         anonymizeFilesButton.innerHTML = "";
         anonymizeFilesButton.classList.add("spinner");
         setTimeout(async () => {
-            await generate_decoded_files();
+            await generate_decoded_files(files, 'anonymizer/temp');
+            for (const file of files) {
+                const newName = `[${file.name}]_anonymized`;
+                if (anonType === 'surveys') {
+                    await eel.survey_anonymize(`anonymizer/temp/${file.name}`, 'anonymizer/anonymized', newName, `anonymizer/key/${keys[0].name}`)();
+                    downloadFile(`${window.location.protocol + "//" + window.location.host}/anonymized/${newName}.csv`, `${newName}.csv`);
+                } else if (anonType === 'gradebook') {
+
+                } else if (anonType === 'zip') {
+                    await eel.zip_anonymize(`anonymizer/temp/${file.name}`, 'anonymizer/anonymized', `anonymizer/key/${keys[0].name}`)();
+                    downloadFile(`${window.location.protocol + "//" + window.location.host}/anonymized/${newName}.zip`, `${newName}.zip`);
+                }
+            }
             files = [];
             filesList.innerHTML = "All files anonymized!";
             anonymizeFilesButton.disabled = false;
