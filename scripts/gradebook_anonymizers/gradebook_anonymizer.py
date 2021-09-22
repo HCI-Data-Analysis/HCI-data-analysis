@@ -2,8 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 
-
-from scripts.utils import data_cleaner
+from .utils import data_cleaner
 
 
 def gradebook_anonymize(gradebook_filepath, output_path, filename, keys_filepath):
@@ -21,7 +20,7 @@ def gradebook_anonymize(gradebook_filepath, output_path, filename, keys_filepath
 
     output_path = os.path.join(output_path, filename + ".csv")
 
-    data_cleaner.column_name_to_lower(file)
+    file = data_cleaner.column_name_to_lower(file)
 
     headers = file.iloc[0:2]
     headers = headers.drop(["student", "id", "sis login id", "student number"], axis=1)
@@ -36,4 +35,3 @@ def gradebook_anonymize(gradebook_filepath, output_path, filename, keys_filepath
     gradebook = gradebook.set_index("data448id")
 
     gradebook.to_csv(output_path, mode='a', header=False)
-
