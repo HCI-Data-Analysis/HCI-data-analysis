@@ -3,12 +3,12 @@
 ## This is a script that will interate through files in data folder, find all file end with .zip and change the name ofthe zip file with the DATA448ID we generated before using encoder function.
 
 ## Structure
-📜convert_zip_file_id.py  
-┣ Libaray imports
-┣ mimic PYTHONPATH using sys.path so python recognize util folder and Encoder class(read note 1)
-┣ KEY_PATH for encoder defined
-┣ Defined function: convert_zip_file()
-┗ __name__ == "__main__"
+    📜convert_zip_file_id.py  
+        ┣ Libaray imports
+        ┣ mimic PYTHONPATH using sys.path so python recognize util folder and Encoder class(read note 1)
+        ┣ KEY_PATH for encoder defined
+        ┣ Defined function: convert_zip_file()
+        ┗ __name__ == "__main__"
 
 ## Structure of the Defined Function
     * convert_zip_file()
