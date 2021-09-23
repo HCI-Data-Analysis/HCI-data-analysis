@@ -3,10 +3,10 @@
 ## This is a script upon given numbers of student(integer) to the fuction half_key_generation(), it will auto-generate the 7 digit data448ID for that given number of student and store it in a csv file in one cloumn with header named Data448ID
 
 ## Structure
-📜generate_half_key.py  
-┣ Libaray imports
-┣ Defined function: half_key_generation(int student)
-┗ __name__ == "__main__"
+    📜generate_half_key.py  
+    ┣ Libaray imports
+    ┣ Defined function: half_key_generation(int student)
+    ┗ __name__ == "__main__"
 
 ## Structure of the Defined Function
     * half_key_generation(student)

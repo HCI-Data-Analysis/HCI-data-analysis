@@ -4,11 +4,11 @@
 Removes the fields `student name`, `student_id`, & `SIS Login ID`. Also encodes the `id` field, anonymizing it with a key only supervisors have access to.
 
 ## Structure
-📜convert_survey.py  
-┣ Imports
-┣ Define constant paths
-┣ Defined function: convert_grade_book()
-┗ __name__ == "__main__"
+    📜convert_survey.py  
+    ┣ Imports
+    ┣ Define constant paths
+    ┣ Defined function: convert_grade_book()
+    ┗ __name__ == "__main__"
 
 ## Structure of the Defined Function
     * convert_survey()
