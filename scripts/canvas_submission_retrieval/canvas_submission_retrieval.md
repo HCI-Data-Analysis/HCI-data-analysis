@@ -1,6 +1,9 @@
 # Download Course Submission Data v1
 This script will download all assignment submissions for a given course within the `https://canvas.ubc.ca` instance
 
+## Executing
+Run `python canvas_submission_retrieval.py *canvas_api_key *course_id`
+
 ## Structure
     📜 canvas_submission_retrieval.py  
      ┣ Libaray imports
