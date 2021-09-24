@@ -23,7 +23,7 @@ We must create a file named `Key.csv` in the `/keys` directory. This csv should 
 
 ## Anonymizing Data
 
-Run `python anaonymize.py` to remove sensitive data from collected .csv files. This assumes that the .csv schemas are
+Run `python anonymize.py` to remove sensitive data from collected .csv files. This assumes that the .csv schemas are
 properly documented in the `/schemas` directory. Currently, this includes:
 
 - Gradebook data
