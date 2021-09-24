@@ -1,4 +1,5 @@
 import os
+
 import numpy as np
 import pandas as pd
 
@@ -25,3 +26,19 @@ def survey_anonymize(survey_filepath, output_path, filename, keys_filepath):
     output_path = os.path.join(output_path, filename + ".csv")
 
     survey.to_csv(output_path)
+
+#
+# from pandas import DataFrame
+# from util import Encoder, EncoderException
+# from schemas import SurveySchema
+#
+#
+# def convert_survey(survey_df: DataFrame, encoder: Encoder) -> DataFrame:
+#     converted_survey_df = survey_df.drop(columns=[SurveySchema.NAME])
+#     for i, row in converted_survey_df.iterrows():
+#         try:
+#             student_id = encoder.encode(canvas_id=row[SurveySchema.ID])
+#             converted_survey_df.at[i, SurveySchema.ID] = student_id
+#         except EncoderException:
+#             converted_survey_df.drop(i, inplace=True)
+#     return converted_survey_df
