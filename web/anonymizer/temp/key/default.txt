@@ -1,0 +1,1 @@
+Default text file to ensure a rigid file structure
