@@ -2,7 +2,7 @@ from random import randint
 import csv
 
 
-def half_key_generation(num_students):
+def half_key_generation(num_students, half_key_filepath):
     is_full = False
 
     dev_id = set()
@@ -20,12 +20,9 @@ def half_key_generation(num_students):
     for id in dev_id:
         dev_key.append(str(id))
 
-    with open("../../keys/HalfKey.csv", "w") as f:
+    with open(half_key_filepath, "w") as f:
         writer = csv.writer(f, lineterminator='\n')
         for id in dev_key:
             writer.writerow([id])
     f.close()
 
-
-if __name__ == "__main__":
-    half_key_generation(161)
