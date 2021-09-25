@@ -14,12 +14,14 @@ def generate_key(gradebook_path, output_dir, filename, seed=123456):
     :param output_dir: A string containing the path to the directory where the output keys file should be generated
     :param filename: A string containing the name of the keys file to be generated. The .csv extension is automatically
     added, so if the file has to be named 'keys.csv', filename = 'keys'
+    :param seed: [optional] Specify a seed number to use for generating pseudorandom data448IDs. Defaults to 123456.
     """
-    sample_file = pd.read_csv(sample_filepath)
+    gradebook = pd.read_csv(gradebook_path)
 
-    random.seed(123456)
-    data448id = random.sample(range(10000, 99999), len(sample_file.index))
-    sample_file['data448id'] = data448id
+    random.seed(seed)
+
+    data448id = random.sample(range(10000, 99999), len(gradebook.index))
+    gradebook[KeySchema.DATA448_ID] = data448id
 
     output_path = os.path.join(output_dir, filename + ".csv")
 
