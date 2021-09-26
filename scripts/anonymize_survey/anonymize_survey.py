@@ -24,7 +24,7 @@ def survey_anonymize(survey_path, output_dir, filename, encoder: Encoder):
         lambda canvas_id: encoder.encode(canvas_id=canvas_id)
     )
 
-    survey = survey.drop(columns=[RawSurveySchema.STUDENT_NAME, RawSurveySchema.SECTION_ID, RawSurveySchema.SECTION])
+    survey = survey.drop(columns=[RawSurveySchema.STUDENT_NAME])
 
     output_dir = os.path.join(output_dir, filename + ".csv")
     survey.to_csv(output_dir, index=False)
