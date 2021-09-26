@@ -7,7 +7,8 @@ from util.encoder import Encoder
 
 
 def survey_anonymize(survey_path, output_dir, filename, encoder: Encoder):
-    """Outputs a file to called <filename> to <output_filepath> that contains the anonymized survey specified in
+    """
+    Outputs a file to called <filename> to <output_filepath> that contains the anonymized survey specified in
     <survey_filepath>, using the keys file located in <keys_filepath>
 
     :param survey_path: A string containing the path of the survey to be anonymized
