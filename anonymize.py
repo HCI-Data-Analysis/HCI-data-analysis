@@ -1,7 +1,3 @@
-import os.path
-
-import pandas as pd
-
 from scripts import generate_key, gradebook_anonymize, survey_anonymize, anonymize_ta_survey
 from util import Encoder
 
