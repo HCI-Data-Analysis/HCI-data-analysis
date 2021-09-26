@@ -1,0 +1,45 @@
+question,category,positive/negative
+Is talkative,Extraversion,1
+Tends to find fault with others,Agreeableness,-1
+Does a thorough job,Conscientiousness,1
+"Is depressed, blue",Neuroticism,1
+"Is original, comes up with new ideas",Openness,1
+Is reserved,Extraversion,-1
+Is helpful and unselfish with others,Agreeableness,1
+Can be somewhat careless,Conscientiousness,-1
+"Is relaxed, handles stress well",Neuroticism,-1
+Is curious about many different things,Openness,1
+Is full of energy,Extraversion,1
+Starts quarrels with others,Agreeableness,-1
+Is a reliable worker,Conscientiousness,1
+Can be tense,Neuroticism,1
+"Is ingenious, a deep thinker",Openness,1
+Generates a lot of enthusiasm,Extraversion,1
+Has a forgiving nature,Agreeableness,1
+Tends to be disorganized,Conscientiousness,-1
+Worries a lot,Neuroticism,1
+Has an active imagination,Openness,1
+Tends to be quiet,Extraversion,-1
+Is generally trusting,Agreeableness,1
+Tends to be lazy,Conscientiousness,-1
+"Is emotionally stable, not easily upset",Neuroticism,-1
+Is inventive,Openness,1
+Has an assertive personality,Extraversion,1
+Can be cold and aloof,Agreeableness,-1
+Perseveres until the task is finished,Conscientiousness,1
+Can be moody,Neuroticism,1
+"Values artistic, aesthetic experiences",Openness,1
+"Is sometimes shy, inhibited",Extraversion,-1
+Is considerate and kind to almost everyone,Agreeableness,1
+Does things efficiently,Conscientiousness,1
+Remains calm in tense situations,Neuroticism,-1
+Prefers work that is routine,Openness,-1
+"Is outgoing, sociable",Extraversion,1
+Is sometimes rude to others,Agreeableness,-1
+Makes plans and follows through with them,Conscientiousness,1
+Gets nervous easily,Neuroticism,1
+"Likes to reflect, play with ideas",Openness,1
+Has few artistic interests,Openness,-1
+Likes to cooperate with others,Agreeableness,1
+Is easily distracted,Conscientiousness,-1
+"Is sophisticated in art, music, or literature",Openness,1
