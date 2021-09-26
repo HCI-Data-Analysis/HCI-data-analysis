@@ -3,42 +3,30 @@ import os
 import numpy as np
 import pandas as pd
 
+from schemas import KeySchema
+from schemas.surveys import SurveySchema
+from util.encoder import Encoder
 
-def survey_anonymize(survey_filepath, output_path, filename, keys_filepath):
+
+def survey_anonymize(survey_path, output_dir, filename, encoder: Encoder):
     """Outputs a file to called <filename> to <output_filepath> that contains the anonymized survey specified in
     <survey_filepath>, using the keys file located in <keys_filepath>
 
-    :param survey_filepath: A string containing the filepath of the survey to be anonymized
-    :param output_path: A string containing the path where the anonymized file should be placed
+    :param survey_path: A string containing the path of the survey to be anonymized
+    :param output_dir: A string containing the path of the directory where the anonymized file should be placed
     :param filename: A string containing the name of the keys file to be generated. The .csv extension is automatically
     added, so if the file has to be named 'keys.csv', filename = 'keys'
-    :param keys_filepath: A string containing the filepath of the keys file containing all of the DATA448 IDs
+    :param encoder: Instance of the encoder model that has been initialized with
     """
-    survey = pd.read_csv(survey_filepath)
-    keys = pd.read_csv(keys_filepath)
+    survey = pd.read_csv(survey_path)
 
-    survey['data448id'] = np.where(survey.id == keys.id, keys.data448id, 0)
+    survey[KeySchema.DATA448_ID] = survey.apply(lambda row: encoder.encode(row[SurveySchema.CANVAS_ID]))
 
-    survey = survey.drop(['name', 'id'], axis=1)
+    survey = survey.drop(columns=[SurveySchema.STUDENT_NAME, SurveySchema.CANVAS_ID, SurveySchema.SECTION_ID,
+                                  SurveySchema.SECTION])
 
-    survey = survey.set_index('data448id')
+    survey = survey.set_index(KeySchema.DATA448_ID)
 
-    output_path = os.path.join(output_path, filename + ".csv")
+    output_dir = os.path.join(output_dir, filename + ".csv")
 
-    survey.to_csv(output_path)
-
-#
-# from pandas import DataFrame
-# from util import Encoder, EncoderException
-# from schemas import SurveySchema
-#
-#
-# def convert_survey(survey_df: DataFrame, encoder: Encoder) -> DataFrame:
-#     converted_survey_df = survey_df.drop(columns=[SurveySchema.NAME])
-#     for i, row in converted_survey_df.iterrows():
-#         try:
-#             student_id = encoder.encode(canvas_id=row[SurveySchema.ID])
-#             converted_survey_df.at[i, SurveySchema.ID] = student_id
-#         except EncoderException:
-#             converted_survey_df.drop(i, inplace=True)
-#     return converted_survey_df
+    survey.to_csv(output_dir)

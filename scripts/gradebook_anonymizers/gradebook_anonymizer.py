@@ -1,8 +1,7 @@
 import os
-import numpy as np
 import pandas as pd
 
-from util import data_cleaner
+from schemas import GradeBookSchema, KeySchema
 from util.encoder import Encoder
 
 
@@ -14,27 +13,26 @@ def gradebook_anonymize(gradebook_path, output_dir, filename, encoder: Encoder):
     :param output_dir: A string containing the path where the anonymized file should be placed
     :param filename: A string containing the name of the keys file to be generated. The .csv extension is automatically
     added, so if the file has to be named 'keys.csv', filename = 'keys'
-    :param keys_filepath: A string containing the filepath of the keys file containing all of the DATA448 IDs
     :param encoder: Instance of the encoder model that has been initialized with
     """
 
     file = pd.read_csv(gradebook_path)
-    keys = pd.read_csv(keys_filepath)
 
     output_dir = os.path.join(output_dir, filename + ".csv")
 
-    # file = data_cleaner.column_name_to_lower(file)
-
+    # Clean up some of the weird formatting of the gradebook
     headers = file.iloc[0:2]
-    headers = headers.drop(["student", "id", "sis login id", "student number"], axis=1)
+    headers = headers.drop(
+        columns=[GradeBookSchema.STUDENT_NAME, GradeBookSchema.STUDENT_ID, GradeBookSchema.SIS_LOGIN_ID])
+    # Write only the headers to preserve them
     headers.to_csv(output_dir)
 
     gradebook = file.iloc[2:len(file)]
 
-    gradebook = gradebook.reset_index(drop=True)
-
-    gradebook["data448id"] = np.where(gradebook.id == keys.id, keys.data448id, 0)
-    gradebook = gradebook.drop(["student", "id", "sis login id", "student number"], axis=1)
+    gradebook[KeySchema.DATA448_ID] = gradebook.apply(lambda row: encoder.encode(row[GradeBookSchema.CANVAS_ID]))
+    gradebook = gradebook.drop(
+        columns=[GradeBookSchema.STUDENT_NAME, GradeBookSchema.STUDENT_ID, GradeBookSchema.SIS_LOGIN_ID])
     gradebook = gradebook.set_index("data448id")
 
+    # Append the anonymized gradebook to the previously written headers to make a completely anonymized gradebook
     gradebook.to_csv(output_dir, mode='a', header=False)

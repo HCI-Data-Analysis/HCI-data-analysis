@@ -20,6 +20,8 @@ def generate_key(gradebook_path, output_dir, filename, seed=123456):
 
     random.seed(seed)
 
+    gradebook = gradebook.iloc[2:len(gradebook)]
+
     data448id = random.sample(range(10000, 99999), len(gradebook.index))
     gradebook[KeySchema.DATA448_ID] = data448id
 
@@ -27,5 +29,6 @@ def generate_key(gradebook_path, output_dir, filename, seed=123456):
 
     gradebook.to_csv(
         output_path,
-        columns=[KeySchema.STUDENT_NAME, KeySchema.CANVAS_ID, KeySchema.STUDENT_ID, KeySchema.DATA448_ID]
+        columns=[KeySchema.STUDENT_NAME, KeySchema.CANVAS_ID, KeySchema.STUDENT_ID, KeySchema.DATA448_ID],
+        index=False
     )
