@@ -2,14 +2,11 @@ import os.path
 
 import pandas as pd
 
-from scripts.gradebook_anonymizers import gradebook_anonymizer
-from scripts.key_generator import key_generator
-from scripts.survey_anonymizers import survey_anonymizer
+from scripts import generate_key, gradebook_anonymize, survey_anonymize, anonymize_ta_survey
 from util import Encoder
 
-KEY_DIR = '.\\keys'
+KEY_DIR = 'keys'
 KEY_EXPORT_FILENAME = 'Key'
-KEY_PATH = os.path.join(KEY_DIR, KEY_EXPORT_FILENAME + '.csv')
 
 EXPORT_DIR = 'data'
 BACKGROUND_SURVEY_PATH = 'raw_data/341_Background_Survey_Header.csv'
@@ -25,12 +22,20 @@ TA_EXPORT_FILENAME = 'ta_survey'
 
 if __name__ == '__main__':
     # Generate Key file
-    key_generator.generate_key(GRADE_BOOK_CSV_PATH, KEY_DIR, KEY_EXPORT_FILENAME)
-
-    encoder = Encoder(KEY_PATH)
+    key_path = generate_key(GRADE_BOOK_CSV_PATH, KEY_DIR, KEY_EXPORT_FILENAME)
+    encoder = Encoder(key_path)
 
     # Convert GradeBook
-    gradebook_anonymizer.gradebook_anonymize(GRADE_BOOK_CSV_PATH, EXPORT_DIR, GRADE_BOOK_EXPORT_FILENAME, encoder)
+    gradebook_anonymize(GRADE_BOOK_CSV_PATH, EXPORT_DIR, GRADE_BOOK_EXPORT_FILENAME, encoder)
 
     # Convert BG Survey
-    survey_anonymizer.survey_anonymize(BACKGROUND_SURVEY_PATH, EXPORT_DIR, BACKGROUND_EXPORT_FILENAME, encoder)
+    survey_anonymize(BACKGROUND_SURVEY_PATH, EXPORT_DIR, BACKGROUND_EXPORT_FILENAME, encoder)
+
+    # Convert Impressions Survey #1
+    survey_anonymize(IMPRESSION_SURVEY_PATH, EXPORT_DIR, IMPRESSION_EXPORT_FILENAME, encoder)
+
+    # Convert Impressions Survey #2
+    survey_anonymize(IMPRESSION_SURVEY_PATH_2, EXPORT_DIR, IMPRESSION_EXPORT_FILENAME_2, encoder)
+
+    # Convert TA Survey
+    anonymize_ta_survey(TA_SURVEY_PATH, EXPORT_DIR, TA_EXPORT_FILENAME, encoder)

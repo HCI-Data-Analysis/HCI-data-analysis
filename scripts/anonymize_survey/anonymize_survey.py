@@ -1,10 +1,8 @@
 import os
 
-import numpy as np
 import pandas as pd
 
-from schemas import KeySchema
-from schemas.surveys import SurveySchema
+from schemas import KeySchema, RawSurveySchema
 from util.encoder import Encoder
 
 
@@ -19,14 +17,13 @@ def survey_anonymize(survey_path, output_dir, filename, encoder: Encoder):
     :param encoder: Instance of the encoder model that has been initialized with
     """
     survey = pd.read_csv(survey_path)
+    survey = survey.rename(columns={RawSurveySchema.CANVAS_ID: KeySchema.DATA448_ID})
 
-    survey[KeySchema.DATA448_ID] = survey.apply(lambda row: encoder.encode(row[SurveySchema.CANVAS_ID]))
+    survey[KeySchema.DATA448_ID] = survey[KeySchema.DATA448_ID].map(
+        lambda canvas_id: encoder.encode(canvas_id=canvas_id)
+    )
 
-    survey = survey.drop(columns=[SurveySchema.STUDENT_NAME, SurveySchema.CANVAS_ID, SurveySchema.SECTION_ID,
-                                  SurveySchema.SECTION])
-
-    survey = survey.set_index(KeySchema.DATA448_ID)
+    survey = survey.drop(columns=[RawSurveySchema.STUDENT_NAME, RawSurveySchema.SECTION_ID, RawSurveySchema.SECTION])
 
     output_dir = os.path.join(output_dir, filename + ".csv")
-
-    survey.to_csv(output_dir)
+    survey.to_csv(output_dir, index=False)

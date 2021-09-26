@@ -1,1 +1,1 @@
-from util.encoder import Encoder
+from .encoder import Encoder, EncoderException

@@ -3,10 +3,10 @@ import shutil
 
 import eel
 
-from scripts.gradebook_anonymizers.gradebook_anonymizer import gradebook_anonymize
-from scripts.key_generator.key_generator import generate_key
-from scripts.survey_anonymizers.survey_anonymizer import survey_anonymize
-from scripts.zip_file_anonymizer.zip_file_anonymizer import zip_anonymize
+from scripts.anonymize_gradebook.anonymize_gradebook import gradebook_anonymize
+from scripts.generate_key.generate_key import generate_key
+from scripts.anonymize_survey.anonymize_survey import survey_anonymize
+from scripts.anonymize_zip_file.anonymize_zip_file import zip_anonymize
 from util.decode_base_64 import generate_decoded_file
 
 eel.expose(generate_decoded_file)
