@@ -36,9 +36,6 @@ def prepare_data_background(survey_path, schema_path, output_dir):
 
     df = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
-    # df = df.drop(df.columns[1:13], axis=1).drop(df.columns[14:19], axis=1).dropna()
-    # questions = list(df.columns)[1]
-    # new_columns = get_columns(questions)
 
     convert_negative(df, schema)
     average_score(df, schema)
@@ -94,7 +91,6 @@ def average_score(survey, schema):
         questions = schema[schema["category"] == category]
         question_col_num = questions["col num 1"]
         question_df = survey.iloc[:, question_col_num]
-        print(question_df)
         survey[category] = question_df.sum(axis=1)/len(question_col_num)
 
 
