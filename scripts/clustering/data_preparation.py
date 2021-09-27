@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import re
 from schemas import data_files
+
+
 def prepare_data_HCI(survey_path, schema_path, output_dir):
     """
     Convert all the ordinal responses in <survey_path> to corresponding numerical representations. (Including flipping the negative
@@ -25,7 +27,6 @@ def prepare_data_HCI(survey_path, schema_path, output_dir):
 
 # Prepares and cleans the dataframe so it is possible to use it for clustering.
 def prepare_data_background(survey_path, schema_path, output_dir):
-
     df = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
 
@@ -67,7 +68,7 @@ def convert_negative(survey, schema):
     """
     negatives_col_nums = schema["col num 1"][schema["positive/negative"] < 1]
     for col in survey.iloc[:, negatives_col_nums]:
-        survey[col] = survey[col].apply(lambda x: x*-1)
+        survey[col] = survey[col].apply(lambda x: x * -1)
 
 
 def average_score(survey, schema):
@@ -83,11 +84,10 @@ def average_score(survey, schema):
         questions = schema[schema["category"] == category]
         question_col_num = questions["col num 1"]
         question_df = survey.iloc[:, question_col_num]
-        survey[category] = question_df.sum(axis=1)/len(question_col_num)
+        survey[category] = question_df.sum(axis=1) / len(question_col_num)
 
 
 def export_to_csv(df, output_dir):
-
     df = df.drop(df.columns[1], axis=1)
 
     student_info = df.iloc[:, 0]
@@ -99,5 +99,6 @@ def export_to_csv(df, output_dir):
 
 
 if __name__ == '__main__':
-    prepare_data_background(data_files.BACKGROUND_SURVEY_DATA, schema_path=data_files.BACKGROUND_SURVEY_SCHEMA, output_dir=data_files.OUTPUT_DIRECTORY)
+    prepare_data_background(data_files.BACKGROUND_SURVEY_DATA, schema_path=data_files.BACKGROUND_SURVEY_SCHEMA,
+                            output_dir=data_files.OUTPUT_DIRECTORY)
     # prepare_data_HCI(HCI_SURVEY_DATA,HCI_SURVEY_SCHEMA,OUTPUT_DIRECTORY)

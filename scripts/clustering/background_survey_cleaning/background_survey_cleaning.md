@@ -1,4 +1,4 @@
-# Background Survey Clustering
+# Background Survey Cleaning
 
 Contains a method called `export_to_csv()` that will take the background survey data and convert it to a csv that is
 prepared for clustering. 
@@ -19,3 +19,5 @@ The following fields were also removed to simplify the dataset with only the req
 - `n correct`
 - `n incorrect`
 - `score`
+
+Outputs a `.csv` to the `data` directory with the name `processed_background_survey.csv`.

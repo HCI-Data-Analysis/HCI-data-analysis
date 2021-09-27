@@ -1,7 +1,5 @@
 import re
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
 from sklearn.cluster import KMeans
 
@@ -48,6 +46,7 @@ def get_columns(questions):
     return new_columns
 
 
+# Assign a number to the student's answer.
 def map_to_number(answer):
     if answer == "Strongly Disagree":
         return -2
@@ -63,16 +62,5 @@ def map_to_number(answer):
         return 0
 
 
-def background_cluster():
-    df = prepare_df()
-    df = df.drop(df.columns[1], axis=1).dropna()
-    print(df)
-    clusters = KMeans(n_clusters=5).fit(df)
-    # Need the proper mapping in order to be able to cluster the data.
-    # plt.scatter(df['id'], df[1:44], c=clusters.labels_.astype(float), s=50, alpha=0.5)
-    # plt.show()
-
-
 if __name__ == "__main__":
     export_to_csv()
-    # background_cluster()
