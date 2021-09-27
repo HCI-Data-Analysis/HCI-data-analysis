@@ -4,17 +4,16 @@ import re
 from schemas import data_files
 
 
-def prepare_data_HCI(survey_path, schema_path, output_dir):
+def prepare_data_hci(survey_path, schema_path, output_dir):
     """
     Convert all the ordinal responses in <survey_path> to corresponding numerical representations. (Including flipping the negative
     questions response)
     Calculate the average rating each student give for each category
     Outputs a file to <output_path> containing the above information
-    :param survey_path: A string containing the filepath of the survey being prepared
+    :param survey_path: A string containing the filepath of the survey being prepared.
     :param schema_path: A string containing the file path of the schema document of the survey questions.
-    :param output_dir: A string containing the path where the anonymized file should be placed
+    :param output_dir: A string containing the path where the anonymized file should be placed.
     """
-
     survey = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
 
@@ -25,8 +24,16 @@ def prepare_data_HCI(survey_path, schema_path, output_dir):
     export_to_csv(survey, output_dir)
 
 
-# Prepares and cleans the dataframe so it is possible to use it for clustering.
 def prepare_data_background(survey_path, schema_path, output_dir):
+    """
+       Convert all the background survey responses in <survey_path> to corresponding numerical representations.
+       (Including flipping the negative questions response)
+       Calculate the average rating each student gives for each category
+       Outputs a file to <output_path> containing the above information
+       :param survey_path: A string containing the filepath of the survey being prepared
+       :param schema_path: A string containing the file path of the schema document of the survey questions.
+       :param output_dir: A string containing the path where the anonymized file should be placed
+       """
     df = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
 
@@ -36,8 +43,11 @@ def prepare_data_background(survey_path, schema_path, output_dir):
     export_to_csv(df, output_dir)
 
 
-# This separates the questions into a list so they can be used to update the columns in the dataframe.
 def get_columns(questions):
+    """
+    This separates the questions into a list so they can be used to update the columns in the dataframe.
+    :param questions: a string of the questions to process.
+    """
     new_columns = []
     for question in questions.splitlines():
         substring = re.search(r"\[(.*?)]", question)
@@ -51,7 +61,6 @@ def map_to_number(survey):
     Convert ordinal values to numerical representations
     :param survey: a dataframe containing survey result
     """
-
     survey = survey.replace("Strongly Disagree", -2)
     survey = survey.replace("Disagree", -1)
     survey = survey.replace("Neither Agree Nor Disagree", 0)
@@ -78,7 +87,6 @@ def average_score(survey, schema):
     :param schema: a dataframe containing the survey schema
     :return:
     """
-
     categories = schema["category"].unique()
     for category in categories:
         questions = schema[schema["category"] == category]
@@ -88,6 +96,11 @@ def average_score(survey, schema):
 
 
 def export_to_csv(df, output_dir):
+    """
+    Export the specified dataframe to a csv file.
+    :param df: the dataframe to export.
+    :param output_dir: the directory to output the csv to.
+    """
     df = df.drop(df.columns[1], axis=1)
 
     student_info = df.iloc[:, 0]
