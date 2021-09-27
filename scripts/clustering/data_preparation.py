@@ -1,15 +1,7 @@
 import pandas as pd
 import os
 import re
-
-BACKGROUND_SURVEY_SCHEMA = "../../../data/background_survey_schema.csv"
-BACKGROUND_SURVEY_DATA = "../../../data/processed_background_survey.csv"
-OUTPUT_DIRECTORY = "../../../data"
-FILE_NAME = "processed_background_survey"
-HCI_SURVEY_DATA = "../../data/impression_survey1.csv"
-HCI_SURVEY_SCHEMA = "../../data/HCI_survey_schema.csv"
-
-
+from schemas import data_files
 def prepare_data_HCI(survey_path, schema_path, output_dir):
     """
     Convert all the ordinal responses in <survey_path> to corresponding numerical representations. (Including flipping the negative
@@ -102,10 +94,10 @@ def export_to_csv(df, output_dir):
     aggregate = df.iloc[:, -5:]
     result = pd.concat([student_info.reset_index(drop=True), aggregate.reset_index(drop=True)], axis=1)
 
-    output_dir = os.path.join(OUTPUT_DIRECTORY, "for_clustering_" + FILE_NAME + '.csv')
+    output_dir = os.path.join(data_files.OUTPUT_DIRECTORY, "for_clustering_" + data_files.FILE_NAME + '.csv')
     result.to_csv(output_dir, index=False)
 
 
 if __name__ == '__main__':
-    prepare_data_background(BACKGROUND_SURVEY_DATA, schema_path=BACKGROUND_SURVEY_SCHEMA, output_dir=OUTPUT_DIRECTORY)
+    prepare_data_background(data_files.BACKGROUND_SURVEY_DATA, schema_path=data_files.BACKGROUND_SURVEY_SCHEMA, output_dir=data_files.OUTPUT_DIRECTORY)
     # prepare_data_HCI(HCI_SURVEY_DATA,HCI_SURVEY_SCHEMA,OUTPUT_DIRECTORY)
