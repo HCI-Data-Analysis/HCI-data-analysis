@@ -50,15 +50,15 @@ def get_columns(questions):
 
 def map_to_number(answer):
     if answer == "Strongly Disagree":
-        return 1
+        return -2
     elif answer == "Disagree":
-        return 2
+        return -1
     elif answer == "Neither Agree Nor Disagree":
-        return 3
+        return 0
     elif answer == "Agree":
-        return 4
+        return 1
     elif answer == "Strongly Agree":
-        return 5
+        return 2
     else:
         return 0
 
@@ -74,5 +74,5 @@ def background_cluster():
 
 
 if __name__ == "__main__":
-    # export_to_csv()
-    background_cluster()
+    export_to_csv()
+    # background_cluster()
