@@ -1,6 +1,6 @@
 import datetime
 import json
-import sys
+import os
 
 from canvasapi import Canvas
 
@@ -13,12 +13,14 @@ class DateTimeEncoder(json.JSONEncoder):
             return super().default(z)
 
 
-def canvas_submission_retrieval(course_id, access_token):
+def canvas_submission_retrieval(course_id, access_token, export_dir):
     canvas = Canvas('https://canvas.ubc.ca', access_token)
     assignments = canvas.get_course(course_id).get_assignments()
     for assignment in assignments:
         submissions = assignment.get_submissions()
-        with open(f"../../data/{course_id}_{assignment.id}.json", "w") as f:
+        filename = str(course_id) + "_" + str(assignment.id)
+        output_dir = os.path.join(export_dir, filename + '.json')
+        with open(output_dir, "w") as f:
             json_submissions = []
             for submission in submissions:
                 submission_dict = submission.__dict__
@@ -26,8 +28,3 @@ def canvas_submission_retrieval(course_id, access_token):
                 json_submissions.append(json.dumps(submission_dict, indent=4, cls=DateTimeEncoder))
             f.write('[' + ','.join(json_submissions) + ']')
 
-
-if __name__ == '__main__':
-    canvas_access_token = sys.argv[1]
-    canvas_course_id = sys.argv[2]
-    canvas_submission_retrieval(canvas_course_id, canvas_access_token)
