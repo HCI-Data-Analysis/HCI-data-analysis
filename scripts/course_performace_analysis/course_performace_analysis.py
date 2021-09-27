@@ -23,6 +23,14 @@ def course_performace_analysis(gradebook_path):
     
     sns.displot(file['Final Score'], kde=True, bins = 30)
     
+    plt.axvline( x = w_2015, label='2015-80.99')
+    plt.text(w_2015,19.5, '2015: 80.99')
+    plt.axvline( x = w_2016, label='2016-79.93')
+    plt.text(w_2016,19, '2016: 79.93')
+    plt.axvline( x = w_2017, label='2017-78.70')
+    plt.text(w_2017,18.5, '2017: 78.70')
+    plt.axvline( x = mean, label='current year')
+    plt.text(mean,20, 'current/2020: ' + str(mean))
     plt.title('Course performace')
     plt.xlabel('Grade')
     plt.ylabel('amount of student')
