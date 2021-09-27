@@ -6,5 +6,5 @@ CANVAS_ACCESS_TOKEN = sys.argv[1]
 CANVAS_COURSE_ID = sys.argv[2]
 
 if __name__ == '__main__':
-    #submission retrieval 
+    # submission retrieval
     canvas_submission_retrieval(CANVAS_COURSE_ID, CANVAS_ACCESS_TOKEN, EXPORT_DIR)

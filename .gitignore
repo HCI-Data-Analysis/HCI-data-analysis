@@ -1,4 +1,4 @@
-# IDE
+# Jetbrains IDEA
 .idea
 
 # Byte-compiled / optimized / DLL files
@@ -130,6 +130,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-# Jetbrains IDEA
-.idea
