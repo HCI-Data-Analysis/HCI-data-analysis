@@ -1,9 +1,9 @@
 import re
-
-import sklearn as sk
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import os
+from sklearn.cluster import KMeans
 
 BACKGROUND_SURVEY_SCHEMA = "../../../data/background_survey_schema.csv"
 BACKGROUND_SURVEY_DATA = "../../../data/background_survey.csv"
@@ -24,7 +24,7 @@ def prepare_df():
         column_index = 0
         for column in new_columns:
             if column_index < len(answers):
-                df.at[row_index, column] = answers[column_index]
+                df.at[row_index, column] = map_to_number(answers[column_index])
             column_index += 1
         row_index += 1
     return df
@@ -48,5 +48,31 @@ def get_columns(questions):
     return new_columns
 
 
+def map_to_number(answer):
+    if answer == "Strongly Disagree":
+        return 1
+    elif answer == "Disagree":
+        return 2
+    elif answer == "Neither Agree Nor Disagree":
+        return 3
+    elif answer == "Agree":
+        return 4
+    elif answer == "Strongly Agree":
+        return 5
+    else:
+        return 0
+
+
+def background_cluster():
+    df = prepare_df()
+    df = df.drop(df.columns[1], axis=1).dropna()
+    print(df)
+    clusters = KMeans(n_clusters=5).fit(df)
+    # Need the proper mapping in order to be able to cluster the data.
+    # plt.scatter(df['id'], df[1:44], c=clusters.labels_.astype(float), s=50, alpha=0.5)
+    # plt.show()
+
+
 if __name__ == "__main__":
-    export_to_csv()
+    # export_to_csv()
+    background_cluster()
