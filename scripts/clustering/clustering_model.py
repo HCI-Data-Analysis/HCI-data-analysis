@@ -4,12 +4,12 @@ from schemas import data_files
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-data = pd.read_csv("../" + data_files.HCI_CLUSTER_DATA)
-# data = pd.read_csv("../" + data_files.BACKGROUND_CLUSTER_DATA)
+data = pd.read_csv("../"+data_files.HCI_CLUSTER_DATA)
+# data = pd.read_csv(data_files.BACKGROUND_CLUSTER_DATA)
 cluster_data = data.iloc[:, 2:7]
 
 
-def elbow_method():
+def inertia_graph():
     inertia = []
     K = range(1, 10)
     for k in K:
@@ -43,12 +43,9 @@ def get_groups(labels):
     groups = labeled_students["labels"].unique()
     grouped_students = pd.DataFrame()
 
-    grouped_students0 = [*labeled_students.loc[labeled_students["labels"] == 0, "id"]]
-    grouped_students1 = [*labeled_students.loc[labeled_students["labels"] == 1, "id"]]
-    grouped_students2 = [*labeled_students.loc[labeled_students["labels"] == 2, "id"]]
-
-    grouped_students = pd.DataFrame(
-        {"g0": pd.Series(grouped_students0), "g1": pd.Series(grouped_students1), "g2": pd.Series(grouped_students2)})
+    for group in groups:
+        grouped_student_list = [*labeled_students.loc[labeled_students["labels"] == group, "id"]]
+        grouped_students["g"+str(group)] = pd.Series(grouped_student_list)
 
     grouped_students.to_csv("../../../data/HCI_survey_group.csv")
 

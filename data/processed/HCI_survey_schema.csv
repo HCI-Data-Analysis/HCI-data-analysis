@@ -4,7 +4,7 @@ question,col num 1,col num 2,category,positive/negative
  A student who performs well in human computer interaction will probably not have a life outside of computers.,9,43,Professional,-1
  Men and women are equally capable of solving design and interaction problems.,11,15,Gender,1
  Men and women can both excel in human computer interaction courses.,13,39,Gender,1
- I am active in organizations or social groups that include mostly members of my own ethnic group.,15,71,Identity,-1
+ I am active in organizations or social groups that include mostly members of my own ethnic group.,15,71,Identity,1
  Design and interaction is an appropriate subject for both men and women to study.,17,47,Gender,1
  I was encouraged to pursue a human computer interaction project/course/degree/career.,19,49,Identity,1
  I can achieve good grades (C or better) in human computer interaction courses.,21,29,Confidence,1
@@ -32,4 +32,4 @@ question,col num 1,col num 2,category,positive/negative
  I have role models in human computer interaction who look like me.,65,13,Identity,1
  The challenge of solving problems using design and interaction appeals to me.,67,67,Interest,1
  I hope that my future career will require the use of design and interaction concepts.,69,69,Interest,1
- I feel a strong attachment towards my own ethnic group.,71,59,Identity,-1
+ I feel a strong attachment towards my own ethnic group.,71,59,Identity,1

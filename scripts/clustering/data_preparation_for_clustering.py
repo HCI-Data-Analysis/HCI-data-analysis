@@ -4,15 +4,12 @@ import re
 from schemas import data_files
 
 
-def prepare_data_hci(survey_path, schema_path, output_dir):
+def prepare_data_hci(survey_path, schema_path):
     """
-    Convert all the ordinal responses in <survey_path> to corresponding numerical representations. (Including flipping the negative
-    questions response)
-    Calculate the average rating each student give for each category
-    Outputs a file to <output_path> containing the above information
+    Prepare the HCI impression survey given in <survey_path> in ways that can be input into the clustering model.
+    Outputs the file /data/processed/for_clustering_impression_survey.csv containing the above information
     :param survey_path: A string containing the filepath of the survey being prepared.
     :param schema_path: A string containing the file path of the schema document of the survey questions.
-    :param output_dir: A string containing the path where the anonymized file should be placed.
     """
     survey = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
@@ -21,39 +18,23 @@ def prepare_data_hci(survey_path, schema_path, output_dir):
     convert_negative(survey, schema)
     average_score(survey, schema)
 
-    export_to_csv(survey, output_dir)
+    export_to_csv(survey, survey_path)
 
 
-def prepare_data_background(survey_path, schema_path, output_dir):
+def prepare_data_background(survey_path, schema_path):
     """
-       Convert all the background survey responses in <survey_path> to corresponding numerical representations.
-       (Including flipping the negative questions response)
-       Calculate the average rating each student gives for each category
-       Outputs a file to <output_path> containing the above information
-       :param survey_path: A string containing the filepath of the survey being prepared
-       :param schema_path: A string containing the file path of the schema document of the survey questions.
-       :param output_dir: A string containing the path where the anonymized file should be placed
-       """
+    Prepare the background survey given in <survey_path> in ways that can be input into the clustering model.
+    Outputs the file /data/processed/for_clustering_background_survey.csv containing the above information
+    :param survey_path: A string containing the filepath of the survey being prepared.
+    :param schema_path: A string containing the file path of the schema document of the survey questions.
+    """
     df = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
 
     convert_negative(df, schema)
     average_score(df, schema)
 
-    export_to_csv(df, output_dir)
-
-
-def get_columns(questions):
-    """
-    This separates the questions into a list so they can be used to update the columns in the dataframe.
-    :param questions: a string of the questions to process.
-    """
-    new_columns = []
-    for question in questions.splitlines():
-        substring = re.search(r"\[(.*?)]", question)
-        if substring:
-            new_columns.append(substring.group(1).replace("_", " "))
-    return new_columns
+    export_to_csv(df, survey_path)
 
 
 def map_to_number(survey):
@@ -95,11 +76,11 @@ def average_score(survey, schema):
         survey[category] = question_df.sum(axis=1) / len(question_col_num)
 
 
-def export_to_csv(df, output_dir):
+def export_to_csv(df, survey_path):
     """
     Export the specified dataframe to a csv file.
     :param df: the dataframe to export.
-    :param output_dir: the directory to output the csv to.
+    :param survey_path: A string containing the path of the survey (for file name purposes).
     """
     df = df.drop(df.columns[1], axis=1)
 
@@ -107,11 +88,12 @@ def export_to_csv(df, output_dir):
     aggregate = df.iloc[:, -5:]
     result = pd.concat([student_info.reset_index(drop=True), aggregate.reset_index(drop=True)], axis=1)
 
-    output_dir = os.path.join(data_files.OUTPUT_DIRECTORY, "for_clustering_" + data_files.FILE_NAME + '.csv')
+    file_name = os.path.basename(survey_path)
+
+    output_dir = os.path.join(data_files.OUTPUT_DIRECTORY, "for_clustering_" + file_name)
     result.to_csv(output_dir, index=False)
 
 
 if __name__ == '__main__':
-    prepare_data_background(data_files.BACKGROUND_SURVEY_DATA, schema_path=data_files.BACKGROUND_SURVEY_SCHEMA,
-                            output_dir=data_files.OUTPUT_DIRECTORY)
-    # prepare_data_HCI(HCI_SURVEY_DATA,HCI_SURVEY_SCHEMA,OUTPUT_DIRECTORY)
+    prepare_data_background(data_files.BACKGROUND_SURVEY_DATA, data_files.BACKGROUND_SURVEY_SCHEMA)
+    prepare_data_hci(data_files.HCI_SURVEY_DATA, data_files.HCI_SURVEY_SCHEMA)
