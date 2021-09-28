@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from schemas import data_files
+from schemas import DataFilesSchema
 
 
 def prepare_data_hci(survey_path, schema_path):
@@ -89,10 +89,10 @@ def export_to_csv(df, survey_path):
 
     file_name = os.path.basename(survey_path)
 
-    output_dir = os.path.join(data_files.OUTPUT_DIRECTORY, "for_clustering_" + file_name)
+    output_dir = os.path.join(DataFilesSchema.OUTPUT_DIRECTORY, "for_clustering_" + file_name)
     result.to_csv(output_dir, index=False)
 
 
 if __name__ == '__main__':
-    prepare_data_background(data_files.BACKGROUND_SURVEY_DATA, data_files.BACKGROUND_SURVEY_SCHEMA)
-    prepare_data_hci(data_files.HCI_SURVEY_DATA, data_files.HCI_SURVEY_SCHEMA)
+    prepare_data_background(DataFilesSchema.BACKGROUND_SURVEY_DATA, DataFilesSchema.BACKGROUND_SURVEY_SCHEMA)
+    prepare_data_hci(DataFilesSchema.HCI_SURVEY_DATA, DataFilesSchema.HCI_SURVEY_SCHEMA)

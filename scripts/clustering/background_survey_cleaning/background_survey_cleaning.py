@@ -1,12 +1,7 @@
 import re
 import pandas as pd
 import os
-from schemas import data_files
-
-# BACKGROUND_SURVEY_SCHEMA = "../../../data/background_survey_schema.csv"
-# BACKGROUND_SURVEY_DATA = "../../../data/background_survey.csv"
-# OUTPUT_DIRECTORY = "../../../data"
-# FILE_NAME = "processed_background_survey"
+from schemas import DataFilesSchema
 
 
 def prepare_df():
@@ -14,7 +9,7 @@ def prepare_df():
     Prepares and cleans the dataframe so it is possible to use it for clustering.
     Fixes the single column with all the questions in it.
     """
-    df = pd.read_csv(data_files.BACKGROUND_SURVEY_DATA)
+    df = pd.read_csv(DataFilesSchema.BACKGROUND_SURVEY_DATA)
     df = df.drop(df.columns[1:13], axis=1).drop(df.columns[14:19], axis=1).dropna()
     questions = list(df.columns)[1]
     new_columns = get_columns(questions)
@@ -32,13 +27,12 @@ def prepare_df():
     return df
 
 
-# Exports the processed dataframe into a csv.
 def export_to_csv(df):
     """
     Exports the processed dataframe into a csv.
     :param df: The df to export.
     """
-    output_dir = os.path.join(data_files.OUTPUT_DIRECTORY, "processed_background_survey" + '.csv')
+    output_dir = os.path.join(DataFilesSchema.OUTPUT_DIRECTORY, "processed_background_survey" + '.csv')
     df.to_csv(output_dir, index=False)
 
 
