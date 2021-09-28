@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import re
 from schemas import data_files
 
 
