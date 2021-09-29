@@ -3,7 +3,7 @@ import os
 from schemas import ClusterSchema
 
 
-def prepare_data_hci(survey_path, schema_path, output_path):
+def prepare_data_for_clustering(survey_path, schema_path, output_path):
     """
     Prepare the HCI impression survey given in <survey_path> in ways that can be input into the clustering model.
     Outputs the file /data/processed/for_clustering_impression_survey.csv containing the above information
@@ -12,30 +12,13 @@ def prepare_data_hci(survey_path, schema_path, output_path):
     :param output_path: A string containing the path to output csv.
     """
     survey = pd.read_csv(survey_path)
-    hci_schema_csv = pd.read_csv(schema_path)
+    data_schema_csv = pd.read_csv(schema_path)
 
     survey = map_to_number(survey)
-    convert_negative(survey, hci_schema_csv)
-    average_score(survey, hci_schema_csv)
+    convert_negative(survey, data_schema_csv)
+    average_score(survey, data_schema_csv)
 
     prepare_csv_for_clustering(survey, survey_path, output_path)
-
-
-def prepare_data_background(survey_path, schema_path, output_path):
-    """
-    Prepare the background survey given in <survey_path> in ways that can be input into the clustering model.
-    Outputs the file /data/processed/for_clustering_background_survey.csv containing the above information
-    :param survey_path: A string containing the filepath of the survey being prepared.
-    :param schema_path: A string containing the file path of the schema document of the survey questions.
-    :param output_path: A string containing the path to output csv.
-    """
-    df = pd.read_csv(survey_path)
-    background_schema_csv = pd.read_csv(schema_path)
-
-    convert_negative(df, background_schema_csv)
-    average_score(df, background_schema_csv)
-
-    prepare_csv_for_clustering(df, survey_path, output_path)
 
 
 def map_to_number(survey):

@@ -2,14 +2,6 @@ import re
 import pandas as pd
 import os
 
-ANSWER_OPTIONS = {
-    "Strongly Disagree": -2,
-    "Disagree": -1,
-    "Neither Agree Nor Disagree": 0,
-    "Agree": 1,
-    "Strongly Agree": 2
-}
-
 
 def clean_background_survey(survey, output):
     """
@@ -27,7 +19,7 @@ def clean_background_survey(survey, output):
         column_index = 0
         for column in new_columns:
             if column_index < len(answers):
-                df.at[row_index, column] = _map_to_number(answers[column_index])
+                df.at[row_index, column] = answers[column_index]
             column_index += 1
         row_index += 1
     df.drop(df.columns[1], axis=1)
@@ -46,11 +38,3 @@ def _get_columns(questions):
         if substring:
             new_columns.append(substring.group(1).replace("_", " "))
     return new_columns
-
-
-def _map_to_number(answer):
-    """
-    Map a number to the student's answer.
-    :param answer: the answer to map.
-    """
-    return ANSWER_OPTIONS[answer]

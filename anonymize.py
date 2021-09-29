@@ -4,7 +4,7 @@ from util import Encoder
 KEY_DIR = 'keys'
 KEY_EXPORT_FILENAME = 'Key'
 
-EXPORT_DIR = 'data'
+EXPORT_DIR = 'data/anonymized'
 BACKGROUND_SURVEY_PATH = 'raw_data/341_Background_Survey_Header.csv'
 BACKGROUND_EXPORT_FILENAME = 'background_survey'
 GRADE_BOOK_CSV_PATH = 'raw_data/2021-09-13T1128_Grades-COSC_341_COSC_541_101_2020W.csv'
