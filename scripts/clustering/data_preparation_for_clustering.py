@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from schemas import ClusterSchema
 
 
 def prepare_data_hci(survey_path, schema_path, output_path):
@@ -11,11 +12,11 @@ def prepare_data_hci(survey_path, schema_path, output_path):
     :param output_path: A string containing the path to output csv.
     """
     survey = pd.read_csv(survey_path)
-    schema = pd.read_csv(schema_path)
+    hci_schema_csv = pd.read_csv(schema_path)
 
     survey = map_to_number(survey)
-    convert_negative(survey, schema)
-    average_score(survey, schema)
+    convert_negative(survey, hci_schema_csv)
+    average_score(survey, hci_schema_csv)
 
     prepare_csv_for_clustering(survey, survey_path, output_path)
 
@@ -29,10 +30,10 @@ def prepare_data_background(survey_path, schema_path, output_path):
     :param output_path: A string containing the path to output csv.
     """
     df = pd.read_csv(survey_path)
-    schema = pd.read_csv(schema_path)
+    background_schema_csv = pd.read_csv(schema_path)
 
-    convert_negative(df, schema)
-    average_score(df, schema)
+    convert_negative(df, background_schema_csv)
+    average_score(df, background_schema_csv)
 
     prepare_csv_for_clustering(df, survey_path, output_path)
 
@@ -50,28 +51,28 @@ def map_to_number(survey):
     return survey
 
 
-def convert_negative(survey, schema):
+def convert_negative(survey, schema_csv):
     """
     Flip the response of negatively phrased question
     :param survey: a dataframe containing survey result
-    :param schema: a dataframe containing the survey schema
+    :param schema_csv: a dataframe containing the survey schema
     """
-    negatives_col_nums = schema["col num 1"][schema["positive/negative"] < 1]
+    negatives_col_nums = schema_csv[ClusterSchema.COL_NUM_1][schema_csv[ClusterSchema.POSITIVE_NEGATIVE] < 1]
     for col in survey.iloc[:, negatives_col_nums]:
         survey[col] = survey[col].apply(lambda x: x * -1)
 
 
-def average_score(survey, schema):
+def average_score(survey, schema_csv):
     """
     Compute the average score for each category
     :param survey: a dataframe containing survey result
-    :param schema: a dataframe containing the survey schema
+    :param schema_csv: a dataframe containing the survey schema
     :return:
     """
-    categories = schema["category"].unique()
+    categories = schema_csv[ClusterSchema.CATEGORY].unique()
     for category in categories:
-        questions = schema[schema["category"] == category]
-        question_col_num = questions["col num 1"]
+        questions = schema_csv[schema_csv[ClusterSchema.CATEGORY] == category]
+        question_col_num = questions[ClusterSchema.COL_NUM_1]
         question_df = survey.iloc[:, question_col_num]
         survey[category] = question_df.sum(axis=1) / len(question_col_num)
 
