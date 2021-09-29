@@ -12,3 +12,9 @@ class CanvasAPI:
 
     def get_assignments_from_course(self, course_id):
         return self.canvas_api.get_course(course_id).get_assignments()
+
+    def get_quiz_submissions(self, course_id, quiz_id):
+        pass
+
+    def get_quiz(self, course_id, quiz_id):
+        pass
