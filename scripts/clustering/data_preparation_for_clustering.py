@@ -17,7 +17,7 @@ def prepare_data_hci(survey_path, schema_path):
     convert_negative(survey, schema)
     average_score(survey, schema)
 
-    export_to_csv(survey, survey_path)
+    prepare_csv_for_clustering(survey, survey_path)
 
 
 def prepare_data_background(survey_path, schema_path):
@@ -33,7 +33,7 @@ def prepare_data_background(survey_path, schema_path):
     convert_negative(df, schema)
     average_score(df, schema)
 
-    export_to_csv(df, survey_path)
+    prepare_csv_for_clustering(df, survey_path)
 
 
 def map_to_number(survey):
@@ -75,7 +75,7 @@ def average_score(survey, schema):
         survey[category] = question_df.sum(axis=1) / len(question_col_num)
 
 
-def export_to_csv(df, survey_path):
+def prepare_csv_for_clustering(df, survey_path):
     """
     Export the specified dataframe to a csv file.
     :param df: the dataframe to export.

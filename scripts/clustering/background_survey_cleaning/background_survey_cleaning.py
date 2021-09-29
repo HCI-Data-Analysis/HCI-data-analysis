@@ -3,8 +3,16 @@ import pandas as pd
 import os
 from schemas import DataFilesSchema
 
+ANSWER_OPTIONS = {
+    "Strongly Disagree": -2,
+    "Disagree": -1,
+    "Neither Agree Nor Disagree": 0,
+    "Agree": 1,
+    "Strongly Agree": 2
+}
 
-def prepare_df():
+
+def clean_background_survey():
     """
     Prepares and cleans the dataframe so it is possible to use it for clustering.
     Fixes the single column with all the questions in it.
@@ -12,7 +20,7 @@ def prepare_df():
     df = pd.read_csv(DataFilesSchema.BACKGROUND_SURVEY_DATA)
     df = df.drop(df.columns[1:13], axis=1).drop(df.columns[14:19], axis=1).dropna()
     questions = list(df.columns)[1]
-    new_columns = get_columns(questions)
+    new_columns = _get_columns(questions)
 
     row_index = 1
     for row in df.itertuples():
@@ -20,23 +28,14 @@ def prepare_df():
         column_index = 0
         for column in new_columns:
             if column_index < len(answers):
-                df.at[row_index, column] = map_to_number(answers[column_index])
+                df.at[row_index, column] = _map_to_number(answers[column_index])
             column_index += 1
         row_index += 1
     df.drop(df.columns[1], axis=1)
     return df
 
 
-def export_to_csv(df):
-    """
-    Exports the processed dataframe into a csv.
-    :param df: The df to export.
-    """
-    output_dir = os.path.join(DataFilesSchema.OUTPUT_DIRECTORY, "processed_background_survey" + '.csv')
-    df.to_csv(output_dir, index=False)
-
-
-def get_columns(questions):
+def _get_columns(questions):
     """
     This separates the questions into a list so they can be used to update the columns in the dataframe.
     :param questions: a string of the questions to process.
@@ -49,25 +48,15 @@ def get_columns(questions):
     return new_columns
 
 
-def map_to_number(answer):
+def _map_to_number(answer):
     """
     Map a number to the student's answer.
     :param answer: the answer to map.
     """
-    if answer == "Strongly Disagree":
-        return -2
-    elif answer == "Disagree":
-        return -1
-    elif answer == "Neither Agree Nor Disagree":
-        return 0
-    elif answer == "Agree":
-        return 1
-    elif answer == "Strongly Agree":
-        return 2
-    else:
-        return 0
+    return ANSWER_OPTIONS[answer]
 
 
 if __name__ == "__main__":
-    data = prepare_df()
-    export_to_csv(data)
+    data = clean_background_survey()
+    output_dir = os.path.join(DataFilesSchema.OUTPUT_DIRECTORY, "processed_background_survey" + '.csv')
+    data.to_csv(output_dir, index=False)

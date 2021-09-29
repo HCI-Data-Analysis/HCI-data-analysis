@@ -78,15 +78,6 @@ def get_groups(labels):
     return grouped_students
 
 
-def export_to_csv(file_path):
-    """
-    Export the dataframe containing the groups of student ids into a csv.
-    :param file_path: a string containing the file path of original data.
-    :return:
-    """
-    file_name = os.path.basename(file_path)
-    get_groups(kmeans_clustering(3)).to_csv(DataFilesSchema.STUDENT_GROUP_OUTPUT_DIRECTORY + file_name + ".csv")
-
-
 if __name__ == '__main__':
-    export_to_csv(DataFilesSchema.HCI_CLUSTER_DATA)
+    file_name = os.path.basename(DataFilesSchema.HCI_CLUSTER_DATA)
+    get_groups(kmeans_clustering(3)).to_csv(DataFilesSchema.STUDENT_GROUP_OUTPUT_DIRECTORY + file_name + ".csv")
