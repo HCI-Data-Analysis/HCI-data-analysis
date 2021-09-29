@@ -1,7 +1,6 @@
 import re
 import pandas as pd
 import os
-from schemas import DataFilesSchema
 
 ANSWER_OPTIONS = {
     "Strongly Disagree": -2,
@@ -12,12 +11,12 @@ ANSWER_OPTIONS = {
 }
 
 
-def clean_background_survey():
+def clean_background_survey(survey, output):
     """
     Prepares and cleans the dataframe so it is possible to use it for clustering.
     Fixes the single column with all the questions in it.
     """
-    df = pd.read_csv(DataFilesSchema.BACKGROUND_SURVEY_DATA)
+    df = pd.read_csv(survey)
     df = df.drop(df.columns[1:13], axis=1).drop(df.columns[14:19], axis=1).dropna()
     questions = list(df.columns)[1]
     new_columns = _get_columns(questions)
@@ -32,7 +31,8 @@ def clean_background_survey():
             column_index += 1
         row_index += 1
     df.drop(df.columns[1], axis=1)
-    return df
+    output_dir = os.path.join(output, "processed_background_survey" + '.csv')
+    df.to_csv(output_dir, index=False)
 
 
 def _get_columns(questions):
@@ -54,9 +54,3 @@ def _map_to_number(answer):
     :param answer: the answer to map.
     """
     return ANSWER_OPTIONS[answer]
-
-
-if __name__ == "__main__":
-    data = clean_background_survey()
-    output_dir = os.path.join(DataFilesSchema.OUTPUT_DIRECTORY, "processed_background_survey" + '.csv')
-    data.to_csv(output_dir, index=False)

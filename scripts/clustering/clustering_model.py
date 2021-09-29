@@ -1,20 +1,16 @@
 from sklearn.cluster import KMeans
 import pandas as pd
-from schemas import DataFilesSchema
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-data = pd.read_csv(DataFilesSchema.HCI_CLUSTER_DATA)
-# data = pd.read_csv(DataFilesSchema.BACKGROUND_CLUSTER_DATA)
-cluster_data = data.iloc[:, 2:7]
 
-
-def inertia_graph(k):
+def inertia_graph(k, cluster_data):
     """
     Plots the inertia of kmeans model for 1 to n clusters.
     The elbow method can then be used to subjectively determine how many clusters is ideal
     :param k: maximum number of clusters that is considered
+    :param cluster_data: data used to determine number of clusters.
     """
     inertia = []
     K = range(1, k)
@@ -30,11 +26,12 @@ def inertia_graph(k):
     # use elbow method to vaguely determine 3 clusters
 
 
-def kmeans_clustering(n_clusters):
+def kmeans_clustering(n_clusters, cluster_data):
     """
     Runs the KMeans model of n_clusters.
     Creates a dataframe with the source dataframe and the label KMeans model assigns the student.
     :param n_clusters: number of clusters
+    :param cluster_data: the data to use to determine clustering.
     :return:
     """
     kmeans = KMeans(n_clusters=n_clusters).fit(cluster_data)
@@ -52,16 +49,16 @@ def pair_plot(labeled_data):
      and the labels clustering model assigns each student
     :return:
     """
-
     sns.pairplot(data=labeled_data, hue='labels')
     plt.show()
 
 
-def get_groups(labels):
+def get_groups(labels, data):
     """
     Creates a dataframe with each column being a list of ids that belongs to the same group according to the
     clustering model.
     :param labels: a dataframe containing the labels the clustering model assigns each student.
+    :param data: the data that was prepared for clustering.
     """
 
     labeled_students = pd.concat((data, labels), axis=1)
@@ -78,6 +75,13 @@ def get_groups(labels):
     return grouped_students
 
 
-if __name__ == '__main__':
-    file_name = os.path.basename(DataFilesSchema.HCI_CLUSTER_DATA)
-    get_groups(kmeans_clustering(3)).to_csv(DataFilesSchema.STUDENT_GROUP_OUTPUT_DIRECTORY + file_name + ".csv")
+def cluster_survey(data_path, output_path):
+    data = pd.read_csv(data_path)
+    cluster_data = data.iloc[:, 2:7]
+    file_name = os.path.basename(data_path)
+    get_groups(kmeans_clustering(3, cluster_data), data).to_csv(output_path + file_name + ".csv")
+
+    # These functions were not being used in this file, not sure where they belong but Novia may be able to clarify
+    # where they should be called.
+    # inertia_graph()
+    # pair_plot()

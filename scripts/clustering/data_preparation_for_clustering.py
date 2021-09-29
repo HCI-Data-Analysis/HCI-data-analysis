@@ -1,14 +1,14 @@
 import pandas as pd
 import os
-from schemas import DataFilesSchema
 
 
-def prepare_data_hci(survey_path, schema_path):
+def prepare_data_hci(survey_path, schema_path, output_path):
     """
     Prepare the HCI impression survey given in <survey_path> in ways that can be input into the clustering model.
     Outputs the file /data/processed/for_clustering_impression_survey.csv containing the above information
     :param survey_path: A string containing the filepath of the survey being prepared.
     :param schema_path: A string containing the file path of the schema document of the survey questions.
+    :param output_path: A string containing the path to output csv.
     """
     survey = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
@@ -17,15 +17,16 @@ def prepare_data_hci(survey_path, schema_path):
     convert_negative(survey, schema)
     average_score(survey, schema)
 
-    prepare_csv_for_clustering(survey, survey_path)
+    prepare_csv_for_clustering(survey, survey_path, output_path)
 
 
-def prepare_data_background(survey_path, schema_path):
+def prepare_data_background(survey_path, schema_path, output_path):
     """
     Prepare the background survey given in <survey_path> in ways that can be input into the clustering model.
     Outputs the file /data/processed/for_clustering_background_survey.csv containing the above information
     :param survey_path: A string containing the filepath of the survey being prepared.
     :param schema_path: A string containing the file path of the schema document of the survey questions.
+    :param output_path: A string containing the path to output csv.
     """
     df = pd.read_csv(survey_path)
     schema = pd.read_csv(schema_path)
@@ -33,7 +34,7 @@ def prepare_data_background(survey_path, schema_path):
     convert_negative(df, schema)
     average_score(df, schema)
 
-    prepare_csv_for_clustering(df, survey_path)
+    prepare_csv_for_clustering(df, survey_path, output_path)
 
 
 def map_to_number(survey):
@@ -75,11 +76,12 @@ def average_score(survey, schema):
         survey[category] = question_df.sum(axis=1) / len(question_col_num)
 
 
-def prepare_csv_for_clustering(df, survey_path):
+def prepare_csv_for_clustering(df, survey_path, output_path):
     """
     Export the specified dataframe to a csv file.
     :param df: the dataframe to export.
     :param survey_path: A string containing the path of the survey (for file name purposes).
+    :param output_path: A string containing the path to output csv.
     """
     df = df.drop(df.columns[1], axis=1)
 
@@ -89,10 +91,5 @@ def prepare_csv_for_clustering(df, survey_path):
 
     file_name = os.path.basename(survey_path)
 
-    output_dir = os.path.join(DataFilesSchema.OUTPUT_DIRECTORY, "for_clustering_" + file_name)
+    output_dir = os.path.join(output_path, "for_clustering_" + file_name)
     result.to_csv(output_dir, index=False)
-
-
-if __name__ == '__main__':
-    prepare_data_background(DataFilesSchema.BACKGROUND_SURVEY_DATA, DataFilesSchema.BACKGROUND_SURVEY_SCHEMA)
-    prepare_data_hci(DataFilesSchema.HCI_SURVEY_DATA, DataFilesSchema.HCI_SURVEY_SCHEMA)
