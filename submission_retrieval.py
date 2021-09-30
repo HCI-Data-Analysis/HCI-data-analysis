@@ -5,17 +5,14 @@ import sys
 
 from util import Encoder
 
-KEY_DIR = 'keys'
-KEY_EXPORT_FILENAME = 'Key'
-
-EXPORT_DIR = os.path.join('data', 'canvas_submission')
+KEY_PATH = 'keys/Key.csv'
+EXPORT_DIR = 'data/canvas_submission'
 CANVAS_ACCESS_TOKEN = sys.argv[1]
 CANVAS_COURSE_ID = sys.argv[2]
-GRADE_BOOK_CSV_PATH = 'raw_data/2021-09-13T1128_Grades-COSC_341_COSC_541_101_2020W.csv'
 
 if __name__ == '__main__':
 
-    encoder = Encoder("keys/Key.csv")
+    encoder = Encoder(KEY_PATH)
 
     os.mkdir(EXPORT_DIR)
     os.mkdir(os.path.join(EXPORT_DIR, CANVAS_COURSE_ID))
