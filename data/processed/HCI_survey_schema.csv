@@ -1,4 +1,4 @@
-question,col num 1,col num 2,category,positive/negative
+question,column number of the question in survey data,column number of the question in second survey,question category,positive/negative phrasing of the question
  I do not think that I can learn to understand design and interaction concepts.,5,25,Confidence,-1
  Men are more likely to excel in careers that involve design and interaction than women are.,7,31,Gender,-1
  A student who performs well in human computer interaction will probably not have a life outside of computers.,9,43,Professional,-1

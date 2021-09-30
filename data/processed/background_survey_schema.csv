@@ -1,4 +1,4 @@
-question,col num 1,category,positive/negative
+question,column number of the question in survey data,question category,positive/negative phrasing of the question
 Is talkative,1,Extraversion,1
 Tends to find fault with others,2,Agreeableness,-1
 Does a thorough job,3,Conscientiousness,1
