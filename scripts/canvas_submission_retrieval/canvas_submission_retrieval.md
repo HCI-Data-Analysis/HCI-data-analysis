@@ -12,3 +12,7 @@ There are three parameters that canvas_submission_retrieval() function requires 
 2.  Canvas access token can be contained from your canvas account settings. Find the `+New Access Token` button, set up the correct expiry date and give it a purpose. Afterward, Canvas will generate a token for you which should be safely stored in a location.
    
 3.  Export path is the path where you wish to store output JSON files.
+
+To call Function canvas_submission_retrieval(). Run Following command in console:
+
+    python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>
