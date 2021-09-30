@@ -15,8 +15,7 @@ GRADE_BOOK_CSV_PATH = 'raw_data/2021-09-13T1128_Grades-COSC_341_COSC_541_101_202
 
 if __name__ == '__main__':
 
-    key_path = generate_key(GRADE_BOOK_CSV_PATH, KEY_DIR, KEY_EXPORT_FILENAME)
-    encoder = Encoder(key_path)
+    encoder = Encoder("keys/Key.csv")
 
     os.mkdir(EXPORT_DIR)
     os.mkdir(os.path.join(EXPORT_DIR, CANVAS_COURSE_ID))
