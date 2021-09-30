@@ -7,8 +7,9 @@ def inertia_graph(k, cluster_data):
     """
     Plots the inertia of kmeans model for 1 to n clusters.
     The elbow method can then be used to subjectively determine how many clusters is ideal
-    :param k: maximum number of clusters that is considered
-    :param cluster_data: data used to determine number of clusters.
+    :param k: An integer which is the maximum number of clusters that is considered
+    :param cluster_data: A dataframe which contains the data used to determine number of clusters
+                        (independent variables only, the id column excluded).
     """
     inertia = []
     K = range(1, k)
@@ -27,7 +28,7 @@ def inertia_graph(k, cluster_data):
 def kmeans_clustering(n_clusters, cluster_data):
     """
     Runs the KMeans model of n_clusters.
-    Creates a dataframe with the source dataframe and the label KMeans model assigns the student.
+    Creates a dataframe with the source and the label KMeans model assigns the student.
     :param n_clusters: number of clusters
     :param cluster_data: the data to use to determine clustering.
     :return:
@@ -45,7 +46,7 @@ def get_groups(labels, data):
     Creates a dataframe with each column being a list of ids that belongs to the same group according to the
     clustering model.
     :param labels: a dataframe containing the labels the clustering model assigns each student.
-    :param data: the data that was prepared for clustering.
+    :param data: Source dataframe
     """
 
     labeled_students = pd.concat((data, labels), axis=1)

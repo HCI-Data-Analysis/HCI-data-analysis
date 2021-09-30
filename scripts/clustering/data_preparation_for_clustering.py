@@ -5,7 +5,7 @@ from schemas import ClusterSchema
 
 def prepare_data_for_clustering(survey_path, schema_path, output_path):
     """
-    Prepare the HCI impression survey given in <survey_path> in ways that can be input into the clustering model.
+    Prepare the survey given in <survey_path> in ways that can be input into the clustering model.
     Outputs the file /data/processed/for_clustering_impression_survey.csv containing the above information
     :param survey_path: A string containing the filepath of the survey being prepared.
     :param schema_path: A string containing the file path of the schema document of the survey questions.

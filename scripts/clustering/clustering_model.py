@@ -6,7 +6,7 @@ from util import inertia_graph, kmeans_clustering, get_groups
 
 def cluster_survey(data_path, output_path):
     data = pd.read_csv(data_path)
-    cluster_data = data.iloc[:, 2:7]
+    cluster_data = data.iloc[:, 1:6]
     file_name = os.path.basename(data_path)
     get_groups(kmeans_clustering(3, cluster_data), data).to_csv(output_path + file_name + ".csv")
     inertia_graph(10, cluster_data)
