@@ -3,7 +3,7 @@ import json
 import os
 
 from api import CanvasAPI, get_default_course_id
-from util import Encoder
+from util import Encoder, mkdir_if_not_exists
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -23,7 +23,10 @@ SUBMISSION_REMOVE_VALUES = {
 def canvas_submission_retrieval(export_dir, encoder: Encoder, course_id=None):
     canvas_api = CanvasAPI()
     assignments = canvas_api.get_assignments_from_course(course_id)
+
     course_id = course_id or get_default_course_id()
+    mkdir_if_not_exists(os.path.join(export_dir, course_id))
+
     temp_ta = {}
     download_submission(assignments, temp_ta, export_dir, course_id, encoder, 'assignment')
     quizzes = canvas.get_course(course_id).get_quizzes()

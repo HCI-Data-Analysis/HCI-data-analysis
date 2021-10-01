@@ -1,8 +1,5 @@
 from scripts import generate_key, gradebook_anonymize, survey_anonymize, anonymize_ta_survey
-from util import Encoder, mkdir_if_not_exists
-
-KEY_DIR = 'keys'
-KEY_EXPORT_FILENAME = 'Key'
+from util import Encoder, mkdir_if_not_exists, KEY_PATH
 
 EXPORT_DIR = 'data/anonymized'
 BACKGROUND_SURVEY_PATH = 'raw_data/341_Background_Survey_Header.csv'
@@ -17,10 +14,10 @@ TA_SURVEY_PATH = 'raw_data/341_TA_resources_survey_W2020T2_September_13_2021_12.
 TA_EXPORT_FILENAME = 'ta_survey'
 
 if __name__ == '__main__':
-    mkdir_if_not_exists('data/anonymized')
+    mkdir_if_not_exists(EXPORT_DIR)
     # Generate Key file
-    key_path = generate_key(GRADE_BOOK_CSV_PATH, KEY_DIR, KEY_EXPORT_FILENAME)
-    encoder = Encoder(key_path)
+    generate_key(GRADE_BOOK_CSV_PATH, KEY_PATH)
+    encoder = Encoder(KEY_PATH)
 
     # Convert GradeBook
     gradebook_anonymize(GRADE_BOOK_CSV_PATH, EXPORT_DIR, GRADE_BOOK_EXPORT_FILENAME, encoder)
