@@ -28,7 +28,7 @@ def course_performance_analysis(gradebook_path):
     
     fig, ax = plt.subplots()
     
-    sns.displot(file[col], kde=True, ax=ax, bins=30, height=5, aspect=1.5).set(title='Course performance', xlabel='Grade', ylabel='Number of students')
+    sns.histplot(file[col], kde=True, ax=ax, bins=30, line_kws={"linewidth":1}).set(title='Course performance', xlabel='Grade', ylabel='Number of students')
 
     ax.set_xticks(range(40, 110, 5))
     ax.set_xticklabels([f'{i}%' for i in range(40, 110, 5)])
