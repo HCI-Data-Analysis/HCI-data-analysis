@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, AgglomerativeClustering
 import pandas as pd
+import seaborn as sns
 
 
 def inertia_graph(k, cluster_data):
@@ -25,6 +26,17 @@ def inertia_graph(k, cluster_data):
     # use elbow method to vaguely determine 3 clusters
 
 
+def correlation_heatmap(cluster_data):
+    """
+    Displays a heatmap based on the correlation of the data columns in cluster_data
+    :param cluster_data: the clustered dataframe to be plotted
+    """
+    plt.figure(figsize=(15, 10))
+    correlation = cluster_data.corr()
+    sns.heatmap(round(correlation, 2), cmap='RdYlGn', annot=True, vmin=-1, vmax=1)
+    plt.show()
+
+
 def kmeans_clustering(n_clusters, cluster_data):
     """
     Runs the KMeans model of n_clusters.
@@ -35,6 +47,22 @@ def kmeans_clustering(n_clusters, cluster_data):
     """
     kmeans = KMeans(n_clusters=n_clusters).fit(cluster_data)
     labels = pd.DataFrame(kmeans.labels_)
+    labeled_data = pd.concat((cluster_data, labels), axis=1)
+    labeled_data = labeled_data.rename({0: 'labels'}, axis=1)
+
+    return labels
+
+
+def ward_hierarchical_clustering(n_clusters, cluster_data):
+    """
+    Runs the Ward hierarchical model of n_clusters.
+    Creates a dataframe with the source and the label Ward Hierarchical model assigns the student.
+    :param n_clusters: number of clusters
+    :param cluster_data: the data to use to determine clustering.
+    :return:
+    """
+    hierarchy = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward').fit(cluster_data)
+    labels = pd.DataFrame(hierarchy.labels_)
     labeled_data = pd.concat((cluster_data, labels), axis=1)
     labeled_data = labeled_data.rename({0: 'labels'}, axis=1)
 
