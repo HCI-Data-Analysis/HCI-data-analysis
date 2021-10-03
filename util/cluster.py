@@ -33,7 +33,7 @@ def kmeans_clustering(n_clusters, cluster_data):
     :param cluster_data: the data to use to determine clustering.
     :return:
     """
-    kmeans = KMeans(n_clusters=n_clusters).fit(cluster_data)
+    kmeans = KMeans(n_clusters=n_clusters, max_iter=500).fit(cluster_data)
     labels = pd.DataFrame(kmeans.labels_)
     labeled_data = pd.concat((cluster_data, labels), axis=1)
     labeled_data = labeled_data.rename({0: 'labels'}, axis=1)
