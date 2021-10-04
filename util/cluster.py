@@ -40,7 +40,11 @@ def kmeans_clustering(n_clusters, n_init, cluster_data):
     labeled_data = pd.concat((cluster_data, labels), axis=1)
     labeled_data = labeled_data.rename({0: 'labels'}, axis=1)
 
-    sns.pairplot(data=labeled_data, hue='labels')
+    g = sns.pairplot(data=labeled_data, hue='labels')
+    for ax in g.axes[-1, :]:
+        ax.set_xlim(-2, 2)
+    for ay in g.axes[:, 0]:
+        ay.set_ylim(-2, 2)
     plt.show()
 
     return labels
