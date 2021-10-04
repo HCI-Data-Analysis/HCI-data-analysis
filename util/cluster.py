@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import linkage, dendrogram
+from scipy.spatial.distance import squareform
 from sklearn.cluster import KMeans, AgglomerativeClustering
 import pandas as pd
 import seaborn as sns
+from sklearn.metrics import silhouette_score
 
 
 def inertia_graph(k, cluster_data):
@@ -22,18 +25,54 @@ def inertia_graph(k, cluster_data):
     plt.plot(K, inertia, 'bx-')
     plt.xlabel('k')
     plt.ylabel('Inertia')
+    plt.title('Inertia Graph for K-means from 1-{}'.format(k))
     plt.show()
     # use elbow method to vaguely determine 3 clusters
 
 
-def correlation_heatmap(cluster_data):
+def silhouette_graph(k, cluster_data):
+    """
+    Plots the silhouette values of kmeans model for 1 to n clusters.
+    The silhouette method can then be used to subjectively determine how many clusters is ideal
+    :param k: An integer which is the maximum number of clusters that is considered
+    :param cluster_data: A dataframe which contains the data used to determine number of clusters
+                        (independent variables only, the id column excluded).
+    """
+    silhouette = []
+    K = range(2, k)
+    for i in K:
+        kmean_model = KMeans(n_clusters=i).fit(cluster_data)
+        kmean_model.fit(cluster_data)
+        silhouette.append(silhouette_score(cluster_data, labels=kmean_model.labels_, metric='cosine'))
+
+    plt.plot(K, silhouette, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Silhouette Score')
+    plt.title('Silhouette Score Graph for K-means from 2-{}'.format(k))
+    plt.show()
+
+
+def correlation_heatmap(cluster_data, title):
     """
     Displays a heatmap based on the correlation of the data columns in cluster_data
+    :param title: title of the plot that is generated
     :param cluster_data: the clustered dataframe to be plotted
     """
     plt.figure(figsize=(15, 10))
-    correlation = cluster_data.corr()
-    sns.heatmap(round(correlation, 2), cmap='RdYlGn', annot=True, vmin=-1, vmax=1)
+    plt.title(title)
+    correlations = cluster_data.corr()
+    sns.heatmap(round(correlations, 2), cmap='RdYlGn', annot=True, vmin=-1, vmax=1)
+    plt.show()
+
+
+def cluster_dendrogram(cluster_data, title):
+    """
+    Displays a cluster-dendrogram based on the correlation of the data columns in cluster_data
+    :param title: title of the plot that is generated
+    :param cluster_data: the clustered dataframe to be plotted
+    """
+    sns.clustermap(cluster_data.corr(), method='centroid', cmap='RdYlGn', annot=True, vmin=-1, vmax=1).fig.suptitle(
+        title)
     plt.show()
 
 
