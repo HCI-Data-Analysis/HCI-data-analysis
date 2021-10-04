@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from pandas import DataFrame
-from statsmodels.multivariate.manova import MANOVA, Model
+from statsmodels.multivariate.manova import MANOVA
 from sklearn.cluster import KMeans
+import seaborn as sns
 
 
 def plot_inertia_graph(max_k, cluster_data):
@@ -135,7 +136,12 @@ class KMeansModel(StudentClusterModel):
     def get_student_groups_df(self) -> DataFrame:
         kmeans_model = self.fit_model()
         labelled_students = self._label_data_with_clusters(kmeans_model, include_ids=True)
-        # drop c
+
+        # # Plot the data when we have the correct labeled data.
+        # df = labelled_students[labelled_students.index.notnull()]
+        # sns.pairplot(data=df, hue='labels')
+        # plt.show()
+
         dropped_columns = filter(lambda var: var != self.clusters_col_name, list(labelled_students.columns.values))
         labelled_students = labelled_students.drop(dropped_columns, axis=1)
         # FIXME: casting issue because of NA values
