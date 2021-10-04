@@ -4,7 +4,7 @@ from util import mkdir_if_not_exists
 BACKGROUND_SURVEY_DATA = "data/anonymized/background_survey.csv"
 
 OUTPUT_DIRECTORY = "data/processed"
-STUDENT_GROUP_OUTPUT_DIRECTORY = "data/processed/student_group"
+STUDENT_GROUP_OUTPUT_DIRECTORY = "data/student_group"
 
 BACKGROUND_SURVEY_SCHEMA = "data/processed/background_survey_schema.csv"
 PROCESSED_BACKGROUND_SURVEY_DATA = "data/processed/processed_background_survey.csv"

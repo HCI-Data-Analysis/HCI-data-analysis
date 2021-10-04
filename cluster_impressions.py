@@ -4,7 +4,7 @@ OUTPUT_DIRECTORY = "data/processed"
 HCI_SURVEY_DATA = "data/anonymized/impression_survey1.csv"
 HCI_SURVEY_SCHEMA = "data/processed/HCI_survey_schema.csv"
 HCI_CLUSTER_DATA = "data/processed/for_clustering_impression_survey1.csv"
-STUDENT_GROUP_OUTPUT_DIRECTORY = "data/processed/student_group"
+STUDENT_GROUP_OUTPUT_DIRECTORY = "data/student_group"
 
 if __name__ == "__main__":
     # Prepare data for clustering.

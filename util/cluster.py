@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 import pandas as pd
+import seaborn as sns
 
 
 def inertia_graph(k, cluster_data):
@@ -25,18 +26,22 @@ def inertia_graph(k, cluster_data):
     # use elbow method to vaguely determine 3 clusters
 
 
-def kmeans_clustering(n_clusters, cluster_data):
+def kmeans_clustering(n_clusters, n_init, cluster_data):
     """
     Runs the KMeans model of n_clusters.
     Creates a dataframe with the source and the label KMeans model assigns the student.
     :param n_clusters: number of clusters
+    :param n_init: A number indicating how many times KMeans should be run
     :param cluster_data: the data to use to determine clustering.
     :return:
     """
-    kmeans = KMeans(n_clusters=n_clusters, max_iter=500).fit(cluster_data)
+    kmeans = KMeans(n_clusters=n_clusters, n_init=n_init).fit(cluster_data)
     labels = pd.DataFrame(kmeans.labels_)
     labeled_data = pd.concat((cluster_data, labels), axis=1)
     labeled_data = labeled_data.rename({0: 'labels'}, axis=1)
+
+    sns.pairplot(data=labeled_data, hue='labels')
+    plt.show()
 
     return labels
 
