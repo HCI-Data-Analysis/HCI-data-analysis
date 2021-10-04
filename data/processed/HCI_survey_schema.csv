@@ -1,0 +1,35 @@
+question,column number of the question in survey data,column number of the question in second survey,question category,positive/negative phrasing of the question
+ I do not think that I can learn to understand design and interaction concepts.,5,25,Confidence,-1
+ Men are more likely to excel in careers that involve design and interaction than women are.,7,31,Gender,-1
+ A student who performs well in human computer interaction will probably not have a life outside of computers.,9,43,Professional,-1
+ Men and women are equally capable of solving design and interaction problems.,11,15,Gender,1
+ Men and women can both excel in human computer interaction courses.,13,39,Gender,1
+ I am active in organizations or social groups that include mostly members of my own ethnic group.,15,71,Identity,1
+ Design and interaction is an appropriate subject for both men and women to study.,17,47,Gender,1
+ I was encouraged to pursue a human computer interaction project/course/degree/career.,19,49,Identity,1
+ I can achieve good grades (C or better) in human computer interaction courses.,21,29,Confidence,1
+ I have little self-confidence when it comes to design and interaction courses.,23,17,Confidence,-1
+ I do not like using design and interaction to solve problems.,25,11,Interest,-1
+ I like to use design and interaction to solve problems.,27,35,Interest,1
+ I would not take additional human computer interaction courses if I were given the opportunity.,29,61,Interest,-1
+ Men produce higher quality work in design and interaction than women.,31,63,Gender,-1
+ I am confident that I can solve problems by applying design skills.,33,37,Confidence,1
+ A student who performs well in human computer interaction is likely to have a life outside of computers.,35,19,Professional,1
+ I can learn to understand design and interaction concepts.,37,57,Confidence,1
+ The challenge of solving problems using design and interaction does not appeal to me.,39,21,Interest,-1
+ I doubt that a woman could excel in human computer interaction courses.,41,9,Gender,-1
+ I think design and interaction is boring.,43,45,Interest,-1
+ I doubt that I can solve problems by applying design skills.,45,27,Confidence,-1
+ I think design and interaction is interesting.,47,55,Interest,1
+ Students who are skilled at human computer interaction are less popular than other students.,49,7,Professional,-1
+ I am comfortable with learning design and interaction concepts.,51,23,Confidence,1
+ I would voluntarily take additional human computer interaction courses if I were given the opportunity.,53,41,Interest,1
+ Women produce the same quality work in design and interaction as men.,55,51,Gender,1
+ I hope that I can find a career that does not require the use of design and interaction concepts.,57,53,Interest,1
+ Students who are skilled at human computer interaction are just as popular as other students.,59,65,Professional,1
+ Men are more capable than women at solving design and interaction problems.,61,5,Gender,-1
+ It is not appropriate for women to study design and interaction.,63,33,Gender,-1
+ I have role models in human computer interaction who look like me.,65,13,Identity,1
+ The challenge of solving problems using design and interaction appeals to me.,67,67,Interest,1
+ I hope that my future career will require the use of design and interaction concepts.,69,69,Interest,1
+ I feel a strong attachment towards my own ethnic group.,71,59,Identity,1
