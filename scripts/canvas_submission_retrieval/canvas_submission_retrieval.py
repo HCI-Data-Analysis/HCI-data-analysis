@@ -16,8 +16,8 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 SUBMISSION_REMOVE_VALUES = {
-    'assignment': ['preview_url', 'course_id'],
-    'quiz': ['course_id', 'html_url', 'result_url', 'validation_token'],
+    'assignment': ['preview_url'],
+    'quiz': ['html_url', 'result_url', 'validation_token'],
 }
 
 
