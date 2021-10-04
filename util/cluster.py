@@ -113,7 +113,6 @@ class KMeansModel(StudentClusterModel):
     def choose_k(self) -> int:
         lower_k = 2
         upper_k = len(self._data.index)
-        upper_k = 3
         highest_f_stat, chosen_k = 0, lower_k
         for k in range(lower_k, upper_k + 1):
             kmeans_model = KMeans(n_clusters=k).fit(self._data)
