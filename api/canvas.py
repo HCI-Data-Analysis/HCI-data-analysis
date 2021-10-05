@@ -19,13 +19,20 @@ class CanvasAPI:
     def __init__(self):
         self.canvas_api = Canvas(CANVAS_BASE_URL, ACCESS_TOKEN)
 
-    def get_assignments_from_course(self, course_id=None):
+    def get_assignments(self, course_id=None):
         if not course_id:
             course_id = get_default_course_id()
         return self.canvas_api.get_course(course_id).get_assignments()
 
-    def get_quiz_submissions(self, course_id, quiz_id):
-        pass
+    def get_quizzes(self, course_id=None):
+        if not course_id:
+            course_id = get_default_course_id()
+        return self.canvas_api.get_course(course_id).get_quizzes()
 
-    def get_quiz(self, course_id, quiz_id):
-        pass
+    def get_quiz(self, quiz_id, course_id=None):
+        if not course_id:
+            course_id = get_default_course_id()
+        quiz = self.canvas_api.get_course(course_id).get_quiz(quiz_id)
+        return quiz
+
+
