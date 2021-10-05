@@ -26,7 +26,7 @@ def inertia_graph(k, cluster_data):
     # use elbow method to vaguely determine 3 clusters
 
 
-def kmeans_clustering(n_clusters, n_init, cluster_data):
+def kmeans_clustering(n_clusters, n_init, cluster_data, categories):
     """
     Runs the KMeans model of n_clusters.
     Creates a dataframe with the source and the label KMeans model assigns the student.
@@ -40,7 +40,12 @@ def kmeans_clustering(n_clusters, n_init, cluster_data):
     labeled_data = pd.concat((cluster_data, labels), axis=1)
     labeled_data = labeled_data.rename({0: 'labels'}, axis=1)
 
-    g = sns.pairplot(data=labeled_data, hue='labels')
+    g = sns.pairplot(
+        data=labeled_data,
+        x_vars=categories,
+        y_vars=categories,
+        hue='labels'
+    )
     for ax in g.axes[-1, :]:
         ax.set_xlim(-2, 2)
     for ay in g.axes[:, 0]:
