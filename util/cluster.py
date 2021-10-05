@@ -33,17 +33,19 @@ def kmeans_clustering(n_clusters, n_init, cluster_data, categories):
     :param n_clusters: number of clusters
     :param n_init: A number indicating how many times KMeans should be run
     :param cluster_data: the data to use to determine clustering.
+    :param categories: the categories to put on the axes.
     :return:
     """
     kmeans = KMeans(n_clusters=n_clusters, n_init=n_init).fit(cluster_data)
     labels = pd.DataFrame(kmeans.labels_)
     labeled_data = pd.concat((cluster_data, labels), axis=1)
     labeled_data = labeled_data.rename({0: 'labels'}, axis=1)
+    reversed_categories = categories[::-1]
 
     g = sns.pairplot(
         data=labeled_data,
         x_vars=categories,
-        y_vars=categories,
+        y_vars=reversed_categories,
         hue='labels'
     )
     for ax in g.axes[-1, :]:
