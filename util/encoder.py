@@ -36,7 +36,7 @@ class Encoder:
         if not data448_id:
             raise EncoderException('No students were found matching the given parameters.')
 
-        return data448_id
+        return int(data448_id)
 
     def decode(self, data448_id: int) -> (int, int):
         """

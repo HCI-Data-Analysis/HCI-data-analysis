@@ -6,8 +6,9 @@
 
 ## Features
 
-- Anonymize survey data
-- Anonymize gradebook data
+ - Anonymize survey data
+ - Anonymize gradebook data
+ - Canvas Submission Retrieval
 
 ## Anonymizing Data
 
@@ -30,3 +31,16 @@ properly documented in the `/schemas` directory. Currently, this includes:
 
 Run `python cluster_impressions.py`, to perform clustering on the Impressions of HCI Survey Data,
 or `python cluster_background.py` to perform clustering on the Background Survey Data. After running either script the clustering graph will be displayed.
+
+## Retrieve submission from Canvas
+
+Run `python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>` where `ACCESS_TOKEN` is obtained from Canvas account setting and `COURSE_ID` is obtained from Course URL. 
+
+> #### Instruction
+> 1. Navigate to the root directory.
+> 2. Make sure Key.csv is in `/key` dicrectory.
+> 3. Open `submission_retrieval.py` and ensure that the names and file paths of each file are accurate.
+> 4. Run `pip install -r requirements.txt`
+> 5. Run `python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>` and enter the correct information. 
+> 6. Now in `/data` dicrectory shoud have a `/canvas_submission`folder that contains a `/<COURSE_ID>` folder which stores anonymized submission information in `.json` format.
+> - More details about the format of the resulting `.json` files can be found in the related `.md` files in `/scripts`.
