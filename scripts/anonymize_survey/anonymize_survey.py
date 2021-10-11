@@ -24,7 +24,18 @@ def survey_anonymize(survey_path, output_dir, filename, encoder: Encoder):
         lambda canvas_id: encoder.encode(canvas_id=canvas_id)
     )
 
+    if RawSurveySchema.BACKGROUND_SV_FRIENDS in survey:
+        survey[RawSurveySchema.BACKGROUND_SV_FRIENDS] = survey[RawSurveySchema.BACKGROUND_SV_FRIENDS].map(
+            lambda student_names: encode_student_names_string(student_names, encoder)
+        )
+
     survey = survey.drop(columns=[RawSurveySchema.STUDENT_NAME])
 
     output_dir = os.path.join(output_dir, filename + ".csv")
     survey.to_csv(output_dir, index=False)
+
+
+def encode_student_names_string(student_names: str, encoder: Encoder):
+    sn_split = student_names.split(', ')
+    sn_every_other_comma = list(map(', '.join, zip(sn_split[::2], sn_split[1::2])))
+    return map(lambda student_name: encoder.encode(student_name=student_name), sn_every_other_comma)
