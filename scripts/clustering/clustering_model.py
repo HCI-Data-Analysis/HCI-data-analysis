@@ -1,6 +1,10 @@
+from statistics import mean
+
 import pandas as pd
-import seaborn as sns
 import os
+
+from sklearn.cluster import KMeans
+
 from util import inertia_graph, kmeans_clustering, get_groups
 
 
@@ -12,6 +16,12 @@ def cluster_survey(data_path, output_path, categories):
     get_groups(kmeans_clustering(3, 500, cluster_data, categories), data).to_csv(output_path_filename)
     inertia_graph(10, cluster_data)
 
-    # Plot the data when we have the correct labeled data.
-    # sns.pairplot(data=labeled_data, hue='labels')
-    # plt.show()
+
+def average_kmeans_iterations(data_path):
+    data = pd.read_csv(data_path)
+    cluster_data = data.iloc[:, 1:6]
+    iterations = []
+    for _ in range(500):
+        model = KMeans(n_clusters=3, n_init=500).fit(cluster_data)
+        iterations.append(model.n_iter_)
+    print('Average k-means iterations: ', round(mean(iterations)))

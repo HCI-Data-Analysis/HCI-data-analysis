@@ -1,4 +1,4 @@
-from scripts import prepare_data_for_clustering, cluster_survey
+from scripts import prepare_data_for_clustering, cluster_survey, average_kmeans_iterations
 
 OUTPUT_DIRECTORY = "data/processed"
 HCI_SURVEY_DATA = "data/anonymized/impression_survey1.csv"
@@ -13,3 +13,6 @@ if __name__ == "__main__":
 
     # Execute clustering on the data and display graphs.
     cluster_survey(HCI_CLUSTER_DATA, STUDENT_GROUP_OUTPUT_DIRECTORY, CLUSTER_CATEGORIES)
+
+    # Determine the average iterations k-means ran.
+    average_kmeans_iterations(HCI_CLUSTER_DATA)

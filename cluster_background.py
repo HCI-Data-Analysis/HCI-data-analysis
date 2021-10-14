@@ -1,4 +1,4 @@
-from scripts import clean_background_survey, cluster_survey, prepare_data_for_clustering
+from scripts import clean_background_survey, cluster_survey, prepare_data_for_clustering, average_kmeans_iterations
 from util import mkdir_if_not_exists
 
 BACKGROUND_SURVEY_DATA = "data/anonymized/background_survey.csv"
@@ -20,3 +20,6 @@ if __name__ == "__main__":
 
     # Execute clustering on the data and display graphs.
     cluster_survey(BACKGROUND_CLUSTER_DATA, STUDENT_GROUP_OUTPUT_DIRECTORY, CLUSTER_CATEGORIES)
+
+    # Determine the average iterations k-means ran.
+    average_kmeans_iterations(BACKGROUND_CLUSTER_DATA)
