@@ -3,7 +3,7 @@ class GradeBookSchema:
     SECTION = 'Section'
     LECTURE = 'Lecture'
     LAB = 'Lab'
-    OVERALL_PROJECT_SCORE = 'Project Final Score',
+    OVERALL_PROJECT_SCORE = 'Project Final Score'
     OVERALL_MAIN_ACTIVITIES_SCORE = 'Main Activities Final Score'
     OVERALL_TUTORIAL_ACTIVITIES_SCORE = 'Tutorial Activities Final Score'
     OVERALL_PRE_POST_TESTS_SCORE = 'Pre/Post Tests Final Score'
