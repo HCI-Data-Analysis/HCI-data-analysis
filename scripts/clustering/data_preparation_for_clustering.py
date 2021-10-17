@@ -1,24 +1,29 @@
-import pandas as pd
 import os
-from schemas import ClusterSchema
+
+import pandas as pd
+from pandas import DataFrame
+
+from schemas import ClusterSchema, SurveySchema
 
 
-def prepare_data_for_clustering(survey_path, schema_path, output_path):
+def prepare_data_for_clustering(survey_path, schema_path, output_path, survey_df: DataFrame = None) -> DataFrame:
     """
     Prepare the survey given in <survey_path> in ways that can be input into the clustering model.
+    The survey_df will be preprocessed, so might differ from raw data stored in the survey_path
     Outputs the file /data/processed/for_clustering_impression_survey.csv containing the above information
+    :param survey_df: A dataframe for the survey in question.
     :param survey_path: A string containing the filepath of the survey being prepared.
     :param schema_path: A string containing the file path of the schema document of the survey questions.
     :param output_path: A string containing the path to output csv.
     """
-    survey = pd.read_csv(survey_path)
-    data_schema_csv = pd.read_csv(schema_path)
+    survey_df = survey_df if survey_df else pd.read_csv(survey_path)
+    schema_df = pd.read_csv(schema_path)
 
-    survey = map_to_number(survey)
-    convert_negative(survey, data_schema_csv)
-    average_score(survey, data_schema_csv)
+    survey_df = map_to_number(survey_df)
+    convert_negative(survey_df, schema_df)
+    average_score(survey_df, schema_df)
 
-    prepare_csv_for_clustering(survey, survey_path, output_path)
+    return prepare_csv_for_clustering(survey_df, survey_path, output_path)
 
 
 def map_to_number(survey):
@@ -77,3 +82,17 @@ def prepare_csv_for_clustering(df, survey_path, output_path):
 
     output_dir = os.path.join(output_path, "for_clustering_" + file_name)
     result.to_csv(output_dir, index=False)
+    return result
+
+
+def preprocess_survey(survey_df: DataFrame) -> DataFrame:
+    temp_df = _keep_most_recent_attempt(survey_df)
+    return temp_df
+
+
+def _keep_most_recent_attempt(survey_df: DataFrame) -> DataFrame:
+    survey_df = survey_df.sort_values(SurveySchema.ATTEMPT)
+    survey_df.to_csv('sorted.csv')
+    survey_df = survey_df[~survey_df.index.duplicated(keep='last')]
+    survey_df.to_csv('all.csv')
+    return survey_df
