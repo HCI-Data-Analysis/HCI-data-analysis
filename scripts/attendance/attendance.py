@@ -16,5 +16,8 @@ def graph_attendance(file_path):
     graph.set_xticks(range(len(attendance.index)))
     graph.set_xticklabels(attendance[AttendanceSchema.DAY].tolist())
     plt.xticks(rotation=270)
+    plt.xlabel('Date')
+    plt.ylabel('# of Students')
+    plt.title('# of Students that Attended Class')
     plt.tight_layout()
     plt.show()
