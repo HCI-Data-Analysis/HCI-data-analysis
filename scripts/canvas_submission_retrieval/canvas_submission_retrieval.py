@@ -2,6 +2,8 @@ import datetime
 import json
 import os
 
+import canvasapi
+
 from api import CanvasAPI, get_default_course_id
 from util import Encoder, mkdir_if_not_exists
 
@@ -77,7 +79,7 @@ def download_submissions(submissions_parent, grader_id_key: dict, output_filepat
         for submission in submissions_parent.get_submissions():
             json_submission = format_and_encode_submission(submission, grader_id_key, removed_values, encoder)
             json_submission['previous_submissions'] = []
-            if submission.attempt and submission.attempt > 1:
+            if type(submissions_parent) == canvasapi.quiz.Quiz and submission.attempt and submission.attempt > 1:
                 previous_submissions = get_previous_submissions_for_student(submission, submissions_parent)
                 for previous_submission in previous_submissions:
                     json_submission['previous_submissions'].append(
