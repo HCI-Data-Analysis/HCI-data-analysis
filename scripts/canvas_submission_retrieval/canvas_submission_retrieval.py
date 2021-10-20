@@ -88,6 +88,13 @@ def download_submissions(submissions_parent, grader_id_key: dict, output_filepat
 
 
 def get_previous_submissions_for_student(submission, quiz) -> list:
+    """
+    Receive previous submissions of a quiz for a student
+
+    :param submission: submission object from canvas api
+    :param quiz: quiz object from canvas api
+    :return: list of submissions
+    """
     submissions = []
     for attempt in range(1, submission.attempt):
         submission = quiz.get_quiz_submission(submission.id, attempt=attempt)
@@ -96,6 +103,15 @@ def get_previous_submissions_for_student(submission, quiz) -> list:
 
 
 def format_and_encode_submission(submission, grader_id_key, removed_values, encoder: Encoder) -> dict:
+    """
+    Format and encode submission
+
+    :param submission: submission object from canvas api
+    :param grader_id_key: a dictionary mapping grader ids to incrementing numbers
+    :param removed_values: a list containing the names of the fields to be removed from the saves JSON object altogether
+    :param encoder: encoder instance used to encode student ids into random ids
+    :return: dict of formatted and encoded submission
+    """
     submission_dict = submission.__dict__
     submission_dict.pop('_requester')
     for key in removed_values:
