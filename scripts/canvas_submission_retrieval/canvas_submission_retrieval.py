@@ -38,13 +38,11 @@ def canvas_submission_retrieval(export_dir, encoder: Encoder, course_id=None):
 
     for assignment in assignments:
         output_path = setup_submissions_filepath(assignment, course_submissions_dir, 'assignments', 'assignment')
-        assignment_submissions = assignment.get_submissions()
-        download_submissions(assignment_submissions, grader_id_key, output_path, encoder, REMOVE_VALUES[ASSIGNMENT])
+        download_submissions(assignment, grader_id_key, output_path, encoder, REMOVE_VALUES[ASSIGNMENT])
 
     for quiz in quizzes:
         output_path = setup_submissions_filepath(quiz, course_submissions_dir, 'quizzes', 'quiz')
-        quiz_submissions = quiz.get_submissions()
-        download_submissions(quiz_submissions, grader_id_key, output_path, encoder, REMOVE_VALUES[QUIZ])
+        download_submissions(quiz, grader_id_key, output_path, encoder, REMOVE_VALUES[QUIZ])
 
 
 def setup_submissions_filepath(obj, parent_dir: str, sub_dir: str, file_prefix: str) -> str:
@@ -61,12 +59,13 @@ def setup_submissions_filepath(obj, parent_dir: str, sub_dir: str, file_prefix: 
     return output_path
 
 
-def download_submissions(submissions, grader_id_key: dict, output_filepath: str, encoder: Encoder, removed_values=None):
+def download_submissions(submissions_parent, grader_id_key: dict, output_filepath: str, encoder: Encoder,
+                         removed_values=None):
     """
     Downloads anonymized submission data in JSON format to the specified output_filepath. Grader ids are replaced
     with incremental numbers in order of encounter.
 
-    :param submissions: submissions objects to be downloaded
+    :param submissions_parent: parent object of the submissions you want to receive
     :param grader_id_key: a dictionary mapping grader ids to incrementing numbers
     :param output_filepath: the filepath for this data to be saved in
     :param encoder: encoder instance used to encode student ids into random ids
@@ -75,16 +74,38 @@ def download_submissions(submissions, grader_id_key: dict, output_filepath: str,
     removed_values = [] if not removed_values else removed_values
     with open(output_filepath, 'w') as f:
         json_submissions = []
-        for submission in submissions:
-            submission_dict = submission.__dict__
-            submission_dict.pop('_requester')
-            for key in removed_values:
-                submission_dict.pop(key)
-            if submission_dict.get('grader_id', None):
-                submission_dict['grader_id'] = grader_id_key.setdefault(
-                    submission_dict['grader_id'],
-                    len(grader_id_key) + 1
-                )
-            submission_dict['user_id'] = encoder.encode(canvas_id=submission_dict['user_id'])
-            json_submissions.append(json.dumps(submission_dict, indent=4, cls=DateTimeEncoder))
+        for submission in submissions_parent.get_submissions():
+            json_submission = format_and_encode_submission(submission, grader_id_key, removed_values, encoder)
+            json_submission['previous_submissions'] = []
+            if submission.attempt and submission.attempt > 1:
+                previous_submissions = get_previous_submissions_for_student(submission, submissions_parent)
+                for previous_submission in previous_submissions:
+                    json_submission['previous_submissions'].append(
+                        format_and_encode_submission(previous_submission, grader_id_key, removed_values, encoder)
+                    )
+            json_submissions.append(json.dumps(json_submission, indent=4, cls=DateTimeEncoder))
         f.write('[' + ','.join(json_submissions) + ']')
+
+
+def get_previous_submissions_for_student(submission, quiz) -> list:
+    submissions = []
+    for attempt in range(1, submission.attempt):
+        submission = quiz.get_quiz_submission(submission.id, attempt=attempt)
+        submissions.append(submission)
+    return submissions
+
+
+def format_and_encode_submission(submission, grader_id_key, removed_values, encoder: Encoder) -> dict:
+    submission_dict = submission.__dict__
+    submission_dict.pop('_requester')
+    for key in removed_values:
+        submission_dict.pop(key)
+    if submission_dict.get('attachments', None):
+        submission_dict.pop('attachments')
+    if submission_dict.get('grader_id', None):
+        submission_dict['grader_id'] = grader_id_key.setdefault(
+            submission_dict['grader_id'],
+            len(grader_id_key) + 1
+        )
+    submission_dict['user_id'] = encoder.encode(canvas_id=submission_dict['user_id'])
+    return submission_dict
