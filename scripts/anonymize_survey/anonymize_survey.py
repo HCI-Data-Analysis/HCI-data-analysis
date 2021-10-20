@@ -36,6 +36,13 @@ def survey_anonymize(survey_path, output_dir, filename, encoder: Encoder):
 
 
 def encode_student_names_string(student_names: str, encoder: Encoder):
+    """
+    Outputs a string of encoded names read from a string of names in the form of 'last_name, first_name, ...'
+
+    :param student_names: string list of students names in the form 'last_name, first_name, ...'
+    :param encoder: Instance of the encoder model that has been initialized with
+    :return: string list of encoded student names
+    """
     sn_split = student_names.split(', ')
-    sn_every_other_comma = list(map(', '.join, zip(sn_split[::2], sn_split[1::2])))
-    return map(lambda student_name: encoder.encode(student_name=student_name), sn_every_other_comma)
+    return ', '.join([str(encoder.encode(student_name=', '.join([names[1], names[0]]))) for names in
+                      zip(sn_split[::2], sn_split[1::2])])
