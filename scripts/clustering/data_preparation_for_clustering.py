@@ -4,15 +4,14 @@ from pandas import DataFrame
 from schemas import ClusterSchema, SurveySchema
 
 
-def prepare_data_for_clustering(survey_df: DataFrame, schema_path) -> DataFrame:
+def prepare_data_for_clustering(survey_df: DataFrame, schema_df: DataFrame) -> DataFrame:
     """
     Prepare the survey given in <survey_path> in ways that can be input into the clustering model.
     Outputs the file /data/processed/for_clustering_impression_survey.csv containing the above information
-    :param survey_df: The survey dataframe to process.
-    :param schema_path: A string containing the file path of the schema document of the survey questions.
+    :param survey_df: the survey dataframe to process.
+    :param schema_df: a dataframe containing schema of the survey questions.
     :return: the processed dataframe.
     """
-    schema_df = pd.read_csv(schema_path)
 
     survey_df = map_to_number(survey_df)
     convert_negative(survey_df, schema_df)

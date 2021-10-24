@@ -68,26 +68,3 @@ def get_labels(kmeans: KMeans) -> DataFrame:
     :param kmeans: the model kmeans model.
     """
     return pd.DataFrame(kmeans.labels_)
-
-
-def get_groups(labels, cluster_data):
-    """
-    Creates a dataframe with each column being a list of ids that belongs to the same group according to the
-    clustering model.
-    :param labels: a dataframe containing the labels the clustering model assigns each student.
-    :param cluster_data: the source dataframe.
-    :return: a dataframe containing the student groups.
-    """
-
-    # labeled_students is a dataframe containing the source data and the labels clustering model assigns each student.
-    labeled_students = pd.concat((cluster_data, labels), axis=1)
-    labeled_students = labeled_students.rename({0: 'labels'}, axis=1)
-
-    groups = labeled_students["labels"].unique()
-    grouped_students = pd.DataFrame()
-
-    for group in groups:
-        grouped_student_list = [*labeled_students.loc[labeled_students["labels"] == group, "id"]]
-        grouped_students["g" + str(group)] = pd.Series(grouped_student_list)
-
-    return grouped_students

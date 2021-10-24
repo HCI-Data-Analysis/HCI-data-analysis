@@ -9,13 +9,18 @@ BACKGROUND_SURVEY_SCHEMA = "data/processed/background_survey_schema.csv"
 
 if __name__ == "__main__":
     # Get data to run kmeans on from impression survey.
-    survey_df = pd.read_csv(HCI_SURVEY_DATA)
-    processed_impression_survey_df = prepare_data_for_clustering(survey_df, HCI_SURVEY_SCHEMA)
+    impression_survey_df = pd.read_csv(HCI_SURVEY_DATA)
+    impression_schema_df = pd.read_csv(HCI_SURVEY_SCHEMA)
+    processed_impression_survey_df = prepare_data_for_clustering(impression_survey_df, impression_schema_df)
 
     # Get data to run kmeans on from background survey.
-    survey_df = clean_background_survey(BACKGROUND_SURVEY_DATA)
-    processed_background_survey_df = prepare_data_for_clustering(survey_df, BACKGROUND_SURVEY_SCHEMA)
+    background_survey_df = pd.read_csv(BACKGROUND_SURVEY_DATA)
+    background_survey_df = clean_background_survey(background_survey_df)
+    background_schema_df = pd.read_csv(BACKGROUND_SURVEY_SCHEMA)
+    processed_background_survey_df = prepare_data_for_clustering(background_survey_df, background_schema_df)
 
     # Run kmeans for n-iter and determine the average time for convergence.
-    average_kmeans_iterations(processed_impression_survey_df, 500)
-    average_kmeans_iterations(processed_background_survey_df, 500)
+    impression_cluster_data = processed_impression_survey_df.iloc[:, 1:6]
+    background_cluster_data = processed_background_survey_df.iloc[:, 1:6]
+    average_kmeans_iterations(impression_cluster_data, 500, 3)
+    average_kmeans_iterations(background_cluster_data, 500, 3)
