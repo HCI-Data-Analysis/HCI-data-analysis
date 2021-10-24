@@ -1,17 +1,14 @@
-import pandas as pd
-import seaborn as sns
-import os
 from util import inertia_graph, kmeans_clustering, get_groups
 
 
-def cluster_survey(data_path, output_path, categories):
-    data = pd.read_csv(data_path)
-    cluster_data = data.iloc[:, 1:6]
-    file_name = os.path.basename(data_path)
-    output_path_filename = os.path.join(output_path, file_name)
-    get_groups(kmeans_clustering(3, 500, cluster_data, categories), data).to_csv(output_path_filename)
+def cluster_survey(survey_df, categories):
+    """
+    Performs clustering on the dataframe, and graphs the inertia as graph for the specified dataframe.
+    :param survey_df: the processed dataframe to perform clustering on.
+    :param categories: the categories for labels on the pair-plot.
+    :return: the student groups as a dataframe.
+    """
+    cluster_data = survey_df.iloc[:, 1:6]
+    student_groups = get_groups(kmeans_clustering(3, 500, cluster_data, categories), survey_df)
     inertia_graph(10, cluster_data)
-
-    # Plot the data when we have the correct labeled data.
-    # sns.pairplot(data=labeled_data, hue='labels')
-    # plt.show()
+    return student_groups
