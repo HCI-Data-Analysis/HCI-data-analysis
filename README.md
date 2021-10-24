@@ -10,6 +10,13 @@
  - Anonymize gradebook data
  - Canvas Submission Retrieval
 
+## Environment File Setup
+```
+CANVAS_ACCESS_TOKEN=
+CANVAS_COURSE_ID=
+```
+> Information on how to retrieve these values can be found in [this guide](scripts/canvas_submission_retrieval/canvas_submission_retrieval.md).
+
 ## Anonymizing Data
 
 Run `python anonymize.py` to remove sensitive data from collected .csv files. This assumes that the .csv schemas are
@@ -38,9 +45,9 @@ Run `python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>` where `AC
 
 > #### Instruction
 > 1. Navigate to the root directory.
-> 2. Make sure Key.csv is in `/key` dicrectory.
+> 2. Make sure Key.csv is in `/key` directory.
 > 3. Open `submission_retrieval.py` and ensure that the names and file paths of each file are accurate.
 > 4. Run `pip install -r requirements.txt`
 > 5. Run `python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>` and enter the correct information. 
-> 6. Now in `/data` dicrectory shoud have a `/canvas_submission`folder that contains a `/<COURSE_ID>` folder which stores anonymized submission information in `.json` format.
+> 6. Now in `/data` directory should have a `/canvas_submission`folder that contains a `/<COURSE_ID>` folder which stores anonymized submission information in `.json` format.
 > - More details about the format of the resulting `.json` files can be found in the related `.md` files in `/scripts`.
