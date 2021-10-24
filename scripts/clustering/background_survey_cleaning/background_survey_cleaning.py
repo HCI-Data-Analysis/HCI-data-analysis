@@ -1,15 +1,15 @@
 import re
 import pandas as pd
+from pandas import DataFrame
 
 
-def clean_background_survey(survey):
+def clean_background_survey(survey_df: DataFrame) -> DataFrame:
     """
     Prepares and cleans the dataframe so it is possible to use it for clustering. Fixes the single column with all
     the questions in it.
-    :param survey: the path to the background survey :return: a dataframe that has been cleaned.
+    :param survey_df: the dataframe to process.
     :returns: the cleaned data in a dataframe.
     """
-    survey_df = pd.read_csv(survey)
     survey_df = survey_df.drop(survey_df.columns[1:13], axis=1).drop(survey_df.columns[14:19], axis=1).dropna()
     questions = list(survey_df.columns)[1]
     new_columns = _get_columns(questions)
