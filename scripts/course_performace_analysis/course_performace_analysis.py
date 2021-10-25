@@ -182,6 +182,22 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     plt.show()
 
 
+def remove_survey_from_df(df, classification_df):
+    for index, row in classification_df.iterrows():
+        if row["submission_type"] == "Survey":
+            quiz_id = row["QUIZ_ID"]
+            df = df[df.QUIZ_ID != quiz_id]
+    return df
+
+
+def remove_survey_from_list(lst, classification_df):
+    for index, row in classification_df.iterrows():
+        if row["submission_type"] == "Survey":
+            quiz_id = row["QUIZ_ID"]
+            lst.remove(quiz_id)
+    return lst
+
+
 if __name__ == '__main__':
     quiz_path = os.path.join(os.getcwd(), 'quizzes')
     course_performance_analysis('grade_book.csv', quiz_path)
