@@ -9,6 +9,8 @@
 - Anonymize survey data
 - Anonymize gradebook data
 - Canvas Submission Retrieval
+- Cluster Students
+- Student Attendance Exploration
 
 ## Environment File Setup
 
@@ -63,3 +65,16 @@ account setting and `COURSE_ID` is obtained from Course URL.
 > 5. Run `python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>` and enter the correct information.
 > 6. Now in `/data` directory should have a `/canvas_submission`folder that contains a `/<COURSE_ID>` folder which stores anonymized submission information in `.json` format.
 > - More details about the format of the resulting `.json` files can be found in the related `.md` files in `/scripts`.
+
+## Attendance Exploration
+
+Run `python student_attendance.py`, which will plot the graph showing student's attendance over time. This assumes
+that `data/anonymized/attendance.csv` exists and conforms to the schema in `schemas/attendance.py`.
+
+> #### Instructions
+> 1. Navigate to the root directory.
+> 2. Ensure `data/anonymized/attendance.csv` exists.
+> 3. Open `student_attendance.py` and ensure that the names and file paths of each file are accurate.
+> 4. Run `pip install -r requirements.txt`
+> 5. Run `python student_attendance.py` in your terminal.
+> 6. The plot will be displayed upon the completion of the script.
