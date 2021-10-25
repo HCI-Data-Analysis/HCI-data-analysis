@@ -22,12 +22,14 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
         columns=['DATA448_ID', 'QUIZ_ID', 'score', 'time', 'possible_points']
     )
     df_student_grade_first_attempt = pd.DataFrame(
-        columns=['DATA448_ID', 'total_score', 'total_possible_points', 'final_score', 'first_attempt_final_score']
+        columns=['DATA448_ID', 'QUIZ_ID', 'total_score', 'total_possible_points', 'final_score', 'first_attempt_final_score']
     )
     df_average_student_attempts = pd.DataFrame(
         columns=['DATA448_ID', 'QUIZ_ID', 'attempt', 'final_score']
     )
-
+    df_first_attempt_classification = pd.DataFrame(
+        columns=['DATA448_ID', 'QUIZ_ID', 'submission_type']
+    )
     # Get first attempt only quiz mark out of JSON files
     number_of_quizzes = 0
     for i in os.listdir(QUIZSCOREJSON_PATH):
@@ -41,6 +43,24 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
                     if json_file[0]['quiz_points_possible'] > 0:
                         quiz_ids.append(json_file[0]['quiz_id'])
                 for json_block in json_file:
+                    if json_block['quiz_points_possible'] == 1.0:
+                        student_average_attempt_data = {
+                            'DATA448_ID': json_block['user_id'],
+                            'QUIZ_ID': json_block['quiz_id'],
+                            'submission_type': 'Survey'
+                        }
+                        df_first_attempt_classification = df_first_attempt_classification.append(student_average_attempt_data,
+                                                                                         ignore_index=True)
+                    elif json_block['quiz_points_possible'] > 0:
+                        student_average_attempt_data = {
+                            'DATA448_ID': json_block['user_id'],
+                            'QUIZ_ID': json_block['quiz_id'],
+                            'submission_type': 'Quiz'
+                        }
+                        df_first_attempt_classification = df_first_attempt_classification.append(
+                            student_average_attempt_data,
+                            ignore_index=True)
+
                     if json_block['quiz_points_possible'] > 0:
                         student_average_attempt_data = {
                             'DATA448_ID': json_block['user_id'],
@@ -63,8 +83,15 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
                         }
                         df_first_attempt = df_first_attempt.append(student_first_attempt_data, ignore_index=True)
 
+    df_first_attempt_classification = df_first_attempt_classification.drop_duplicates(subset=["QUIZ_ID"])
+    df_first_attempt = remove_survey_from_df(df_first_attempt, df_first_attempt_classification)
+    df_average_student_attempts = remove_survey_from_df(df_average_student_attempts, df_first_attempt_classification)
+    quiz_ids = remove_survey_from_list(quiz_ids, df_first_attempt_classification)
+
     for index, data448_id in enumerate(data448_ids):
         df_student_first_attempts = df_first_attempt.loc[df_first_attempt['DATA448_ID'] == data448_id]
+        df_student_first_attempts = remove_survey_from_df(df_student_first_attempts,
+                                                               df_first_attempt_classification)
 
         total_score = df_student_first_attempts['score'].sum()
         total_possible_points = df_student_first_attempts['possible_points'].sum()
