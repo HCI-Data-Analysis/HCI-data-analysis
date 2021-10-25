@@ -13,6 +13,9 @@ def clean_background_survey(survey, output):
     questions = list(df.columns)[1]
     new_columns = _get_columns(questions)
 
+    df = df.drop(df[pd.isnull(df.iloc[:, 1])].index)
+    df.index = [i for i in range(1,  157)]
+
     row_index = 1
     for row in df.itertuples():
         answers = row[2].split(",")

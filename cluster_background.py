@@ -16,7 +16,7 @@ if __name__ == "__main__":
     clean_background_survey(BACKGROUND_SURVEY_DATA, OUTPUT_DIRECTORY)
 
     # Prepare data for clustering.
-    prepare_data_for_clustering(PROCESSED_BACKGROUND_SURVEY_DATA, BACKGROUND_SURVEY_SCHEMA, OUTPUT_DIRECTORY)
-
-    # Execute clustering on the data and display graphs.
-    cluster_survey(BACKGROUND_CLUSTER_DATA, STUDENT_GROUP_OUTPUT_DIRECTORY, CLUSTER_CATEGORIES)
+    # prepare_data_for_clustering(PROCESSED_BACKGROUND_SURVEY_DATA, BACKGROUND_SURVEY_SCHEMA, OUTPUT_DIRECTORY)
+    #
+    # # Execute clustering on the data and display graphs.
+    # cluster_survey(BACKGROUND_CLUSTER_DATA, STUDENT_GROUP_OUTPUT_DIRECTORY, CLUSTER_CATEGORIES)
