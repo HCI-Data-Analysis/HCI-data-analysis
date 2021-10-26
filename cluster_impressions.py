@@ -1,15 +1,20 @@
-from scripts import prepare_data_for_clustering, cluster_survey
+import pandas as pd
 
-OUTPUT_DIRECTORY = "data/processed"
+from scripts import prepare_data_for_clustering, cluster_survey, preprocess_survey
+
 HCI_SURVEY_DATA = "data/anonymized/impression_survey1.csv"
 HCI_SURVEY_SCHEMA = "data/processed/HCI_survey_schema.csv"
-HCI_CLUSTER_DATA = "data/processed/for_clustering_impression_survey1.csv"
-STUDENT_GROUP_OUTPUT_DIRECTORY = "data/student_group"
 CLUSTER_CATEGORIES = ["Confidence", "Gender", "Professional", "Identity", "Interest"]
 
 if __name__ == "__main__":
+    # Get and pre-process survey data.
+    survey_df = pd.read_csv(HCI_SURVEY_DATA)
+    schema_df = pd.read_csv(HCI_SURVEY_SCHEMA)
+    survey_df = preprocess_survey(survey_df)
+
     # Prepare data for clustering.
-    prepare_data_for_clustering(HCI_SURVEY_DATA, HCI_SURVEY_SCHEMA, OUTPUT_DIRECTORY)
+    processed_survey_df = prepare_data_for_clustering(survey_df, schema_df)
 
     # Execute clustering on the data and display graphs.
-    cluster_survey(HCI_CLUSTER_DATA, STUDENT_GROUP_OUTPUT_DIRECTORY, CLUSTER_CATEGORIES)
+    cluster_data = processed_survey_df.iloc[:, 1:6]
+    cluster_survey(cluster_data, CLUSTER_CATEGORIES, 3)
