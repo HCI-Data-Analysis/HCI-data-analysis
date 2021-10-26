@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 from schemas import GradeBookSchema
 
 
-def performance_by_activity_type(file_path):
+def performance_by_activity_type(file_path, n_stddev):
     """
+    This method will extract data from the gradebook and graph the performance by activity type with plotted mean and standard deviations
     :param file_path: the path to the gradebook csv.
+    :param n_stddev: the number of standard deviations on either side to be plotted for each graph
     """
     gradebook = pd.read_csv(file_path)
     overall_score_cols = [GradeBookSchema.OVERALL_COURSE_SCORE, GradeBookSchema.OVERALL_PROJECT_SCORE,
@@ -29,7 +31,6 @@ def performance_by_activity_type(file_path):
         # set the limits of the x-axis
         ax.set_xlim(0, max)
 
-        n_stddev = 2
         # Plot mean and n_stddev std deviations on either side
         plt.axvline(mean, label='mean', linestyle=':', color='red')
         for i in range(1, n_stddev + 1):
