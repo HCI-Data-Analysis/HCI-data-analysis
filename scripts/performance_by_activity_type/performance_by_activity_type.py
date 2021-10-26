@@ -20,20 +20,22 @@ def performance_by_activity_type(file_path):
         # set up plot
         mean = overall_score_data[col].mean()
         stdev = overall_score_data[col].std()
+        max = overall_score_data[col].max()
         figure, ax = plt.subplots()
 
         # plot using seaborn distplot
         sns.histplot(overall_score_data[col], ax=ax, kde=True)
 
         # set the limits of the x-axis
-        ax.set_xlim(0, 120)
+        ax.set_xlim(0, max)
 
-        # Plot mean and 2 std deviations on either side
+        n_stddev = 2
+        # Plot mean and n_stddev std deviations on either side
         plt.axvline(mean, label='mean', linestyle=':', color='red')
-        plt.axvline(mean - stdev, label='standard deviation', linestyle='--', color='purple')
-        plt.axvline(mean + stdev, linestyle='--', color='purple')
-        plt.axvline(mean - 2 * stdev, linestyle='--', color='purple')
-        plt.axvline(mean + 2 * stdev, linestyle='--', color='purple')
+        for i in range(1, n_stddev + 1):
+            plt.axvline(mean - i * stdev, label='standard deviation', linestyle='--', color='purple')
+            plt.axvline(mean + i * stdev, linestyle='--', color='purple')
+
         plt.suptitle('Density Distribution of {}'.format(col))
         plt.legend()
         plt.show()
