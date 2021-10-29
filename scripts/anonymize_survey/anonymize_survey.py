@@ -44,5 +44,5 @@ def encode_student_names_string(student_names: str, encoder: Encoder):
     :return: string list of encoded student names
     """
     sn_split = student_names.split(', ')
-    return ', '.join([str(encoder.encode(student_name=', '.join([names[1], names[0]]))) for names in
-                      zip(sn_split[::2], sn_split[1::2])])
+    first_last_pair = zip(sn_split[::2], sn_split[1::2])
+    return ', '.join([str(encoder.encode(student_name=', '.join([names[0], names[1]]))) for names in first_last_pair])
