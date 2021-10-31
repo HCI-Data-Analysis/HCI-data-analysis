@@ -118,11 +118,15 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     # 1) Histogram comparison plot for Actual score and First attempt only score
     fig, (ax1) = plt.subplots(1)
     data_graph_colors = ['b', 'r']
+    overall_mean_std = "Overall Score\nMean: "+str(round(current_mean, 2))+"  "+"Std Dev: "+str(round(current_standard_dev, 2))
+    first_attempt_mean_std = "First Attempt Score\nMean: "+str(round(mean, 2))+"  "+"Std Dev: "+str(round(standard_dev, 2))
     for index, data in enumerate([final_score, df_student_grade_first_attempt['first_attempt_final_score']]):
         sns.histplot(data, kde=True, bins=30, line_kws={'linewidth': 1}, color=data_graph_colors[index], ax=ax1).set(
             title='Overall Score vs First Attempt Score',
             xlabel='Grade',
             ylabel='Number of Students')
+    plt.text(42, 18, overall_mean_std)
+    plt.text(42, 15, first_attempt_mean_std)
     ax1.set_xticks(range(40, 110, 10))
     ax1.set_xticklabels([f'{i}%' for i in range(40, 110, 10)])
     ax1.set_yticks(range(0, 25, 3))
