@@ -168,12 +168,17 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
             'final_score': list(students_per_quiz['final_score']),
             'attempts': list(students_per_quiz['attempt'])
         }
+        
+        temp_mean = "Mean: " + str(round(students_per_quiz['final_score'].mean(), 2))
+        temp_std = "Std Dev: " + str(round(students_per_quiz['final_score'].std(), 2))
         df = pd.DataFrame(quiz_attempt_grade_data)
-
+        
         fig = sns.jointplot(x='final_score', y='attempts', kind='reg', data=df)
         fig.set_axis_labels('Final Score', 'Attempts')
         fig.ax_marg_x.set_xlim(0, 110)
         fig.ax_marg_y.set_ylim(0, 4)
+        plt.text(5, 4, temp_mean)
+        plt.text(5, 3.7, temp_std)
         fig.figure.suptitle(f'Final Score vs Attempts Taken For Quiz {quiz_id}')
         fig.figure.tight_layout()
         plt.savefig(f'final_score_vs_attempts_{quiz_id}.png')
