@@ -7,7 +7,7 @@ from pyclustertend import vat, ivat, hopkins
 def average_hopkins_statistic(data: np.ndarray, num_runs=500):
     hopkins_scores = []
     for i in range(0, num_runs):
-        H = 1 - hopkins(data, len(data))
+        H = 1 - hopkins(data, 40)
         hopkins_scores.append(H)
 
     return sum(hopkins_scores) / len(hopkins_scores)
