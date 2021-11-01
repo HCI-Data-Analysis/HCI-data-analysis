@@ -1,7 +1,7 @@
 import numpy as np
-import pandas as pd
-from pyclustertend import vat, ivat, hopkins
 from matplotlib import pyplot as plt
+from pandas import DataFrame
+from pyclustertend import vat, ivat, hopkins
 
 
 def average_hopkins_statistic(data: np.ndarray, num_runs=500):
@@ -13,7 +13,7 @@ def average_hopkins_statistic(data: np.ndarray, num_runs=500):
     return sum(hopkins_scores) / len(hopkins_scores)
 
 
-def clustering_tendency(survey_df: pd.DataFrame):
+def clustering_tendency(survey_df: DataFrame):
     survey_array = survey_df.values
 
     average_H = average_hopkins_statistic(survey_array, 500)
