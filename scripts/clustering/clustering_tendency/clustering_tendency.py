@@ -29,4 +29,4 @@ def clustering_tendency(survey_df: DataFrame):
     _, ax = plt.subplots(figsize=figure_size)
     ax.imshow(ordered_matrix, cmap='pink', vmin=0, vmax=np.max(ordered_matrix))
 
-    print(f'Hopkins statistics: {str(average_H)}')
+    print(f'Hopkins statistics: {average_H}')
