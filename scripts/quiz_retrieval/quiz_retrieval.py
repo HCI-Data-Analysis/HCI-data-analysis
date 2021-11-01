@@ -5,6 +5,8 @@ import os
 from api import CanvasAPI, get_default_course_id
 from scripts import setup_submissions_filepath
 
+OUTPUT_DIR = "../../data/api/canvas"
+
 
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, z):
@@ -14,14 +16,11 @@ class DateTimeEncoder(json.JSONEncoder):
             return super().default(z)
 
 
-def quiz_name_retrieval(course_id):
+def quiz_object_retrieval():
     canvas_api = CanvasAPI()
-    course_id = course_id or get_default_course_id()
-    # course_submissions_dir = mkdir_if_not_exists(os.path.join(export_dir, course_id))
-    output_dir = "data/api/canvas"
+    output_dir = OUTPUT_DIR
     quizzes = canvas_api.get_quizzes()
     for quiz in quizzes:
-
         output_path = setup_submissions_filepath(quiz, output_dir, "quiz_objects", "quiz_object" )
         download_quiz(quiz, output_path)
 
@@ -35,5 +34,14 @@ def download_quiz(quiz, output_filepath):
         f.write('[' + ','.join(json_quiz) + ']')
 
 
+def get_quiz_name(file_dir, file_name):
+    """
+    Return the name of the quiz as a string giving the quiz_object.json file
+    :param file_dir: A string that contains the directory which the quiz_object.json file is in
+    :param file_name: A string that contains the name of the quiz_object.json file
+    :return: A string that contains the name of the quiz
+    """
+
+
 if __name__ == '__main__':
-    quiz_name_retrieval(74915)
+   quiz_object_retrieval()
