@@ -2,8 +2,9 @@ import datetime
 import json
 import os
 
-from api import CanvasAPI, get_default_course_id
+from api import CanvasAPI
 from scripts import setup_submissions_filepath
+from util import  mkdir_if_not_exists
 
 OUTPUT_DIR = "../../data/api/canvas"
 
@@ -41,7 +42,20 @@ def get_quiz_name(file_dir, file_name):
     :param file_name: A string that contains the name of the quiz_object.json file
     :return: A string that contains the name of the quiz
     """
+    full_path = os.path.join(file_dir, file_name)
+    with open(full_path, 'r') as f:
+        file = f.read()
+        json_file = json.loads(file)
+        if json_file:
+            return json_file[0]['title']
+        else:
+            return file_name + " can't retrieve quiz name"
 
 
 if __name__ == '__main__':
-   quiz_object_retrieval()
+    quiz_object_retrieval()
+
+    file_dir = os.path.join(OUTPUT_DIR, "quiz_objects")
+    # for file in os.listdir(file_dir):
+    #     if file.endswith('.json'):
+    #         print(get_quiz_name(file_dir, file))
