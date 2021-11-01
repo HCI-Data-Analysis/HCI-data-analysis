@@ -46,8 +46,16 @@ clustering graph will be displayed.
 
 ## Retrieve submission from Canvas
 
-Run `python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>` where `ACCESS_TOKEN` is obtained from Canvas
-account setting and `COURSE_ID` is obtained from Course URL.
+Run `python canvas_submission_retrieval.py [COURSE_ID]`. If no `COURSE_ID` is specified, then the `CANVAS_COURSE_ID`
+in `.env` will be used.
+
+> #### Instructions
+> 1. Navigate to the root directory.
+> 2. Make sure Key.csv is in `/key` directory.
+> 3. Open `submission_retrieval.py` and ensure that the names and file paths of each file are accurate.
+> 4. Run `python canvas_submission_retrieval.py [COURSE_ID]`.
+> - Now in `/data` directory should have a `/canvas_submission` folder that contains a `/<COURSE_ID>` folder which stores anonymized submission information in `.json` format.
+> - More details about the format of the resulting `.json` files can be found in the related `.md` files in `/scripts`.
 
 ## Determine Average KMeans Iterations
 
@@ -56,15 +64,6 @@ account setting and `COURSE_ID` is obtained from Course URL.
 > 2. Open `average_kmeans_iterations.py` and ensure that the names and file paths of each file are accurate. You can also update the number of iterations you want to determine the average for.
 > 3. Run `pip install -r requirements.txt`.
 > 4. Run `python average_kmeans_iterations` and the average iterations for convergence will be printed to the terminal.
-
-> #### Instruction
-> 1. Navigate to the root directory.
-> 2. Make sure Key.csv is in `/key` directory.
-> 3. Open `submission_retrieval.py` and ensure that the names and file paths of each file are accurate.
-> 4. Run `pip install -r requirements.txt`
-> 5. Run `python canvas_submission_retrieval.py <ACCESS_TOKEN> <COURSE_ID>` and enter the correct information.
-> 6. Now in `/data` directory should have a `/canvas_submission`folder that contains a `/<COURSE_ID>` folder which stores anonymized submission information in `.json` format.
-> - More details about the format of the resulting `.json` files can be found in the related `.md` files in `/scripts`.
 
 ## Attendance Exploration
 
