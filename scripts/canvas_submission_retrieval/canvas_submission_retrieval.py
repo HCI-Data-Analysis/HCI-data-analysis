@@ -47,6 +47,7 @@ def canvas_submission_retrieval(export_dir, encoder: Encoder, course_id=None):
         download_submissions(quiz_submissions, grader_id_key, output_path, encoder, REMOVE_VALUES[QUIZ])
 
 
+# Should I move this function to somewhere that is more like util for api?
 def setup_submissions_filepath(obj, parent_dir: str, sub_dir: str, file_prefix: str) -> str:
     """
     Get the correct filepath for a submissions data download
