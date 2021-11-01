@@ -1,5 +1,5 @@
 from .canvas_submission_retrieval import canvas_submission_retrieval, setup_submissions_filepath
-from .quiz_retrieval import quiz_object_retrieval, get_quiz_name
+from .quiz_retrieval import quiz_object_retrieval, get_quiz_name, get_quiz_object
 from .generate_key import generate_key
 from .anonymize_gradebook import gradebook_anonymize
 from .anonymize_survey import survey_anonymize

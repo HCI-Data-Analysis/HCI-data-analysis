@@ -5,7 +5,7 @@ import matplotlib.patches as pch
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from scripts import get_quiz_name
+from scripts import get_quiz_name, get_quiz_object
 
 QUIZ_PATH = "../../data/api/canvas/quizzes"
 QUIZ_OBJECT_PATH = "../data/api/canvas/quiz_objects"
@@ -39,42 +39,67 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     for file in os.listdir(QUIZSCOREJSON_PATH):  # QUIZSCOREJSON_PATH = ../../data/api/canvas\quizzes
         if file.endswith('.json'):
             quiz_id = file[5:11]  #the course id is the 5th to 10th character in the file name
-            print(get_quiz_name(quiz_id))
+            quiz_objecct_path = get_quiz_object(quiz_id)
+            with open(quiz_objecct_path, 'r') as quiz_object:
+                file = quiz_object.read()
+                json_file = json.loads(file)
+                if json_file:
+                    quiz_title = json_file[0]['title'].lower()
+                    if 'pre-test' in quiz_title:
+                        submission_type = {
+                            'QUIZ_ID': json_file[0]['id'],
+                            'quiz_title': quiz_title,
+                            'submission_type': 'Pre-Test'
+                        }
+                    elif 'post-test' in quiz_title:
+                        submission_type = {
+                            'QUIZ_ID': json_file[0]['id'],
+                            'quiz_title': quiz_title,
+                            'submission_type': 'Post-Test'
+                        }
+                    else:
+                        submission_type = {
+                            'QUIZ_ID': json_file[0]['id'],
+                            'quiz_title': quiz_title,
+                            'submission_type': 'Survey'
+                        }
+                    df_submission_type = df_submission_type.append(submission_type, ignore_index=True)
+    print(df_submission_type)
 
     # Get first attempt only quiz mark out of JSON files
-    # number_of_quizzes = 0
-    # for i in os.listdir(QUIZSCOREJSON_PATH):
-    #     if i.endswith('.json'):
-    #         number_of_quizzes += 1
-    #         full_path = os.path.join(QUIZSCOREJSON_PATH, i)
-    #         with open(full_path, 'r') as f:
-    #             file = f.read()
-    #             json_file = json.loads(file)
-    #             if json_file:
-    #                 if json_file[0]['quiz_points_possible'] > 0:
-    #                     quiz_ids.append(json_file[0]['quiz_id'])
-    #             for json_block in json_file:
-    #                 if json_block['quiz_points_possible'] > 0:
-    #                     student_average_attempt_data = {
-    #                         'DATA448_ID': json_block['user_id'],
-    #                         'QUIZ_ID': json_block['quiz_id'],
-    #                         'attempt': json_block['attempt'],
-    #                         'final_score': json_block['kept_score'] / json_block['quiz_points_possible'] * 100
-    #                     }
-    #                     df_average_student_attempts = df_average_student_attempts.append(student_average_attempt_data,
-    #                                                                                      ignore_index=True)
-    #                     if json_block['attempt'] > 1:
-    #                         for previous_json_block in json_block['previous_submissions']:
-    #                             if previous_json_block['attempt'] == 1:
-    #                                 json_block = previous_json_block
-    #                     student_first_attempt_data = {
-    #                         'DATA448_ID': json_block['user_id'],
-    #                         'QUIZ_ID': json_block['quiz_id'],
-    #                         'score': json_block['score'],
-    #                         'time': json_block['time_spent'],
-    #                         'possible_points': json_block['quiz_points_possible']
-    #                     }
-    #                     df_first_attempt = df_first_attempt.append(student_first_attempt_data, ignore_index=True)
+    number_of_quizzes = 0
+    for i in os.listdir(QUIZSCOREJSON_PATH):
+        if i.endswith('.json'):
+            number_of_quizzes += 1
+            full_path = os.path.join(QUIZSCOREJSON_PATH, i)
+            with open(full_path, 'r') as f:
+                file = f.read()
+                json_file = json.loads(file)
+                if json_file:
+                    if json_file[0]['quiz_points_possible'] > 0:
+                        quiz_ids.append(json_file[0]['quiz_id'])
+                for json_block in json_file:
+                    if json_block['quiz_points_possible'] > 0:
+                        student_average_attempt_data = {
+                            'DATA448_ID': json_block['user_id'],
+                            'QUIZ_ID': json_block['quiz_id'],
+                            'attempt': json_block['attempt'],
+                            'final_score': json_block['kept_score'] / json_block['quiz_points_possible'] * 100
+                        }
+                        df_average_student_attempts = df_average_student_attempts.append(student_average_attempt_data,
+                                                                                         ignore_index=True)
+                        if json_block['attempt'] > 1:
+                            for previous_json_block in json_block['previous_submissions']:
+                                if previous_json_block['attempt'] == 1:
+                                    json_block = previous_json_block
+                        student_first_attempt_data = {
+                            'DATA448_ID': json_block['user_id'],
+                            'QUIZ_ID': json_block['quiz_id'],
+                            'score': json_block['score'],
+                            'time': json_block['time_spent'],
+                            'possible_points': json_block['quiz_points_possible']
+                        }
+                        df_first_attempt = df_first_attempt.append(student_first_attempt_data, ignore_index=True)
     #
     # for index, data448_id in enumerate(data448_ids):
     #     df_student_first_attempts = df_first_attempt.loc[df_first_attempt['DATA448_ID'] == data448_id]
