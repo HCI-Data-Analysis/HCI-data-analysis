@@ -4,9 +4,8 @@ import os
 
 from api import CanvasAPI
 from scripts import setup_submissions_filepath
-from util import  mkdir_if_not_exists
 
-OUTPUT_DIR = "../../data/api/canvas"
+OUTPUT_DIR = "data/api/canvas"
 
 
 class DateTimeEncoder(json.JSONEncoder):
