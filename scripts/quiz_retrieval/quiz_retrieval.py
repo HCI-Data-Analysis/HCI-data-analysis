@@ -48,9 +48,8 @@ def download_quiz(quiz, output_filepath):
 
 def get_quiz_name(quiz_id):
     """
-    Return the name of the quiz as a string giving the quiz_object.json file
-    :param file_dir: A string that contains the directory which the quiz_object.json file is in
-    :param file_name: A string that contains the name of the quiz_object.json file
+    Return the name of the quiz as a string giving the quiz_id
+    :param quiz_id: A string that contains the quiz_id
     :return: A string that contains the name of the quiz
     """
     full_path = os.path.join(OUTPUT_DIR, "quiz_objects")
@@ -73,7 +72,7 @@ def get_quiz_object(quiz_id):
     """
     Returns the path of the quiz object with the corresponding quiz_id
     :param quiz_id: a string containing the quiz id
-    :return:the path of the quiz object with the corresponding quiz_id
+    :return: the path of the quiz object with the corresponding quiz_id
     """
     full_path = os.path.join(OUTPUT_DIR, "quiz_objects")
     for quiz_object in os.listdir(full_path):
@@ -85,11 +84,3 @@ def get_quiz_object(quiz_id):
                 return quiz_object_path
             else:
                 continue
-
-
-
-
-    # file_dir = os.path.join(OUTPUT_DIR, "quiz_objects")
-    # for file in os.listdir(file_dir):
-    #     if file.endswith('.json'):
-    #         print(get_quiz_name(file_dir, file))
