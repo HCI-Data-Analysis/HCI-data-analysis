@@ -17,6 +17,12 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 def quiz_object_retrieval():
+    """
+    Retrieve all quiz objects as .json files from the course and download all quizzes into
+        "data/api/canvas/quiz_objects"
+    Quiz object name will follow the format "quiz_object_[quiz_id].json"
+    :return:
+    """
     canvas_api = CanvasAPI()
     output_dir = OUTPUT_DIR
     quizzes = canvas_api.get_quizzes()
@@ -26,6 +32,12 @@ def quiz_object_retrieval():
 
 
 def download_quiz(quiz, output_filepath):
+    """
+    Download the given quiz object in to the specified output path
+    :param quiz: quiz object
+    :param output_filepath: a string containing the output path and name of the quiz object.
+    :return:
+    """
     with open(output_filepath, 'w') as f:
         json_quiz = []
         quiz_dict = quiz.__dict__
