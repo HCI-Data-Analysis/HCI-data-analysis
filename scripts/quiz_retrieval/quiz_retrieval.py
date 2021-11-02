@@ -76,10 +76,9 @@ def get_quiz_object(quiz_id):
                 continue
 
 
-if __name__ == '__main__':
-    quiz_object_retrieval()
 
-    file_dir = os.path.join(OUTPUT_DIR, "quiz_objects")
+
+    # file_dir = os.path.join(OUTPUT_DIR, "quiz_objects")
     # for file in os.listdir(file_dir):
     #     if file.endswith('.json'):
     #         print(get_quiz_name(file_dir, file))
