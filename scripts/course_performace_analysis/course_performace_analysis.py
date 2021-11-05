@@ -125,11 +125,15 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     # 1) Histogram comparison plot for Actual score and First attempt only score
     fig, (ax1) = plt.subplots(1)
     data_graph_colors = ['b', 'r']
+    overall_mean_std = "Overall Score\nMean: "+str(round(current_mean, 2))+"  "+"Std Dev: "+str(round(current_standard_dev, 2))
+    first_attempt_mean_std = "First Attempt Score\nMean: "+str(round(mean, 2))+"  "+"Std Dev: "+str(round(standard_dev, 2))
     for index, data in enumerate([final_score, df_student_grade_first_attempt['first_attempt_final_score']]):
         sns.histplot(data, kde=True, bins=30, line_kws={'linewidth': 1}, color=data_graph_colors[index], ax=ax1).set(
             title='Overall Score vs First Attempt Score',
             xlabel='Grade',
             ylabel='Number of Students')
+    plt.text(42, 18, overall_mean_std)
+    plt.text(42, 15, first_attempt_mean_std)
     ax1.set_xticks(range(40, 110, 10))
     ax1.set_xticklabels([f'{i}%' for i in range(40, 110, 10)])
     ax1.set_yticks(range(0, 25, 3))
@@ -175,12 +179,17 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
             'final_score': list(students_per_quiz['final_score']),
             'attempts': list(students_per_quiz['attempt'])
         }
+        
+        temp_mean = "Mean: " + str(round(students_per_quiz['final_score'].mean(), 2))
+        temp_std = "Std Dev: " + str(round(students_per_quiz['final_score'].std(), 2))
         df = pd.DataFrame(quiz_attempt_grade_data)
-
+        
         fig = sns.jointplot(x='final_score', y='attempts', kind='reg', data=df)
         fig.set_axis_labels('Final Score', 'Attempts')
         fig.ax_marg_x.set_xlim(0, 110)
         fig.ax_marg_y.set_ylim(0, 4)
+        plt.text(5, 4, temp_mean)
+        plt.text(5, 3.7, temp_std)
         fig.figure.suptitle(f'Final Score vs Attempts Taken For Quiz {quiz_id}')
         fig.figure.tight_layout()
         plt.savefig(f'final_score_vs_attempts_{quiz_id}.png')
