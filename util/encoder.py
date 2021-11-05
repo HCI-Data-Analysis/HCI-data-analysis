@@ -11,32 +11,38 @@ class Encoder:
     def __init__(self, key_path):
         self.key_df = pd.read_csv(key_path)
 
-    def encode(self, canvas_id: int = None, student_id: int = None) -> int:
+    def encode(self, canvas_id: int = None, student_id: int = None, student_name: str = None) -> int:
         """
-        Encodes a canvas_id or student_id into a data448_id. Only 1 of (canvas_id, student_id) is required to specify a
-        student, since both should be unique, but if both are given, the function will try to find the student by
-        canvas_id first, and then by student_id second
+        Encodes a canvas_id, student_id, student_name into a data448_id. Only 1 of (canvas_id, student_id, student_name)
+        is required to specify a student, since both should be unique, but if more than one is given, the function will
+        try to find the student by canvas_id first, then by student_id second, and the student_name third
 
         :param canvas_id: a numeric canvas_id
         :param student_id: a numeric student_id
+        :param student_name: a string type student_name
         :return: the data448_id corresponding to the specified student, as given in the key
         """
-        if not canvas_id and not student_id:
-            raise EncoderException('Neither a CanvasID nor a StudentID for the given student was specified.')
+        if not canvas_id and not student_id and not student_name:
+            raise EncoderException('Neither a CanvasID, StudentID, nor a Student Name '
+                                   'for the given student was specified.')
 
         data448_id = None
         if canvas_id:
             row = self.key_df.loc[self.key_df[KeySchema.CANVAS_ID] == canvas_id]
             data448_id = self._retrieve_value_from_row(row, KeySchema.DATA448_ID)
 
-        if student_id:
+        if not data448_id and student_id:
             row = self.key_df.loc[self.key_df[KeySchema.STUDENT_ID] == student_id]
+            data448_id = self._retrieve_value_from_row(row, KeySchema.DATA448_ID)
+
+        if not data448_id and student_name:
+            row = self.key_df.loc[self.key_df[KeySchema.STUDENT_NAME] == student_name]
             data448_id = self._retrieve_value_from_row(row, KeySchema.DATA448_ID)
 
         if not data448_id:
             raise EncoderException('No students were found matching the given parameters.')
 
-        return data448_id
+        return int(data448_id)
 
     def decode(self, data448_id: int) -> (int, int):
         """
