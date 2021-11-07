@@ -43,12 +43,12 @@ def performance_by_activity_type(file_path, n_stddev, grouped_dataframe=None):
 
             # run levene's test w/ alpha value of 0.05
             alpha = 0.05
-            stat, p = levene(positive_group, neutral_group)
+            stat, p = levene(positive_group, neutral_group, negative_group)
 
             if p > alpha:
                 # do ANOVA if levene's test passes
                 print(f'ANOVA Results for {col} with facet {facet_column_name}:')
-                print(f_oneway(positive_group, neutral_group))
+                print(f_oneway(positive_group, neutral_group, negative_group))
             else:
                 print(f'levene test failed for column {col}')
 

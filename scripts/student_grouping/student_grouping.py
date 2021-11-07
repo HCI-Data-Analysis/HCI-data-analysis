@@ -38,7 +38,7 @@ def group_students(survey_path, facets, threshold) -> DataFrame:
                                                   categories=categories, ordered=True)
         figure, ax = plt.subplots()
         sns.histplot(survey, x=facet + "_group", ax=ax)
-        ax.set_ylim(0, 170)
+        ax.set_ylim(0, 170)  # Max. number of students
         plt.suptitle("Distribution for {}".format(facet))
         plt.show()
     return survey
