@@ -78,7 +78,7 @@ def get_quiz_object(quiz_id):
     for quiz_object in os.listdir(full_path):
 
         if quiz_object.endswith('.json'):
-            file_quiz_id = quiz_object.split("_")[-1]  # the course id is the 12th to 18th character in the file name
+            file_quiz_id = quiz_object.split("_")[-1].split(".")[0]  # Extract quiz id from file name
             if file_quiz_id == quiz_id:
                 quiz_object_path = os.path.join(full_path, quiz_object)
                 return quiz_object_path
