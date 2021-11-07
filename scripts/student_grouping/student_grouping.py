@@ -2,8 +2,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from pandas import DataFrame
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
 
 
 def categorize(x, threshold):
@@ -44,7 +42,3 @@ def group_students(survey_path, facets, threshold) -> DataFrame:
         plt.suptitle("Distribution for {}".format(facet))
         plt.show()
     return survey
-
-# ANOVA CODE (using directions from https://www.pythonfordatascience.org/anova-python/#anova_statsmodels)
-# model = ols('Openness ~ C(standardized_Openness)', data=survey).fit()
-# anova_table = sm.stats.anova_lm(model, typ=2)

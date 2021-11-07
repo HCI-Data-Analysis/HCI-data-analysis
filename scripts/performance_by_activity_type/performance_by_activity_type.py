@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from scipy.stats import levene, f_oneway
 
 from schemas import GradeBookSchema
 
@@ -30,8 +31,26 @@ def performance_by_activity_type(file_path, n_stddev, grouped_dataframe=None):
     for col in overall_score_cols[1:]:
 
         if grouped_dataframe is not None:
+            # If there are groups based on facets, plot categorized histograms
             g = sns.FacetGrid(overall_score_data, col=facet_column_name)
             g.map(sns.histplot, col)
+
+            # Do Levene's test and ANOVA if Levene's test passes alpha value of 0.05
+            # Generate columns for each category of facet
+            positive_group = overall_score_data[overall_score_data[facet_column_name] == 'Positive'][col]
+            neutral_group = overall_score_data[overall_score_data[facet_column_name] == 'Neutral'][col]
+            negative_group = overall_score_data[overall_score_data[facet_column_name] == 'Negative'][col]
+
+            # run levene's test w/ alpha value of 0.05
+            alpha = 0.05
+            stat, p = levene(positive_group, neutral_group)
+
+            if p > alpha:
+                # do ANOVA if levene's test passes
+                print(f'ANOVA Results for {col} with facet {facet_column_name}:')
+                print(f_oneway(positive_group, neutral_group))
+            else:
+                print(f'levene test failed for column {col}')
 
         else:
             # set up plot
