@@ -32,40 +32,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     df_average_student_attempts = pd.DataFrame(
         columns=['DATA448_ID', 'QUIZ_ID', 'attempt', 'final_score']
     )
-    df_submission_type = pd.DataFrame(
-        columns=["QUIZ_ID", "quiz_title", "submission_type"]
-    )
 
-    # distinguish submission type
-    for file in os.listdir(QUIZSCOREJSON_PATH):  # QUIZSCOREJSON_PATH = ../../data/api/canvas\quizzes
-        if file.endswith('.json'):
-            file_quiz_id = file[5:11]  #the course id is the 5th to 10th character in the file name
-            quiz_object_path = get_quiz_object(file_quiz_id)
-            with open(quiz_object_path, 'r') as quiz_object:
-                file = quiz_object.read()
-                json_file = json.loads(file)
-                if json_file:
-                    quiz_title = json_file[0]['title'].lower()
-                    if 'pre-test' in quiz_title:
-                        submission_type = {
-                            'QUIZ_ID': file_quiz_id,
-                            'quiz_title': quiz_title,
-                            'submission_type': 'Pre-Test'
-                        }
-                    elif 'post-test' in quiz_title:
-                        submission_type = {
-                            'QUIZ_ID': file_quiz_id,
-                            'quiz_title': quiz_title,
-                            'submission_type': 'Post-Test'
-                        }
-                    else:
-                        submission_type = {
-                            'QUIZ_ID': file_quiz_id,
-                            'quiz_title': quiz_title,
-                            'submission_type': 'Survey'
-                        }
-                    df_submission_type = df_submission_type.append(submission_type, ignore_index=True)
-    print(df_submission_type)
     # Get first attempt only quiz mark out of JSON files
     number_of_quizzes = 0
     for i in os.listdir(QUIZSCOREJSON_PATH):
@@ -100,10 +67,6 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
                             'possible_points': json_block['quiz_points_possible']
                         }
                         df_first_attempt = df_first_attempt.append(student_first_attempt_data, ignore_index=True)
-
-    df_first_attempt = remove_survey_from_df(df_first_attempt, df_submission_type)
-    df_average_student_attempts = remove_survey_from_df(df_average_student_attempts, df_submission_type)
-    # quiz_ids = remove_survey_from_list(quiz_ids, df_submission_type)
 
     for index, data448_id in enumerate(data448_ids):
         df_student_first_attempts = df_first_attempt.loc[df_first_attempt['DATA448_ID'] == data448_id]
@@ -226,30 +189,12 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
         plt.text(5, 4, temp_mean)
         plt.text(5, 3.7, temp_std)
 
-        quiz_name = df_submission_type['QUIZ_ID' == quiz_id]
-        print(quiz_name)
         fig.figure.suptitle(f'Final Score vs Attempts Taken For Quiz {quiz_id}')
         fig.figure.tight_layout()
         plt.savefig(f'final_score_vs_attempts_{quiz_id}.png')
         plt.close()
 
     plt.show()
-
-
-def remove_survey_from_df(df, submission_type_df):
-    for index, row in submission_type_df.iterrows():
-        if row["submission_type"] == "Survey":
-            quiz_id = row["QUIZ_ID"]
-            df = df[df.QUIZ_ID != quiz_id]
-    return df
-
-
-def remove_survey_from_list(lst, submission_type_df):
-    for index, row in submission_type_df.iterrows():
-        if row["submission_type"] == "Survey":
-            quiz_id = row["QUIZ_ID"]
-            lst.remove(quiz_id)
-    return lst
 
 
 if __name__ == '__main__':

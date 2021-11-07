@@ -1,19 +1,10 @@
-import datetime
 import json
 import os
 
 from api import CanvasAPI
-from scripts import setup_submissions_filepath
+from util import setup_submissions_filepath, DateTimeEncoder
 
 OUTPUT_DIR = "data/api/canvas"
-
-
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, z):
-        if isinstance(z, datetime.datetime):
-            return str(z)
-        else:
-            return super().default(z)
 
 
 def quiz_object_retrieval():
@@ -27,7 +18,7 @@ def quiz_object_retrieval():
     output_dir = OUTPUT_DIR
     quizzes = canvas_api.get_quizzes()
     for quiz in quizzes:
-        output_path = setup_submissions_filepath(quiz, output_dir, "quiz_objects", "quiz_object" )
+        output_path = setup_submissions_filepath(quiz, output_dir, "quiz_objects", "quiz_object")
         download_quiz(quiz, output_path)
 
 

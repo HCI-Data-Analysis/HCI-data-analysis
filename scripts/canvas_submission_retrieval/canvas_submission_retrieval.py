@@ -1,9 +1,8 @@
-import datetime
 import json
 import os
 
 from api import CanvasAPI, get_default_course_id
-from util import Encoder, mkdir_if_not_exists
+from util import Encoder, mkdir_if_not_exists, setup_submissions_filepath, DateTimeEncoder
 
 ASSIGNMENT = 'assignment'
 QUIZ = 'quiz'
@@ -11,14 +10,6 @@ REMOVE_VALUES = {
     ASSIGNMENT: ['preview_url'],
     QUIZ: ['html_url', 'result_url', 'validation_token'],
 }
-
-
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, z):
-        if isinstance(z, datetime.datetime):
-            return str(z)
-        else:
-            return super().default(z)
 
 
 def canvas_submission_retrieval(export_dir, encoder: Encoder, course_id=None):
@@ -45,21 +36,6 @@ def canvas_submission_retrieval(export_dir, encoder: Encoder, course_id=None):
         output_path = setup_submissions_filepath(quiz, course_submissions_dir, 'quizzes', 'quiz')
         quiz_submissions = quiz.get_submissions()
         download_submissions(quiz_submissions, grader_id_key, output_path, encoder, REMOVE_VALUES[QUIZ])
-
-
-# Should I move this function to somewhere that is more like util for api?
-def setup_submissions_filepath(obj, parent_dir: str, sub_dir: str, file_prefix: str) -> str:
-    """
-    Get the correct filepath for a submissions data download
-    :param obj: the object (Assignment or Quiz) whose submissions we are saving
-    :param parent_dir: the parent directory path
-    :param sub_dir: the name of the sub directory for this object type's submissions to be saved
-    :param file_prefix: a prefix to be prepended to the saved json file
-    :return: a string filepath
-    """
-    mkdir_if_not_exists(os.path.join(parent_dir, sub_dir))
-    output_path = os.path.join(parent_dir, sub_dir, f'{file_prefix}_{obj.id}.json')
-    return output_path
 
 
 def download_submissions(submissions, grader_id_key: dict, output_filepath: str, encoder: Encoder, removed_values=None):
