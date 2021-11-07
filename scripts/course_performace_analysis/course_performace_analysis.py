@@ -35,7 +35,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
         columns=['DATA448_ID', 'QUIZ_ID', 'attempt', 'final_score']
     )
     df_submission_type = pd.DataFrame(
-        columns=["QUIZ_ID", "quiz_title", "submission_type"]
+        columns=['QUIZ_ID', 'quiz_title', 'submission_type', 'total_score']
     )
 
     # distinguish submission type
@@ -48,23 +48,27 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
                 json_file = json.loads(file)
                 if json_file:
                     quiz_title = json_file[0]['title'].lower()
+                    points_possible = json_file[0]['points_possible']
                     if 'pre-test' in quiz_title:
                         submission_type = {
                             'QUIZ_ID': file_quiz_id,
                             'quiz_title': quiz_title,
-                            'submission_type': 'Pre-Test'
+                            'submission_type': 'Pre-Test',
+                            'total_score': points_possible
                         }
                     elif 'post-test' in quiz_title:
                         submission_type = {
                             'QUIZ_ID': file_quiz_id,
                             'quiz_title': quiz_title,
-                            'submission_type': 'Post-Test'
+                            'submission_type': 'Post-Test',
+                            'total_score': points_possible
                         }
                     else:
                         submission_type = {
                             'QUIZ_ID': file_quiz_id,
                             'quiz_title': quiz_title,
-                            'submission_type': 'Survey'
+                            'submission_type': 'Survey',
+                            'total_score': points_possible
                         }
                     df_submission_type = df_submission_type.append(submission_type, ignore_index=True)
 
@@ -237,7 +241,8 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
         plt.text(5, 3.7, temp_std)
 
         quiz_name = df_submission_type.loc[df_submission_type['QUIZ_ID'] == str(quiz_id), "quiz_title"].iloc[0]
-        fig.figure.suptitle(f'Final Score (out of x) vs Attempts Taken For {quiz_name}')
+        out_of_x = df_submission_type.loc[df_submission_type['QUIZ_ID'] == str(quiz_id), "total_score"].iloc[0]
+        fig.figure.suptitle(f'Final Score (out of {out_of_x}) vs Attempts Taken For {quiz_name}')
         fig.figure.tight_layout()
         plt.savefig(f'final_score_vs_attempts_{quiz_name}.png')
         plt.close()
