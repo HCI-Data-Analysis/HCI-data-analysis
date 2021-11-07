@@ -4,6 +4,8 @@ import os
 import matplotlib.patches as pch
 import matplotlib.pyplot as plt
 import pandas as pd
+import scipy as sci
+import scipy.stats
 import seaborn as sns
 from scripts import get_quiz_object
 
@@ -154,6 +156,11 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
                          w_2020_first_attempt_std]
     winter_labels = ['W2016', 'W2017', 'W2018', 'W2019', 'W2020', 'C W2020', 'F 2020']
 
+    # print out the statistics significant value of the overall final score.
+    print('25% quantile: ' + str(final_score.quantile(.25)), ' Median: ' + str(final_score.median()),
+          ' 75% quantile: ' + str(final_score.quantile(.75)), ' Mean: ' + str(current_mean),
+          ' Standard Deviation: ' + str(current_standard_dev))
+
     # print out the statistics significant value of the first attempt final score.
     print('25% quantile: ' + str(quantile_25percent), ' Median: ' + str(median),
           ' 75% quantile: ' + str(quantile_75percent), ' Mean: ' + str(mean),
@@ -234,6 +241,23 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
         fig.figure.tight_layout()
         plt.savefig(f'final_score_vs_attempts_{quiz_id}.png')
         plt.close()
+
+    # Wilcoxon signed-rank test exploration
+    print(scipy.stats.shapiro(final_score))
+    print(scipy.stats.shapiro(df_student_grade_first_attempt['first_attempt_final_score']))
+    scipy.stats.probplot(final_score, dist="norm", plot=plt)
+    plt.title("Overall Final Score Q-Q Plot")
+    plt.savefig("overall_QQ.png")
+    plt.close()
+    scipy.stats.probplot(df_student_grade_first_attempt['first_attempt_final_score'], dist="norm", plot=plt)
+    plt.title("First Attempt Final Score Q-Q Plot")
+    plt.savefig("first_attempt_QQ.png")
+    plt.close()
+    final_score = final_score
+    first_score = df_student_grade_first_attempt['first_attempt_final_score']
+    difference_score = final_score - first_score
+    wilcoxon = scipy.stats.wilcoxon(final_score, first_score)
+    print(wilcoxon)
 
     plt.show()
 
