@@ -9,9 +9,9 @@ import scipy.stats
 import seaborn as sns
 from scripts import get_quiz_object
 
-QUIZ_PATH = "../../data/api/canvas/quizzes"
-QUIZ_OBJECT_PATH = "../data/api/canvas/quiz_objects"
-PARENT_PATH = "../../data/api/canvas"
+QUIZ_PATH = "data/api/canvas/quizzes"
+QUIZ_OBJECT_PATH = "../../data/api/canvas/quiz_objects"
+PARENT_PATH = "data/api/canvas"
 
 
 def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
@@ -39,9 +39,9 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     )
 
     # distinguish submission type
-    for file in os.listdir(QUIZSCOREJSON_PATH):  # QUIZSCOREJSON_PATH = ../../data/api/canvas\quizzes
+    for file in os.listdir(QUIZ_OBJECT_PATH):  # QUIZSCOREJSON_PATH = ../../data/api/canvas\quizzes
         if file.endswith('.json'):
-            file_quiz_id = file[5:11]  #the course id is the 5th to 10th character in the file name
+            file_quiz_id = file.split("_")[-1]  #the course id is the 5th to 10th character in the file name
             quiz_object_path = get_quiz_object(file_quiz_id)
             with open(quiz_object_path, 'r') as quiz_object:
                 file = quiz_object.read()
@@ -68,6 +68,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
                         }
                     df_submission_type = df_submission_type.append(submission_type, ignore_index=True)
     print(df_submission_type)
+
     # Get first attempt only quiz mark out of JSON files
     number_of_quizzes = 0
     for i in os.listdir(QUIZSCOREJSON_PATH):
@@ -109,8 +110,8 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
 
     for index, data448_id in enumerate(data448_ids):
         df_student_first_attempts = df_first_attempt.loc[df_first_attempt['DATA448_ID'] == data448_id]
-        df_student_first_attempts = remove_survey_from_df(df_student_first_attempts,
-                                                               df_first_attempt_classification)
+        # df_student_first_attempts = remove_survey_from_df(df_student_first_attempts,
+        #                                                        df_first_attempt_classification)
 
         total_score = df_student_first_attempts['score'].sum()
         total_possible_points = df_student_first_attempts['possible_points'].sum()

@@ -5,7 +5,7 @@ import os
 from api import CanvasAPI
 from scripts import setup_submissions_filepath
 
-OUTPUT_DIR = "data/api/canvas"
+OUTPUT_DIR = "../../data/api/canvas"
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -78,9 +78,11 @@ def get_quiz_object(quiz_id):
     for quiz_object in os.listdir(full_path):
 
         if quiz_object.endswith('.json'):
-            file_quiz_id = quiz_object[12:18]  # the course id is the 12th to 18th character in the file name
+            file_quiz_id = quiz_object.split("_")[-1]  # the course id is the 12th to 18th character in the file name
             if file_quiz_id == quiz_id:
                 quiz_object_path = os.path.join(full_path, quiz_object)
                 return quiz_object_path
             else:
                 continue
+        else:
+            continue
