@@ -1,5 +1,4 @@
 class GradeBookSchema:
-    ID = 'ID'
     STUDENT_NAME = 'Student'
     STUDENT_ID = 'ID'
     SECTION = 'Section'

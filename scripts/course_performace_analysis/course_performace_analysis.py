@@ -13,7 +13,7 @@ from schemas import GradeBookSchema
 def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     sns.color_palette('bright')
     file = pd.read_csv(GRADEBOOK_PATH)
-    data448_ids = file[GradeBookSchema.ID]
+    data448_ids = file[GradeBookSchema.STUDENT_ID]
     quiz_ids = []
     final_score = file[GradeBookSchema.FINAL_SCORE]
 
