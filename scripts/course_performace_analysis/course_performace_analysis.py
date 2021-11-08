@@ -7,6 +7,7 @@ import pandas as pd
 import scipy.stats
 import seaborn as sns
 from scripts import get_quiz_object
+from util import get_quiz_id_from_file_name
 
 QUIZ_PATH = "../../data/api/canvas/quizzes"
 QUIZ_OBJECT_PATH = "../../data/api/canvas/quiz_objects"
@@ -40,7 +41,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     # distinguish submission type
     for file in os.listdir(QUIZ_OBJECT_PATH):
         if file.endswith('.json'):
-            file_quiz_id = file.split("_")[-1].split(".")[0]  # Extract quiz id from file name
+            file_quiz_id = get_quiz_id_from_file_name(file)
             quiz_object_path = get_quiz_object(file_quiz_id, QUIZ_OBJECT_PATH)
             with open(quiz_object_path, 'r') as quiz_object:
                 file = quiz_object.read()

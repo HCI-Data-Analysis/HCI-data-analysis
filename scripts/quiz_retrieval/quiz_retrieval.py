@@ -2,7 +2,7 @@ import json
 import os
 
 from api import CanvasAPI
-from util import setup_submissions_filepath, DateTimeEncoder
+from util import setup_submissions_filepath, get_quiz_id_from_file_name, DateTimeEncoder
 
 
 def quiz_object_retrieval(output_dir):
@@ -44,7 +44,7 @@ def get_quiz_name(quiz_id, quiz_object_path):
     full_path = os.path.join(quiz_object_path, "quiz_objects")
     for quiz_object in os.listdir(full_path):
         if quiz_object.endswith('.json'):
-            file_quiz_id = quiz_object.split("_")[-1].split(".")[0]
+            file_quiz_id = get_quiz_id_from_file_name(quiz_object)
 
             if file_quiz_id == quiz_id:
                 quiz_object_path = os.path.join(full_path, quiz_object)
@@ -68,7 +68,7 @@ def get_quiz_object(quiz_id, quiz_object_path):
     for quiz_object in os.listdir(quiz_object_path):
 
         if quiz_object.endswith('.json'):
-            file_quiz_id = quiz_object.split("_")[-1].split(".")[0]  # Extract quiz id from file name
+            file_quiz_id = get_quiz_id_from_file_name(quiz_object)
             if file_quiz_id == quiz_id:
                 quiz_object_path = os.path.join(quiz_object_path, quiz_object)
                 return quiz_object_path

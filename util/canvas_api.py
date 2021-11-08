@@ -19,6 +19,19 @@ def setup_submissions_filepath(obj, parent_dir: str, sub_dir: str, file_prefix: 
     return output_path
 
 
+def get_quiz_id_from_file_name(file_name):
+    """
+    Extract quiz_id from a given file name.
+    File names have the structure of [object_type]_[quiz_id].json
+    To extract the quiz id from the file name, first split the string on "_",
+    extract the last element of the result array --> [quiz_id].json
+    Then split it on ".", extracting the first element --> [quiz_id]
+    :param file_name: A string containing the file_name
+    :return: a string containing the quiz id
+    """
+    return file_name.split("_")[-1].split(".")[0]
+
+
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, z):
         if isinstance(z, datetime.datetime):
