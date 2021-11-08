@@ -14,6 +14,11 @@ def clean_background_survey(survey_df: DataFrame) -> DataFrame:
     questions = list(survey_df.columns)[1]
     new_columns = _get_columns(questions)
 
+    # column 1 is the column where the long list of answer is stored.
+    survey_df = survey_df.drop(survey_df[pd.isnull(survey_df.iloc[:, 1])].index)
+    # reassign index to avoid skipping index due to missing value
+    survey_df.index = [i for i in range(1, len(survey_df) + 1)]
+
     row_index = 1
     for row in survey_df.itertuples():
         answers = row[2].split(",")
