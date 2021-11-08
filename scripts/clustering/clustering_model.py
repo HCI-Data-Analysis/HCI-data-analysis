@@ -1,17 +1,29 @@
-import pandas as pd
-import seaborn as sns
-import os
-from util import inertia_graph, kmeans_clustering, get_groups
+from pandas import DataFrame
+from statsmodels.multivariate.manova import MANOVA
+
+from util import plot_inertia_graph, plot_kmeans_clusters, get_labels, run_kmeans_clustering
 
 
-def cluster_survey(data_path, output_path, categories):
-    data = pd.read_csv(data_path)
-    cluster_data = data.iloc[:, 1:6]
-    file_name = os.path.basename(data_path)
-    output_path_filename = os.path.join(output_path, file_name)
-    get_groups(kmeans_clustering(3, 500, cluster_data, categories), data).to_csv(output_path_filename)
-    inertia_graph(10, cluster_data)
+def cluster_survey(cluster_data, categories, k):
+    """
+    Performs clustering on the dataframe, and graphs the inertia as graph for the specified dataframe.
+    :param cluster_data: the processed dataframe to perform clustering on.
+    :param categories: the categories for labels on the pair-plot.
+    :param k: the number of clusters.
+    """
+    kmeans = run_kmeans_clustering(k, 500, cluster_data)
+    labels = get_labels(kmeans)
+    plot_kmeans_clusters(labels, cluster_data, categories)
+    plot_inertia_graph(10, cluster_data)
 
-    # Plot the data when we have the correct labeled data.
-    # sns.pairplot(data=labeled_data, hue='labels')
-    # plt.show()
+
+def manova_from_cluster_labels(manova_data: DataFrame, clusters_col_name) -> MANOVA:
+    dependent_variables_list = list(manova_data.columns.values)
+    parsed_dependent_variables = ' + '.join(filter(lambda var: var != clusters_col_name, dependent_variables_list))
+    manova = MANOVA.from_formula(f'{parsed_dependent_variables} ~ {clusters_col_name}', data=manova_data)
+    return manova
+
+
+def get_f_stat_from_manova(manova: MANOVA, clusters_col_name):
+    current_f_stat = manova.mv_test().results[clusters_col_name]['stat']['F Value'].mean()
+    return current_f_stat
