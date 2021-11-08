@@ -41,14 +41,16 @@ def performance_by_activity_type(file_path, n_stddev, grouped_dataframe=None):
             neutral_group = overall_score_data[overall_score_data[facet_column_name] == 'Neutral'][col]
             negative_group = overall_score_data[overall_score_data[facet_column_name] == 'Negative'][col]
 
+            nonzero_params = [x for x in [positive_group, neutral_group, negative_group] if len(x) is not 0]  # place non-empty DFs in params
+
             # run levene's test w/ alpha value of 0.05
             alpha = 0.05
-            stat, p = levene(positive_group, neutral_group, negative_group)
+            stat, p = levene(*nonzero_params)
 
             if p > alpha:
                 # do ANOVA if levene's test passes
                 print(f'ANOVA Results for {col} with facet {facet_column_name}:')
-                print(f_oneway(positive_group, neutral_group, negative_group))
+                print(f_oneway(*nonzero_params))
             else:
                 print(f'levene test failed for column {col}')
 
