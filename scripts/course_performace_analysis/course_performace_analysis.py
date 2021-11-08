@@ -10,9 +10,9 @@ import seaborn as sns
 from schemas import GradeBookSchema
 
 
-def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
+def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
     sns.color_palette('bright')
-    file = pd.read_csv(GRADEBOOK_PATH)
+    file = gradebook
     data448_ids = file[GradeBookSchema.STUDENT_ID]
     quiz_ids = []
     final_score = file[GradeBookSchema.FINAL_SCORE]
@@ -142,7 +142,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     first_attempt_legend = pch.Patch(color=data_graph_colors[1], label='First Attempt Score')
     ax1.legend(handles=[score_legend, first_attempt_legend])
     fig.tight_layout()
-    plt.savefig(f'overall_vs_first_attempt.png')
+    plt.savefig(f'data/graphs/overall_vs_first_attempt.png')
     plt.close()
 
     # 2) Histogram comparison plot for Actual score and First attempt only score
@@ -155,7 +155,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     ax1.set_xticklabels([f'{i}%' for i in range(40, 110, 10)])
     ax1.set_yticks(range(0, 25, 3))
     fig.tight_layout()
-    plt.savefig(f'course_performance.png')
+    plt.savefig(f'data/graphs/course_performance.png')
     plt.close()
 
     # 3) Mean and Standard Deviation graph
@@ -169,7 +169,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     ax2.errorbar(winter_labels, winter_averages, yerr=winter_deviations, capsize=4)
     ax2.set_yticks(range(60, 105, 5))
     fig.tight_layout()
-    plt.savefig(f'mean_and_standard_deviation.png')
+    plt.savefig(f'data/graphs/mean_and_standard_deviation.png')
     plt.close()
 
     # 4) Students grades to attempts taken for each quiz
@@ -193,7 +193,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
         plt.text(5, 3.7, temp_std)
         fig.figure.suptitle(f'Final Score vs Attempts Taken For Quiz {quiz_id}')
         fig.figure.tight_layout()
-        plt.savefig(f'final_score_vs_attempts_{quiz_id}.png')
+        plt.savefig(f'data/graphs/final_score_vs_attempts_{quiz_id}.png')
         plt.close()
 
     # Wilcoxon signed-rank test exploration
@@ -201,11 +201,11 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     print(scipy.stats.shapiro(df_student_grade_first_attempt['first_attempt_final_score']))
     scipy.stats.probplot(final_score, dist="norm", plot=plt)
     plt.title("Overall Final Score Q-Q Plot")
-    plt.savefig("overall_QQ.png")
+    plt.savefig("data/graphs/overall_QQ.png")
     plt.close()
     scipy.stats.probplot(df_student_grade_first_attempt['first_attempt_final_score'], dist="norm", plot=plt)
     plt.title("First Attempt Final Score Q-Q Plot")
-    plt.savefig("first_attempt_QQ.png")
+    plt.savefig("data/graphs/first_attempt_QQ.png")
     plt.close()
     final_score = final_score
     first_score = df_student_grade_first_attempt['first_attempt_final_score']
@@ -214,8 +214,3 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     print(wilcoxon)
 
     plt.show()
-
-
-if __name__ == '__main__':
-    quiz_path = os.path.join(os.getcwd(), 'quizzes')
-    course_performance_analysis('grade_book.csv', quiz_path)
