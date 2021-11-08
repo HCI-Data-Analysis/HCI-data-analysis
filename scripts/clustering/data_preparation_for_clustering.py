@@ -1,7 +1,8 @@
 import pandas as pd
 from pandas import DataFrame
 
-from schemas import ClusterSchema, SurveySchema
+from schemas import ClusterSchema
+from util import keep_latest_survey_attempt
 
 
 def prepare_data_for_clustering(survey_df: DataFrame, schema_df: DataFrame) -> DataFrame:
@@ -80,16 +81,5 @@ def preprocess_survey(survey_df: DataFrame) -> DataFrame:
     :param survey_df: the dataframe to get the most recent attempt for.
     :return: the preprocessed dataframe.
     """
-    temp_df = _keep_most_recent_attempt(survey_df)
+    temp_df = keep_latest_survey_attempt(survey_df)
     return temp_df
-
-
-def _keep_most_recent_attempt(survey_df: DataFrame) -> DataFrame:
-    """
-    Keep the most recent attempt.
-    :param survey_df: the dataframe with only the most recent attempt.
-    :return: the dataframe.
-    """
-    survey_df = survey_df.sort_values(SurveySchema.ATTEMPT)
-    survey_df = survey_df[~survey_df.index.duplicated(keep='last')]
-    return survey_df
