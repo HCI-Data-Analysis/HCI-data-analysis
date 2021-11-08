@@ -148,7 +148,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
     # 2) Histogram comparison plot for Actual score and First attempt only score
     fig, (ax1) = plt.subplots(1)
     sns.histplot(final_score, kde=True, bins=30, line_kws={'linewidth': 1}, ax=ax1).set(
-        title='Overall Score vs First Attempt Score',
+        title='Overall Final Score',
         xlabel='Grade',
         ylabel='Number of Students')
     ax1.set_xticks(range(40, 110, 10))
