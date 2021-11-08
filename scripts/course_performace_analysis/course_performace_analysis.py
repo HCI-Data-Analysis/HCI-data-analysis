@@ -6,19 +6,20 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats
 import seaborn as sns
-import scipy as sci
+
+from schemas import GradeBookSchema
 
 
 def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     sns.color_palette('bright')
     file = pd.read_csv(GRADEBOOK_PATH)
-    data448_ids = file['ID']
+    data448_ids = file[GradeBookSchema.ID]
     quiz_ids = []
-    final_score = file['Overall Final Score']
+    final_score = file[GradeBookSchema.FINAL_SCORE]
 
-    overall_pre_test = file['Overall Pre-Tests (880658)']
-    overall_post_test = file['Overall Post-Tests (880660)']
-    overall_pre_post_grade = 40
+    overall_pre_test = file[GradeBookSchema.PRE_TEST_SCORE]
+    overall_post_test = file[GradeBookSchema.POST_TEST_SCORE]
+    overall_pre_post_grade = GradeBookSchema.COMBINED_PRE_POST_WORTH
 
     df_first_attempt = pd.DataFrame(
         columns=['DATA448_ID', 'QUIZ_ID', 'score', 'time', 'possible_points']
