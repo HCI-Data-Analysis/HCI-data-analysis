@@ -42,7 +42,7 @@ def course_performance_analysis(GRADEBOOK_PATH, QUIZSCOREJSON_PATH):
     for file in os.listdir(QUIZ_OBJECT_PATH):
         if file.endswith('.json'):
             file_quiz_id = file.split("_")[-1].split(".")[0]  # Extract quiz id from file name
-            quiz_object_path = get_quiz_object(file_quiz_id)
+            quiz_object_path = get_quiz_object(file_quiz_id, QUIZ_OBJECT_PATH)
             with open(quiz_object_path, 'r') as quiz_object:
                 file = quiz_object.read()
                 json_file = json.loads(file)

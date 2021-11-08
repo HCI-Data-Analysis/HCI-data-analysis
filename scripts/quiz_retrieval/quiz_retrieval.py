@@ -5,8 +5,6 @@ import os
 from api import CanvasAPI
 from scripts import setup_submissions_filepath
 
-OUTPUT_DIR = "../../data/api/canvas"
-
 
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, z):
@@ -16,7 +14,7 @@ class DateTimeEncoder(json.JSONEncoder):
             return super().default(z)
 
 
-def quiz_object_retrieval():
+def quiz_object_retrieval(output_dir):
     """
     Retrieve all quiz objects as .json files from the course and download all quizzes into
         "data/api/canvas/quiz_objects"
@@ -24,7 +22,6 @@ def quiz_object_retrieval():
     :return:
     """
     canvas_api = CanvasAPI()
-    output_dir = OUTPUT_DIR
     quizzes = canvas_api.get_quizzes()
     for quiz in quizzes:
         output_path = setup_submissions_filepath(quiz, output_dir, "quiz_objects", "quiz_object" )
@@ -46,16 +43,16 @@ def download_quiz(quiz, output_filepath):
         f.write('[' + ','.join(json_quiz) + ']')
 
 
-def get_quiz_name(quiz_id):
+def get_quiz_name(quiz_id, quiz_object_path):
     """
     Return the name of the quiz as a string giving the quiz_id
     :param quiz_id: A string that contains the quiz_id
     :return: A string that contains the name of the quiz
     """
-    full_path = os.path.join(OUTPUT_DIR, "quiz_objects")
+    full_path = os.path.join(quiz_object_path, "quiz_objects")
     for quiz_object in os.listdir(full_path):
         if quiz_object.endswith('.json'):
-            file_quiz_id = quiz_object[12:18]  # the course id is the 12th to 18th character in the file name
+            file_quiz_id = quiz_object.split("_")[-1].split(".")[0]
 
             if file_quiz_id == quiz_id:
                 quiz_object_path = os.path.join(full_path, quiz_object)
@@ -68,19 +65,19 @@ def get_quiz_name(quiz_id):
                         return quiz_id + " can't retrieve quiz name"
 
 
-def get_quiz_object(quiz_id):
+def get_quiz_object(quiz_id, quiz_object_path):
     """
     Returns the path of the quiz object with the corresponding quiz_id
     :param quiz_id: a string containing the quiz id
     :return: the path of the quiz object with the corresponding quiz_id
     """
-    full_path = os.path.join(OUTPUT_DIR, "quiz_objects")
-    for quiz_object in os.listdir(full_path):
+
+    for quiz_object in os.listdir(quiz_object_path):
 
         if quiz_object.endswith('.json'):
             file_quiz_id = quiz_object.split("_")[-1].split(".")[0]  # Extract quiz id from file name
             if file_quiz_id == quiz_id:
-                quiz_object_path = os.path.join(full_path, quiz_object)
+                quiz_object_path = os.path.join(quiz_object_path, quiz_object)
                 return quiz_object_path
             else:
                 continue
