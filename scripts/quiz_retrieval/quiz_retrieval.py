@@ -1,17 +1,8 @@
-import datetime
 import json
 import os
 
 from api import CanvasAPI
-from scripts import setup_submissions_filepath
-
-
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, z):
-        if isinstance(z, datetime.datetime):
-            return str(z)
-        else:
-            return super().default(z)
+from util import setup_submissions_filepath, DateTimeEncoder
 
 
 def quiz_object_retrieval(output_dir):
@@ -24,7 +15,7 @@ def quiz_object_retrieval(output_dir):
     canvas_api = CanvasAPI()
     quizzes = canvas_api.get_quizzes()
     for quiz in quizzes:
-        output_path = setup_submissions_filepath(quiz, output_dir, "quiz_objects", "quiz_object" )
+        output_path = setup_submissions_filepath(quiz, output_dir, "quiz_objects", "quiz_object")
         download_quiz(quiz, output_path)
 
 
@@ -46,6 +37,7 @@ def download_quiz(quiz, output_filepath):
 def get_quiz_name(quiz_id, quiz_object_path):
     """
     Return the name of the quiz as a string giving the quiz_id
+    :param quiz_object_path: a string containing the directory of where the quiz objects are stored
     :param quiz_id: A string that contains the quiz_id
     :return: A string that contains the name of the quiz
     """
@@ -68,6 +60,7 @@ def get_quiz_name(quiz_id, quiz_object_path):
 def get_quiz_object(quiz_id, quiz_object_path):
     """
     Returns the path of the quiz object with the corresponding quiz_id
+    :param quiz_object_path: a string containing the directory of where the quiz objects are stored
     :param quiz_id: a string containing the quiz id
     :return: the path of the quiz object with the corresponding quiz_id
     """

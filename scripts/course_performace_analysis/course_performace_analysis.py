@@ -4,7 +4,6 @@ import os
 import matplotlib.patches as pch
 import matplotlib.pyplot as plt
 import pandas as pd
-import scipy as sci
 import scipy.stats
 import seaborn as sns
 from scripts import get_quiz_object
