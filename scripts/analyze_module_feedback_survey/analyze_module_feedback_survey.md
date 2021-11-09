@@ -1,4 +1,4 @@
-### Class
+### Lecture
 
 3078650: When considering the topics covered in this course so far, I would say that for most of the modules in this course, the ideal format for delivering the lecture material to me is:
 

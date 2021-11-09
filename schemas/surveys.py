@@ -17,6 +17,36 @@ class TASurveySchema:
 
 class ModuleFeedbackSchema(SurveySchema):
     class Questions:
+        first_to_second_col_name_map = {
+            'When considering the topics covered in this course so far, I would say that for most of the modules in '
+            'this course, the ideal format for delivering the lecture material to me is:':
+                'When considering the topics covered in the second half of this course, I would say that for most of '
+                'the modules in this course, the ideal format for delivering the lecture material to me is:',
+            'In general, I feel my performance (e.g., my grades) in the pre-tests, post-tests, tutorial activities, '
+            'and main activities reflect how skillful I am in these modules.\nIn particular, if I did not do well in '
+            'a module, it is mostly because I was not good at the material. On the other hand, if I did well, '
+            'it was mostly because I was good at the material.':
+                'When I think about how I did in the second half of this course, I feel my performance (e.g., '
+                'my grades) in the pre-tests, post-tests, tutorial activities, and main activities reflect how '
+                'skillful I am in these modules.\nIn particular, if I did not do well in a module, it is mostly '
+                'because I was not good at the material. On the other hand, if I did well, it was mostly because I '
+                'was good at the material.',
+            'In general, I feel my performance (e.g., my grades) in the pre-tests, post-tests, tutorial activities, '
+            'and main activities reflect how interested I am in these modules.\nIn particular, if I did not do well '
+            'in a module, it is mostly because I was not interested in the material. On the other hand, '
+            'if I did well, it was mostly because I was interested in the material.':
+                'When I think about how I did in the second half of this course, I feel my performance (e.g., '
+                'my grades) in the pre-tests, post-tests, tutorial activities, and main activities reflect how '
+                'interested I am in these modules.\nIn particular, if I did not do well in a module, it is mostly '
+                'because I was not interested in the material. On the other hand, if I did well, it was mostly '
+                'because I was interested in the material.',
+        }
+
+        answer_option_map = {
+            'Almost never used scheduled class time for these (Almost always did them outside of class time)':
+                'Almost never did I use scheduled class time for these (Almost always I did them outside of class time)',
+        }
+
         MC_SINGLE_ANSWER = [
             'When considering the topics covered in this course so far, I would say that for most of the modules in '
             'this course, the ideal format for delivering the lecture material to me is:',
@@ -111,3 +141,17 @@ class ModuleFeedbackSchema(SurveySchema):
 
             'Any other suggestions you\'d like to provide to help us improve these modules?',
         ]
+
+        @staticmethod
+        def convert_col_name(col_name: str) -> str:
+            if col_name in ModuleFeedbackSchema.Questions.first_to_second_col_name_map:
+                return ModuleFeedbackSchema.Questions.first_to_second_col_name_map[col_name]
+            else:
+                return col_name
+
+        @staticmethod
+        def convert_answer_option(answer_option: str) -> str:
+            if answer_option in ModuleFeedbackSchema.Questions.answer_option_map:
+                return ModuleFeedbackSchema.Questions.answer_option_map[answer_option]
+            else:
+                return answer_option
