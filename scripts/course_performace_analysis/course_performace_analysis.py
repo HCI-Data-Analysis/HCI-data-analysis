@@ -269,8 +269,8 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
         temp_std = "Std Dev: " + str(round(students_per_quiz['final_score'].std(), 2))
         df = pd.DataFrame(quiz_attempt_grade_data)
 
-        fig = sns.jointplot(x='final_score', y='attempts', kind='reg', data=df)
-        fig.set_axis_labels('Final Score', 'Attempts')
+        fig = sns.jointplot(x='attempts', y='final_score', kind='reg', data=df)
+        fig.set_axis_labels('Attempts', 'Final Score')
         fig.ax_marg_x.set_xlim(0, 110)
         fig.ax_marg_y.set_ylim(0, 4)
         plt.text(5, 4, temp_mean)
@@ -284,7 +284,9 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
         plt.savefig(f'final_score_vs_attempts_{quiz_name}.png')
         plt.close()
 
-    # Wilcoxon signed-rank test exploration
+
+
+    # Wilcoxon signed-rank test exploration - overall
     print(scipy.stats.shapiro(final_score))
     print(scipy.stats.shapiro(df_student_grade_first_attempt['first_attempt_final_score']))
     scipy.stats.probplot(final_score, dist="norm", plot=plt)
@@ -297,8 +299,27 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
     plt.close()
     final_score = final_score
     first_score = df_student_grade_first_attempt['first_attempt_final_score']
-    difference_score = final_score - first_score
+    # difference_score = final_score - first_score
     wilcoxon = scipy.stats.wilcoxon(final_score, first_score)
+    print(wilcoxon)
+
+    plt.show()
+
+    # Wilcoxon signed-rank test exploration - quiz
+    print(scipy.stats.shapiro(df_student_grade_first_attempt['overall_quiz_score']))
+    print(scipy.stats.shapiro(df_student_grade_first_attempt['first_attempt_quiz_score']))
+    scipy.stats.probplot(final_score, dist="norm", plot=plt)
+    plt.title("Overall Quiz Score Q-Q Plot")
+    plt.savefig("data/graphs/quiz_QQ.png")
+    plt.close()
+    scipy.stats.probplot(df_student_grade_first_attempt['first_attempt_quiz_score'], dist="norm", plot=plt)
+    plt.title("First Attempt Quiz Score Q-Q Plot")
+    plt.savefig("data/graphs/first_attempt_quiz_QQ.png")
+    plt.close()
+    quiz_final_score = df_student_grade_first_attempt['overall_quiz_score']
+    first_quiz_score = df_student_grade_first_attempt['first_attempt_final_score']
+    # difference_score = quiz_final_score - first_quiz_score
+    wilcoxon = scipy.stats.wilcoxon(quiz_final_score, first_quiz_score)
     print(wilcoxon)
 
     plt.show()
