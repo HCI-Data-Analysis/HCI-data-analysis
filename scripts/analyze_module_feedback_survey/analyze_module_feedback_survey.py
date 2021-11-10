@@ -75,10 +75,7 @@ def create_answer_frequency_dict(data: iter, is_second=False):
     freq = {}
     for value in data:
         str_value = str(value)  # resolves the difference in dtypes from pandas
-        temp = str_value
         str_value = ModuleFeedbackSchema.Questions.convert_answer_option(str_value) if is_second else str_value
-        if temp != str_value:
-            a = 7
         freq[str_value] = freq.get(str_value, 0) + 1
 
     if NAN in freq:
