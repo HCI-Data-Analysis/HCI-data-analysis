@@ -1,3 +1,5 @@
+import os
+
 from scripts import generate_key, gradebook_anonymize, survey_anonymize, anonymize_ta_survey
 from util import Encoder, mkdir_if_not_exists, KEY_PATH
 
@@ -12,6 +14,11 @@ IMPRESSION_SURVEY_PATH_2 = 'raw_data/Your_Impression_of_HCI__10_min_Header-Secon
 IMPRESSION_EXPORT_FILENAME_2 = 'impression_survey2'
 TA_SURVEY_PATH = 'raw_data/341_TA_resources_survey_W2020T2_September_13_2021_12.36.csv'
 TA_EXPORT_FILENAME = 'ta_survey'
+
+module_feedback_survey_paths = [
+    'raw_data/ModuleFeedback1.csv'
+    'raw_data/ModuleFeedback2.csv'
+]
 
 if __name__ == '__main__':
     mkdir_if_not_exists(EXPORT_DIR)
@@ -30,6 +37,11 @@ if __name__ == '__main__':
 
     # Convert Impressions Survey #2
     survey_anonymize(IMPRESSION_SURVEY_PATH_2, EXPORT_DIR, IMPRESSION_EXPORT_FILENAME_2, encoder)
+
+    # Convert Module Feedback Surveys
+    for feedback_survey_path in module_feedback_survey_paths:
+        file_name = os.path.basename(feedback_survey_path)
+        survey_anonymize(feedback_survey_path, EXPORT_DIR, file_name, encoder)
 
     # Convert TA Survey
     anonymize_ta_survey(TA_SURVEY_PATH, EXPORT_DIR, TA_EXPORT_FILENAME, encoder)
