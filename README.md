@@ -51,11 +51,22 @@ in `.env` will be used.
 
 > #### Instructions
 > 1. Navigate to the root directory.
-> 2. Make sure Key.csv is in `/key` directory.
+> 2. Make sure Key.csv is in `/keys` directory.
 > 3. Open `submission_retrieval.py` and ensure that the names and file paths of each file are accurate.
 > 4. Run `python canvas_submission_retrieval.py [COURSE_ID]`.
 > - Now in `/data` directory should have a `/canvas_submission` folder that contains a `/<COURSE_ID>` folder which stores anonymized submission information in `.json` format.
 > - More details about the format of the resulting `.json` files can be found in the related `.md` files in `/scripts`.
+
+## Retrieve Reading Logs from Canvas
+
+Run `python reading_logs_retrieval.py [COURSE_ID]`. If no `COURSE_ID` is specified, then the `CANVAS_COURSE_ID`
+in `.env` will be used.
+
+> #### Instructions
+> 1. Navigate to the root directory.
+> 2. Make sure Key.csv is in `/keys` directory.
+> 3. Open `reading_logs_retrieval.py` and ensure that the names and file paths of each file are accurate.
+> 4. Run `python reading_logs_retrieval.py [COURSE_ID]`.
 
 ## Determine Average KMeans Iterations
 
