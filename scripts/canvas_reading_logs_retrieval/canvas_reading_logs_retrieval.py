@@ -36,7 +36,7 @@ def setup_reading_logs_filepath(parent_dir: str, sub_dir: str, assignment) -> st
     :param assignment: the assignment we are retrieving the reading logs for
     :return: a string filepath
     """
-    if assignment.submission_type == 'online_upload':
+    if assignment.submission_type == SUBMISSION_TYPE:
         output_path = os.path.join(parent_dir, sub_dir, str(assignment.id))
         mkdir_if_not_exists(output_path)
         return output_path
