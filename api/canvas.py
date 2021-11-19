@@ -40,5 +40,3 @@ class CanvasAPI:
             course_id = get_default_course_id()
         assignment = self.canvas_api.get_course(course_id).get_assignment(assignment_id)
         return assignment
-
-
