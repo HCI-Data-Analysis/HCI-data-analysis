@@ -1,4 +1,5 @@
 import os
+import ssl
 
 from api import CanvasAPI, get_default_course_id
 from util import Encoder, mkdir_if_not_exists
@@ -48,6 +49,7 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
     :param output_filepath: the filepath for this data to be saved in
     :param encoder: encoder instance used to encode student ids into random ids
     """
+    context = ssl.SSLContext()
     for submission in submissions:
         submission_dict = submission.__dict__
         if submission_dict['submission_type'] == SUBMISSION_TYPE:
@@ -56,6 +58,6 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
             mkdir_if_not_exists(output_filepath, True)
             if len(submission_dict['attachments']) == 1:
                 submission_url = submission_dict['attachments'][0].get('url', None)
-                with urlopen(submission_url) as zip_response:
+                with urlopen(submission_url, context=context) as zip_response:
                     with ZipFile(BytesIO(zip_response.read())) as zip_file:
                         zip_file.extractall(output_filepath)
