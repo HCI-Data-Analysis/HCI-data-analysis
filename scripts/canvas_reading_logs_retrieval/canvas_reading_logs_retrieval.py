@@ -58,7 +58,10 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
             mkdir_if_not_exists(output, True)
             for attachment in submission_dict['attachments']:
                 submission_url = attachment.get('url', None)
-                urlretrieve(submission_url, output)
+                ssl._create_default_https_context = ssl.create_default_context()
+                with urlopen(submission_url, context=context) as file, open(os.path.join(output, file_name), 'wb') as f:
+                    file_name = file.headers.get_filename()
+                    f.write(file.read())
                 # with urlopen(submission_url, context=context) as zip_response:
                 #     file_type = zip_response.headers.get_content_type()
                 #     file_name = zip_response.headers.get_filename()
