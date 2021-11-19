@@ -23,7 +23,7 @@ def canvas_reading_logs_retrieval(export_dir, encoder: Encoder, course_id=None):
     assignments = canvas_api.get_assignments(course_id)
 
     for assignment in assignments:
-        output_path = setup_reading_logs_filepath(course_reading_logs_dir, 'reading_logs')
+        output_path = setup_reading_logs_filepath(course_reading_logs_dir, 'reading_logs', assignment)
         assignment_submissions = assignment.get_submissions()
         download_reading_logs(assignment_submissions, output_path, encoder)
 
