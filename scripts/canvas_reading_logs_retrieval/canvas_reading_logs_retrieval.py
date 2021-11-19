@@ -19,7 +19,7 @@ def canvas_reading_logs_retrieval(export_dir, encoder: Encoder, course_id=None, 
     course_id = course_id or get_default_course_id()
     course_reading_logs_dir = mkdir_if_not_exists(os.path.join(export_dir, course_id))
 
-    assignment = canvas_api.get_assignment(course_id)
+    assignment = canvas_api.get_assignment(assignment_id)
 
     output_path = setup_reading_logs_filepath(course_reading_logs_dir, 'reading_logs')
     assignment_submissions = assignment.get_submissions()
