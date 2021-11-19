@@ -36,8 +36,8 @@ def setup_reading_logs_filepath(parent_dir: str, sub_dir: str, assignment) -> st
     :param assignment: the assignment we are retrieving the reading logs for
     :return: a string filepath
     """
-    if assignment.submission_type == SUBMISSION_TYPE:
-        output_path = os.path.join(parent_dir, sub_dir, str(assignment.id))
+    if getattr(assignment, 'submission_type', None) == SUBMISSION_TYPE:
+        output_path = os.path.join(parent_dir, sub_dir, str(getattr(assignment, 'assignment_id', None)))
         mkdir_if_not_exists(output_path)
         return output_path
     return ''
