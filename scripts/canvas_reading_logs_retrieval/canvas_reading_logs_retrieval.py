@@ -23,12 +23,12 @@ def canvas_reading_logs_retrieval(export_dir, encoder: Encoder, course_id=None):
     assignments = canvas_api.get_assignments(course_id)
 
     for assignment in assignments:
-        output_path = setup_reading_logs_filepath(course_reading_logs_dir, 'reading_logs', assignment)
+        output_path = setup_reading_logs_filepath(course_reading_logs_dir, 'reading_logs')
         assignment_submissions = assignment.get_submissions()
         download_reading_logs(assignment_submissions, output_path, encoder)
 
 
-def setup_reading_logs_filepath(parent_dir: str, sub_dir: str, assignment) -> str:
+def setup_reading_logs_filepath(parent_dir: str, sub_dir: str) -> str:
     """
     Get the correct filepath for a reading logs download
     :param parent_dir: the parent directory path
@@ -36,11 +36,9 @@ def setup_reading_logs_filepath(parent_dir: str, sub_dir: str, assignment) -> st
     :param assignment: the assignment we are retrieving the reading logs for
     :return: a string filepath
     """
-    if getattr(assignment, 'submission_type', None) == SUBMISSION_TYPE:
-        output_path = os.path.join(parent_dir, sub_dir, str(getattr(assignment, 'assignment_id', None)))
-        mkdir_if_not_exists(output_path)
-        return output_path
-    return ''
+    output_path = os.path.join(parent_dir, sub_dir)
+    mkdir_if_not_exists(output_path)
+    return output_path
 
 
 def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
@@ -53,7 +51,8 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
     for submission in submissions:
         submission_dict = submission.__dict__
         if submission_dict['submission_type'] == SUBMISSION_TYPE:
-            output_filepath = os.path.join(output_filepath, str(encoder.encode(canvas_id=submission_dict['user_id'])))
+            output_filepath = os.path.join(output_filepath, submission_dict['assignment_id'],
+                                           str(encoder.encode(canvas_id=submission_dict['user_id'])))
             mkdir_if_not_exists(output_filepath)
             submission_url = submission_dict['attachments'].get('url', None)
             with urlopen(submission_url) as zip_response:
