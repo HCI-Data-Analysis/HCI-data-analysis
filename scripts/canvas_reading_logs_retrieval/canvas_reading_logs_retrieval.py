@@ -55,11 +55,11 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
         submission_dict = submission.__dict__
         if submission_dict['submission_type'] == SUBMISSION_TYPE:
             output = os.path.join(output_filepath, str(submission_dict['assignment_id']),
-                                           str(encoder.encode(canvas_id=submission_dict['user_id'])))
+                                  str(encoder.encode(canvas_id=submission_dict['user_id'])))
             mkdir_if_not_exists(output, True)
             if len(submission_dict['attachments']) == 1:
                 submission_url = submission_dict['attachments'][0].get('url', None)
                 with urlopen(submission_url, context=context) as zip_response:
-                    if zipfile.is_zipfile(zip_response):
-                        with ZipFile(BytesIO(zip_response.read())) as zip_file:
-                            zip_file.extractall(output)
+                    print(zip_response)
+                    with ZipFile(BytesIO(zip_response.read())) as zip_file:
+                        zip_file.extractall(output)
