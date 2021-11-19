@@ -3,9 +3,7 @@ import ssl
 
 from api import CanvasAPI, get_default_course_id
 from util import Encoder, mkdir_if_not_exists
-from io import BytesIO
-from urllib.request import urlopen, urlretrieve
-from zipfile import ZipFile
+from urllib.request import urlopen
 
 SUBMISSION_TYPE = 'online_upload'
 
@@ -50,6 +48,8 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
     :param encoder: encoder instance used to encode student ids into random ids
     """
     context = ssl.SSLContext()
+    print(len(submissions))
+    count = 0
     for submission in submissions:
         submission_dict = submission.__dict__
         if submission_dict['submission_type'] == SUBMISSION_TYPE:
@@ -63,6 +63,8 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
                     file_name = file.headers.get_filename()
                     with open(os.path.join(output, file_name), 'wb') as f:
                         f.write(file.read())
+                        count += 1
+                print(count)
                 # with urlopen(submission_url, context=context) as zip_response:
                 #     file_type = zip_response.headers.get_content_type()
                 #     file_name = zip_response.headers.get_filename()
