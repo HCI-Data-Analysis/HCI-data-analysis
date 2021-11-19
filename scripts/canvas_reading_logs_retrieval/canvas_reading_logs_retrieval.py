@@ -48,7 +48,7 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
     :param encoder: encoder instance used to encode student ids into random ids
     """
     context = ssl.SSLContext()
-    print(len(submissions))
+    print(submissions.totalCount)
     count = 0
     for submission in submissions:
         submission_dict = submission.__dict__
