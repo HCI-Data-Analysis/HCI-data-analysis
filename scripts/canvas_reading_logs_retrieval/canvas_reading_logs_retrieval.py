@@ -51,7 +51,7 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
     for submission in submissions:
         submission_dict = submission.__dict__
         if submission_dict['submission_type'] == SUBMISSION_TYPE:
-            output_filepath = os.path.join(output_filepath, submission_dict['assignment_id'],
+            output_filepath = os.path.join(output_filepath, str(submission_dict['assignment_id']),
                                            str(encoder.encode(canvas_id=submission_dict['user_id'])))
             mkdir_if_not_exists(output_filepath)
             submission_url = submission_dict['attachments'].get('url', None)
