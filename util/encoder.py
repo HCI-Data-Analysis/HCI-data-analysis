@@ -40,6 +40,7 @@ class Encoder:
             data448_id = self._retrieve_value_from_row(row, KeySchema.DATA448_ID)
 
         if not data448_id and canvas_id != 0:
+            print(canvas_id)
             raise EncoderException('No students were found matching the given parameters.')
 
         return int(data448_id)
