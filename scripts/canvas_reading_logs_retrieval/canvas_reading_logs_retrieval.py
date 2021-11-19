@@ -1,6 +1,5 @@
 import os
 import ssl
-import zipfile
 
 from api import CanvasAPI, get_default_course_id
 from util import Encoder, mkdir_if_not_exists
@@ -57,9 +56,14 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
             output = os.path.join(output_filepath, str(submission_dict['assignment_id']),
                                   str(encoder.encode(canvas_id=submission_dict['user_id'])))
             mkdir_if_not_exists(output, True)
-            if len(submission_dict['attachments']) == 1:
-                submission_url = submission_dict['attachments'][0].get('url', None)
+            for attachment in submission_dict['attachments']:
+                submission_url = attachment.get('url', None)
                 with urlopen(submission_url, context=context) as zip_response:
-                    print(zip_response.read())
-                    with ZipFile(BytesIO(zip_response.read())) as zip_file:
-                        zip_file.extractall(output)
+                    file_type = zip_response.headers.get_content_type()
+                    file_name = zip_response.headers.get_filename()
+                    if file_type == 'application/zip':
+                        with ZipFile(BytesIO(zip_response.read())) as zip_file:
+                            zip_file.extractall(output)
+                    else:
+                        with open(os.path.join(output, file_name), 'wb') as f:
+                            f.write(zip_response.read())
