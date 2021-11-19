@@ -35,4 +35,10 @@ class CanvasAPI:
         quiz = self.canvas_api.get_course(course_id).get_quiz(quiz_id)
         return quiz
 
+    def get_assignment(self, assignment_id, course_id=None):
+        if not course_id:
+            course_id = get_default_course_id()
+        assignment = self.canvas_api.get_course(course_id).get_assignment(assignment_id)
+        return assignment
+
 

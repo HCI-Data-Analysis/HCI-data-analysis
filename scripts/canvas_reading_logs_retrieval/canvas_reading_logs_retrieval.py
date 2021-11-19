@@ -8,7 +8,7 @@ from urllib.request import urlopen
 SUBMISSION_TYPE = 'online_upload'
 
 
-def canvas_reading_logs_retrieval(export_dir, encoder: Encoder, course_id=None):
+def canvas_reading_logs_retrieval(export_dir, encoder: Encoder, course_id=None, assignment_id=None):
     """
     Downloads reading logs.
     :param export_dir: the container directory to store all submission data within
@@ -19,12 +19,11 @@ def canvas_reading_logs_retrieval(export_dir, encoder: Encoder, course_id=None):
     course_id = course_id or get_default_course_id()
     course_reading_logs_dir = mkdir_if_not_exists(os.path.join(export_dir, course_id))
 
-    assignments = canvas_api.get_assignments(course_id)
+    assignment = canvas_api.get_assignment(course_id)
 
-    for assignment in assignments:
-        output_path = setup_reading_logs_filepath(course_reading_logs_dir, 'reading_logs')
-        assignment_submissions = assignment.get_submissions()
-        download_reading_logs(assignment_submissions, output_path, encoder)
+    output_path = setup_reading_logs_filepath(course_reading_logs_dir, 'reading_logs')
+    assignment_submissions = assignment.get_submissions()
+    download_reading_logs(assignment_submissions, output_path, encoder)
 
 
 def setup_reading_logs_filepath(parent_dir: str, sub_dir: str) -> str:
