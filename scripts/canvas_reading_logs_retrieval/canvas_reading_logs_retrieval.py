@@ -48,11 +48,6 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
     :param encoder: encoder instance used to encode student ids into random ids
     """
     context = ssl.SSLContext()
-    a = 0
-    for submission in submissions:
-        a += 1
-    print(a)
-    count = 0
     for submission in submissions:
         submission_dict = submission.__dict__
         if submission_dict['submission_type'] == SUBMISSION_TYPE:
@@ -66,14 +61,3 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
                     file_name = file.headers.get_filename()
                     with open(os.path.join(output, file_name), 'wb') as f:
                         f.write(file.read())
-                        count += 1
-                print(count)
-                # with urlopen(submission_url, context=context) as zip_response:
-                #     file_type = zip_response.headers.get_content_type()
-                #     file_name = zip_response.headers.get_filename()
-                #     if file_type == 'application/zip':
-                #         with ZipFile(BytesIO(zip_response.read())) as zip_file:
-                #             zip_file.extractall(output)
-                #     else:
-                #         with open(os.path.join(output, file_name), 'wb') as f:
-                #             f.write(zip_response.read())
