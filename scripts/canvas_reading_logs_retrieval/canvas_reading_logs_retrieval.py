@@ -53,7 +53,7 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
         if submission_dict['submission_type'] == SUBMISSION_TYPE:
             output_filepath = os.path.join(output_filepath, str(submission_dict['assignment_id']),
                                            str(encoder.encode(canvas_id=submission_dict['user_id'])))
-            mkdir_if_not_exists(output_filepath)
+            mkdir_if_not_exists(output_filepath, True)
             submission_url = submission_dict['attachments'].get('url', None)
             with urlopen(submission_url) as zip_response:
                 with ZipFile(BytesIO(zip_response.read())) as zip_file:
