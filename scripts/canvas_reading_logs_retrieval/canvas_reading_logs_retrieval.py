@@ -14,6 +14,7 @@ def canvas_reading_logs_retrieval(export_dir, encoder: Encoder, course_id=None, 
     :param export_dir: the container directory to store all submission data within
     :param encoder: encoder instance used to encode student ids into random ids
     :param course_id: the course id to download submissions for (defaults to the course id set in .env)
+    :param assignment_id: the id of the assignment to download reading logs for.
     """
     canvas_api = CanvasAPI()
     course_id = course_id or get_default_course_id()
@@ -53,10 +54,11 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
             output = os.path.join(output_filepath, str(submission_dict['assignment_id']),
                                   str(encoder.encode(canvas_id=submission_dict['user_id'])))
             mkdir_if_not_exists(output, True)
+            count = 0
             for attachment in submission_dict['attachments']:
                 submission_url = attachment.get('url', None)
                 ssl._create_default_https_context = ssl.create_default_context()
                 with urlopen(submission_url, context=context) as file:
-                    file_name = file.headers.get_filename()
-                    with open(os.path.join(output, file_name), 'wb') as f:
+                    with open(os.path.join(output, f'file-{count}'), 'wb') as f:
                         f.write(file.read())
+                count += 1
