@@ -1,8 +1,5 @@
 import re
-from textwrap import wrap
 
-import matplotlib
-from matplotlib import pyplot as plt
 from pandas import DataFrame, Series
 
 from schemas import ModuleFeedbackSchema
@@ -35,21 +32,21 @@ def analyze_module_feedback(survey_df: DataFrame):
 
     for question_col_name in ModuleFeedbackSchema.Questions.MC_SINGLE_ANSWER:
         print_freq_dict(processed_survey_df[question_col_name], question_col_name)
-        plot_bar_graph(processed_survey_df[question_col_name], question_col_name)
 
     for question_col_name in ModuleFeedbackSchema.Questions.MC_MULTI_ANSWER:
         data = preprocess_multiple_answer_data(processed_survey_df[question_col_name])
         print_freq_dict(data, question_col_name)
-        plot_bar_graph(data, question_col_name)
 
 
 def preprocess_module_feedback_survey(survey_df: DataFrame) -> DataFrame:
+    """Preprocessing needed for module feedback surveys"""
     keep_last_attempt_df = keep_latest_survey_attempt(survey_df)
     ids_removed_from_headers = remove_id_from_question_titles(keep_last_attempt_df)
     return ids_removed_from_headers
 
 
 def remove_id_from_question_titles(survey_df: DataFrame) -> DataFrame:
+    """Removes question ids from the header strings of a DataFrame"""
     def remove_id_prefix(col_name):
         regex = r'^([0-9]{7}: )'
         id_stripped_string = re.sub(regex, '', col_name)
@@ -60,9 +57,13 @@ def remove_id_from_question_titles(survey_df: DataFrame) -> DataFrame:
 
 
 def preprocess_multiple_answer_data(data: Series) -> []:
+    """
+    Breaks a Series containing strings of comma-separated-responses into a list of each response separately
+    :param data: a Series object
+    :return: a list of response strings
+    """
     separated_values = []
     for value in data:
-        # FIXME: this could be better, honestly
         if not value or str(value) == NAN:
             separated_values.append(NAN)
             continue
@@ -71,7 +72,13 @@ def preprocess_multiple_answer_data(data: Series) -> []:
     return separated_values
 
 
-def create_answer_frequency_dict(data: iter, is_second=False):
+def create_answer_frequency_dict(data: iter, is_second=False) -> dict:
+    """
+    Creates a frequency dictionary to tally responses to a question
+    :param data: an iterable (either Series or list)
+    :param is_second: whether this is the second survey. This is to resolve minor wording changes between surveys
+    :return: { str: int }
+    """
     freq = {}
     for value in data:
         str_value = str(value)  # resolves the difference in dtypes from pandas
@@ -84,23 +91,15 @@ def create_answer_frequency_dict(data: iter, is_second=False):
     return freq
 
 
-def set_plot_settings():
-    font = {
-        'family': 'sans-serif',
-        'weight': 'normal',
-        'size': 10,
-    }
-    matplotlib.rc('font', **font)
-
-    axes = {
-        'titlesize': 10,
-    }
-    matplotlib.rc('axes', **axes)
-
-
 def print_freq_dict(data: iter, question_text: str, compare_data: iter = None):
+    """
+    Prints the contents of the frequency dictionary into the terminal
+    :param data: an iterable list of values (a Series or a list)
+    :param question_text: the associated survey question text to be printed alongside the data
+    :param compare_data: (optional) a second iterable to compare data to. If given, prints both side by side (data | compare_data) - qustion_text.
+    """
     freq = create_answer_frequency_dict(data)
-    freq_compare = create_answer_frequency_dict(compare_data, is_second=True)
+    freq_compare = create_answer_frequency_dict(compare_data, is_second=True) if compare_data else None
     print(f'"{question_text}" Answer Frequency')
     if freq_compare:
         merged_freq = merge_dict(freq, freq_compare)
@@ -113,6 +112,15 @@ def print_freq_dict(data: iter, question_text: str, compare_data: iter = None):
 
 
 def merge_dict(dict_1: dict, dict_2: dict) -> dict:
+    """
+    Merges two dictionaries into a single dictionary, but preserving the individual values from shared keys across dictionaries.
+    { 'A': 1, 'B': 2 } merged with { 'A': 33, 'C': 44 } becomes { 'A': (1, 33), 'B': (2, NAN), 'C': (NAN, 44) }
+    Where NAN refers to the constant at the top of this file.
+
+    :param dict_1: The first dictionary, it's entries will be in index 0 of the tuple values.
+    :param dict_2: The second dictionary, it's entries will be in index 1 of the tuple values.
+    :return: { str: (int, int) }
+    """
     new_dict = {}
     for key, value in dict_1.items():
         new_dict[key] = (value, NAN)
@@ -123,16 +131,3 @@ def merge_dict(dict_1: dict, dict_2: dict) -> dict:
         else:
             new_dict[key] = (NAN, value)
     return new_dict
-
-
-def plot_bar_graph(data: iter, question_text: str):
-    set_plot_settings()
-    freq = create_answer_frequency_dict(data)
-
-    plt.bar(list(freq.keys()), list(freq.values()))
-    plt.xlabel("Answer Option")
-    plt.title("\n".join(wrap(f"'{question_text}'")))
-    # plt.subplots_adjust(top=0.65)
-    # plt.setp(plt.gca().get_xticklabels(), fontsize=10, rotation=45)
-    plt.xticks(rotation=-45)
-    plt.show()
