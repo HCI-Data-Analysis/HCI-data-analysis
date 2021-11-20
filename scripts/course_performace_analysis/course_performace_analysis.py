@@ -9,6 +9,8 @@ import seaborn as sns
 
 from schemas import GradeBookSchema
 
+COMBINED_PRE_POST_WORTH = 20
+
 
 def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
     sns.color_palette('bright')
@@ -19,7 +21,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
 
     overall_pre_test = gradebook[GradeBookSchema.PRE_TEST_SCORE]
     overall_post_test = gradebook[GradeBookSchema.POST_TEST_SCORE]
-    overall_pre_post_grade = GradeBookSchema.COMBINED_PRE_POST_WORTH
+    overall_pre_post_grade = COMBINED_PRE_POST_WORTH
 
     df_first_attempt = pd.DataFrame(
         columns=['DATA448_ID', 'QUIZ_ID', 'score', 'time', 'possible_points']
