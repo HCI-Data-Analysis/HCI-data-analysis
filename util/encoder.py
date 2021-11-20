@@ -39,7 +39,7 @@ class Encoder:
             row = self.key_df.loc[self.key_df[KeySchema.STUDENT_NAME] == student_name]
             data448_id = self._retrieve_value_from_row(row, KeySchema.DATA448_ID)
 
-        if not data448_id:
+        if not data448_id and canvas_id != 0:
             raise EncoderException('No students were found matching the given parameters.')
 
         return int(data448_id)
