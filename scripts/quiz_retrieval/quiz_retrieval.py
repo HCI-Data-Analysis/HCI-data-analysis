@@ -70,5 +70,5 @@ def get_quiz_object(quiz_id):
         if os.path.exists(full_path):
             if os.path.isfile(full_path):
                 return full_path
-    except FileNotFoundError:
-        print(os.strerror(errno.ENOENT))
+    except FileNotFoundError as e:
+        print(e.errno)
