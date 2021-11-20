@@ -5,7 +5,7 @@ from scripts.canvas_reading_logs_retrieval import canvas_reading_logs_retrieval
 from util import Encoder, KEY_PATH, mkdir_if_not_exists
 
 EXPORT_DIR = 'data/canvas_submission'
-ASSIGNMENT_IDS = [741711, 741731, 741733, 741741, 741741, 741743, 741742, 741742, 741750, 741751,
+ASSIGNMENT_IDS = [741711, 741731, 741733, 741741, 741744, 741743, 741742, 741749, 741750, 741751,
                   741752, 741753]
 
 if __name__ == "__main__":
