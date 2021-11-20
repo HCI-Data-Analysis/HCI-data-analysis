@@ -1,5 +1,6 @@
 import json
 import os
+import errno
 
 from api import CanvasAPI
 from util import setup_submissions_filepath, DateTimeEncoder
@@ -43,20 +44,18 @@ def get_quiz_name(quiz_id):
     :param quiz_id: A string that contains the quiz_id
     :return: A string that contains the name of the quiz
     """
-    full_path = os.path.join(OUTPUT_DIR, "quiz_objects")
-    for quiz_object in os.listdir(full_path):
-        if quiz_object.endswith('.json'):
-            file_quiz_id = quiz_object[12:18]  # the course id is the 12th to 18th character in the file name
+    full_path = os.path.join(OUTPUT_DIR, "quiz_objects", quiz_id)
 
-            if file_quiz_id == quiz_id:
-                quiz_object_path = os.path.join(full_path, quiz_object)
-                with open(quiz_object_path, 'r') as f:
+    try:
+        if os.path.exists(full_path):
+            if os.path.isfile(full_path):
+                with open(full_path, 'r') as f:
                     file = f.read()
                     json_file = json.loads(file)
                     if json_file:
                         return json_file[0]['title']
-                    else:
-                        return quiz_id + " can't retrieve quiz name"
+    except FileNotFoundError:
+        print(os.strerror(errno.ENOENT))
 
 
 def get_quiz_object(quiz_id):
@@ -65,13 +64,11 @@ def get_quiz_object(quiz_id):
     :param quiz_id: a string containing the quiz id
     :return: the path of the quiz object with the corresponding quiz_id
     """
-    full_path = os.path.join(OUTPUT_DIR, "quiz_objects")
-    for quiz_object in os.listdir(full_path):
+    full_path = os.path.join(OUTPUT_DIR, "quiz_objects", quiz_id)
 
-        if quiz_object.endswith('.json'):
-            file_quiz_id = quiz_object[12:18]  # the course id is the 12th to 18th character in the file name
-            if file_quiz_id == quiz_id:
-                quiz_object_path = os.path.join(full_path, quiz_object)
-                return quiz_object_path
-            else:
-                continue
+    try:
+        if os.path.exists(full_path):
+            if os.path.isfile(full_path):
+                return full_path
+    except FileNotFoundError:
+        print(os.strerror(errno.ENOENT))
