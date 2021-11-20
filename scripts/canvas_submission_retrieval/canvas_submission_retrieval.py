@@ -57,8 +57,6 @@ def download_submissions(submissions, grader_id_key: dict, output_filepath: str,
             submission_dict.pop('_requester')
             for key in removed_values:
                 submission_dict.pop(key)
-            if submission_dict.get('attachments', None):
-                submission_dict.pop('attachments')
             if submission_dict.get('grader_id', None):
                 submission_dict['grader_id'] = grader_id_key.setdefault(
                     submission_dict['grader_id'],
