@@ -54,8 +54,8 @@ def get_quiz_name(quiz_id):
                     json_file = json.loads(file)
                     if json_file:
                         return json_file[0]['title']
-    except FileNotFoundError:
-        print(os.strerror(errno.ENOENT))
+    except FileNotFoundError as e:
+        print(e.errno)
 
 
 def get_quiz_object(quiz_id):

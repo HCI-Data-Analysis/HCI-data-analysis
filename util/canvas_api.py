@@ -2,7 +2,7 @@ import os
 import datetime
 import json
 
-from util import Encoder, mkdir_if_not_exists
+from util import mkdir_if_not_exists
 
 
 def setup_submissions_filepath(obj, parent_dir: str, sub_dir: str, file_prefix: str) -> str:
