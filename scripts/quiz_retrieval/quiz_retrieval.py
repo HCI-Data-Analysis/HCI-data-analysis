@@ -41,20 +41,18 @@ def get_quiz_name(quiz_id, quiz_object_path):
     :param quiz_id: A string that contains the quiz_id
     :return: A string that contains the name of the quiz
     """
-    full_path = os.path.join(quiz_object_path, "quiz_objects")
-    for quiz_object in os.listdir(full_path):
-        if quiz_object.endswith('.json'):
-            file_quiz_id = get_quiz_id_from_file_name(quiz_object)
+    full_path = os.path.join(quiz_object_path, "quiz_objects", quiz_id)
 
-            if file_quiz_id == quiz_id:
-                quiz_object_path = os.path.join(full_path, quiz_object)
-                with open(quiz_object_path, 'r') as f:
+    try:
+        if os.path.exists(full_path):
+            if os.path.isfile(full_path):
+                with open(full_path, 'r') as f:
                     file = f.read()
                     json_file = json.loads(file)
                     if json_file:
                         return json_file[0]['title']
-                    else:
-                        return quiz_id + " can't retrieve quiz name"
+    except FileNotFoundError as e:
+        print(e.errno)
 
 
 def get_quiz_object(quiz_id, quiz_object_path):
@@ -64,15 +62,11 @@ def get_quiz_object(quiz_id, quiz_object_path):
     :param quiz_id: a string containing the quiz id
     :return: the path of the quiz object with the corresponding quiz_id
     """
+    full_path = os.path.join(quiz_object_path, "quiz_objects", quiz_id)
 
-    for quiz_object in os.listdir(quiz_object_path):
-
-        if quiz_object.endswith('.json'):
-            file_quiz_id = get_quiz_id_from_file_name(quiz_object)
-            if file_quiz_id == quiz_id:
-                quiz_object_path = os.path.join(quiz_object_path, quiz_object)
-                return quiz_object_path
-            else:
-                continue
-        else:
-            continue
+    try:
+        if os.path.exists(full_path):
+            if os.path.isfile(full_path):
+                return full_path
+    except FileNotFoundError as e:
+        print(e.errno)

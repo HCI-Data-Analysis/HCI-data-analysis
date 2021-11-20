@@ -12,18 +12,21 @@ from scripts import get_quiz_object
 from util import get_quiz_id_from_file_name
 
 QUIZ_PATH = "../../data/api/canvas/quizzes"
-PARENT_PATH = "data/api/canvas"
+PARENT_PATH = "../../data/api/canvas"
+QUIZ_OBJECT_PATH = "../data/api/canvas/quiz_objects"
 
 
-def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH):
+
+def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
     sns.color_palette('bright')
-    file = gradebook
-    data448_ids = file[GradeBookSchema.STUDENT_ID]
-    quiz_ids = []
-    final_score = file[GradeBookSchema.FINAL_SCORE]
 
-    overall_pre_test = file[GradeBookSchema.PRE_TEST_SCORE]
-    overall_post_test = file[GradeBookSchema.POST_TEST_SCORE]
+    data448_ids = gradebook[GradeBookSchema.STUDENT_ID]
+    quiz_ids = []
+    final_score = gradebook[GradeBookSchema.FINAL_SCORE]
+
+    overall_pre_test = gradebook[GradeBookSchema.PRE_TEST_SCORE]
+    overall_post_test = gradebook[GradeBookSchema.POST_TEST_SCORE]
+    overall_pre_post_grade = GradeBookSchema.COMBINED_PRE_POST_WORTH
     total_quiz_worth = GradeBookSchema.COMBINED_PRE_POST_WORTH
     total_quiz_possible_score = GradeBookSchema.TOTAL_QUIZ_POSSIBLE_SCORE
 
@@ -75,6 +78,10 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
                         }
                     df_submission_type = df_submission_type.append(submission_type, ignore_index=True)
 
+    QUIZ_POINTS_POSSIBLE = "quiz_points_possible"
+    FIRST_ATTEMPT_FINAL_SCORE = 'first_attempt_final_score'
+    FINAL_SCORE = 'final_score'
+
     # Get first attempt only quiz mark out of JSON files
     number_of_quizzes = 0
     for i in os.listdir(QUIZSCOREJSON_PATH):
@@ -82,18 +89,18 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
             number_of_quizzes += 1
             full_path = os.path.join(QUIZSCOREJSON_PATH, i)
             with open(full_path, 'r') as f:
-                file = f.read()
-                json_file = json.loads(file)
+                gradebook = f.read()
+                json_file = json.loads(gradebook)
                 if json_file:
-                    if json_file[0]['quiz_points_possible'] > 0:
+                    if json_file[0][QUIZ_POINTS_POSSIBLE] > 0:
                         quiz_ids.append(json_file[0]['quiz_id'])
                 for json_block in json_file:
-                    if json_block['quiz_points_possible'] > 0:
+                    if json_block[QUIZ_POINTS_POSSIBLE] > 0:
                         student_average_attempt_data = {
                             'DATA448_ID': json_block['user_id'],
                             'QUIZ_ID': json_block['quiz_id'],
                             'attempt': json_block['attempt'],
-                            'final_score': json_block['kept_score'] / json_block['quiz_points_possible'] * 100
+                            'final_score': json_block['kept_score'] / json_block[QUIZ_POINTS_POSSIBLE] * 100
                         }
                         df_average_student_attempts = df_average_student_attempts.append(student_average_attempt_data,
                                                                                          ignore_index=True)
@@ -106,7 +113,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
                             'QUIZ_ID': json_block['quiz_id'],
                             'score': json_block['score'],
                             'time': json_block['time_spent'],
-                            'possible_points': json_block['quiz_points_possible']
+                            'possible_points': json_block[QUIZ_POINTS_POSSIBLE]
                         }
                         df_first_attempt = df_first_attempt.append(student_first_attempt_data, ignore_index=True)
 
@@ -138,12 +145,12 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
             'first_attempt_quiz_score': first_attempt_quiz_score
         }, ignore_index=True)
 
-    # First attempt only overall score mean and std
-    mean = df_student_grade_first_attempt['first_attempt_final_score'].mean()
-    standard_dev = df_student_grade_first_attempt['first_attempt_final_score'].std()
-    quantile_25percent = df_student_grade_first_attempt['first_attempt_final_score'].quantile(.25)
-    median = df_student_grade_first_attempt['first_attempt_final_score'].median()
-    quantile_75percent = df_student_grade_first_attempt['first_attempt_final_score'].quantile(.75)
+    # First attempt only score mean and std
+    mean = df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE].mean()
+    standard_dev = df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE].std()
+    quantile_25percent = df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE].quantile(.25)
+    median = df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE].median()
+    quantile_75percent = df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE].quantile(.75)
 
     # Actual Score mean and std
     current_mean = final_score.mean()
@@ -188,7 +195,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
         round(current_standard_dev, 2))
     first_attempt_mean_std = "First Attempt Score\nMean: " + str(round(mean, 2)) + "  " + "Std Dev: " + str(
         round(standard_dev, 2))
-    for index, data in enumerate([final_score, df_student_grade_first_attempt['first_attempt_final_score']]):
+    for index, data in enumerate([final_score, df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE]]):
         sns.histplot(data, kde=True, bins=30, line_kws={'linewidth': 1}, color=data_graph_colors[index], ax=ax1).set(
             title='Overall Score vs First Attempt Score',
             xlabel='Grade',
@@ -261,16 +268,16 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
         students_per_quiz = df_average_student_attempts.loc[df_average_student_attempts['QUIZ_ID'] == quiz_id]
 
         quiz_attempt_grade_data = {
-            'final_score': list(students_per_quiz['final_score']),
+            'final_score': list(students_per_quiz[FINAL_SCORE]),
             'attempts': list(students_per_quiz['attempt'])
         }
 
-        temp_mean = "Mean: " + str(round(students_per_quiz['final_score'].mean(), 2))
-        temp_std = "Std Dev: " + str(round(students_per_quiz['final_score'].std(), 2))
+        temp_mean = "Mean: " + str(round(students_per_quiz[FINAL_SCORE].mean(), 2))
+        temp_std = "Std Dev: " + str(round(students_per_quiz[FINAL_SCORE].std(), 2))
         df = pd.DataFrame(quiz_attempt_grade_data)
 
-        fig = sns.jointplot(x='attempts', y='final_score', kind='reg', data=df)
-        fig.set_axis_labels('Attempts', 'Final Score')
+        fig = sns.jointplot(x='final_score', y='attempts', kind='reg', data=df)
+        fig.set_axis_labels('Final Score', 'Attempts')
         fig.ax_marg_x.set_xlim(0, 110)
         fig.ax_marg_y.set_ylim(0, 4)
         plt.text(5, 4, temp_mean)
@@ -281,25 +288,22 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
         fig.figure.suptitle(f'Final Score (out of {out_of_x}) vs Attempts Taken For {quiz_name}')
         fig.figure.tight_layout()
         plt.savefig(f'data/graphs/final_score_vs_attempts_{quiz_name}.png')
-        plt.savefig(f'final_score_vs_attempts_{quiz_name}.png')
         plt.close()
-
-
 
     # Wilcoxon signed-rank test exploration - overall
     print(scipy.stats.shapiro(final_score))
-    print(scipy.stats.shapiro(df_student_grade_first_attempt['first_attempt_final_score']))
+    print(scipy.stats.shapiro(df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE]))
     scipy.stats.probplot(final_score, dist="norm", plot=plt)
     plt.title("Overall Final Score Q-Q Plot")
     plt.savefig("data/graphs/overall_QQ.png")
     plt.close()
-    scipy.stats.probplot(df_student_grade_first_attempt['first_attempt_final_score'], dist="norm", plot=plt)
+    scipy.stats.probplot(df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE], dist="norm", plot=plt)
     plt.title("First Attempt Final Score Q-Q Plot")
     plt.savefig("data/graphs/first_attempt_QQ.png")
     plt.close()
     final_score = final_score
-    first_score = df_student_grade_first_attempt['first_attempt_final_score']
-    # difference_score = final_score - first_score
+    first_score = df_student_grade_first_attempt[FIRST_ATTEMPT_FINAL_SCORE]
+    difference_score = final_score - first_score
     wilcoxon = scipy.stats.wilcoxon(final_score, first_score)
     print(wilcoxon)
 
