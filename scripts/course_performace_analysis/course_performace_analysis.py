@@ -53,7 +53,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
                             'DATA448_ID': json_block['user_id'],
                             'QUIZ_ID': json_block['quiz_id'],
                             'attempt': json_block['attempt'],
-                            FINAL_SCORE: json_block['kept_score'] / json_block[QUIZ_POINTS_POSSIBLE] * 100
+                            'final_score': json_block['kept_score'] / json_block[QUIZ_POINTS_POSSIBLE] * 100
                         }
                         df_average_student_attempts = df_average_student_attempts.append(student_average_attempt_data,
                                                                                          ignore_index=True)
@@ -88,7 +88,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
             'DATA448_ID': data448_id,
             'total_score': total_score,
             'total_possible_points': total_possible_points,
-            FINAL_SCORE: final_score,
+            'final_score': final_score,
             'first_attempt_final_score': first_attempt_final_score,
         }, ignore_index=True)
 
