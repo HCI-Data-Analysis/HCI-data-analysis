@@ -32,31 +32,28 @@ def parse_module_paragraphs(module_lectures_path, output_filepath):
                     full_html = f.read()
                     soup = BeautifulSoup(full_html, 'html.parser')
                     header_data = soup.find('div', class_='header')
-                    header_content = ''
-                    for content in header_data.contents:
-                        header_content += str(content.string)
-                    header_parsed = parse_html_string(header_content)
+                    header_parsed = parse_html_contents(header_data)
                     module_paragraphs[module][module_section]['title'] = header_parsed
                     divs_content_section = soup.find_all('div', class_='content-section')
                     for div in divs_content_section:
                         paragraphs = div.find_all('p', recursive=False)
                         for paragraph in paragraphs:
-                            paragraph_content = ''
-                            for content in paragraph.contents:
-                                paragraph_content += str(content.string)
-                            paragraph_parsed = parse_html_string(paragraph_content)
+                            paragraph_parsed = parse_html_contents(paragraph)
                             module_paragraphs[module][module_section]['paragraphs'].append(paragraph_parsed)
 
     with open(output_filepath, 'w') as f:
         f.write(json.dumps(module_paragraphs, indent=4))
 
 
-def parse_html_string(html_string):
+def parse_html_contents(tag_element):
     """
     Remove extraneous characters from an html string
-    :param html_string: Content
+    :param tag_element: Tag element to get inner contents from
     :return: Parsed string
     """
-    parsed = html_string.replace('\n', '').replace('\t', '').strip()
+    html_content = ''
+    for content in tag_element.contents:
+        html_content += str(content.string)
+    parsed = html_content.replace('\n', '').replace('\t', '').strip()
     parsed = re.sub(' +', ' ', parsed)
     return parsed
