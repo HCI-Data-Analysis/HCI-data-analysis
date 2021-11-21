@@ -41,7 +41,8 @@ def get_quiz_name(quiz_id, quiz_object_path):
     :param quiz_id: A string that contains the quiz_id
     :return: A string that contains the name of the quiz
     """
-    full_path = os.path.join(quiz_object_path, "quiz_objects", quiz_id)
+    file_name = "quiz_object_" + quiz_id + ".json"
+    full_path = os.path.join(quiz_object_path, "quiz_objects", file_name)
 
     try:
         if os.path.exists(full_path):
@@ -62,7 +63,8 @@ def get_quiz_object(quiz_id, quiz_object_path):
     :param quiz_id: a string containing the quiz id
     :return: the path of the quiz object with the corresponding quiz_id
     """
-    full_path = os.path.join(quiz_object_path, "quiz_objects", quiz_id)
+    file_name = "quiz_object_" + quiz_id + ".json"
+    full_path = os.path.join(quiz_object_path, file_name)
 
     try:
         if os.path.exists(full_path):

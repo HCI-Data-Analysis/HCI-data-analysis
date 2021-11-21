@@ -13,11 +13,9 @@ from util import get_quiz_id_from_file_name
 
 QUIZ_PATH = "../../data/api/canvas/quizzes"
 PARENT_PATH = "../../data/api/canvas"
-QUIZ_OBJECT_PATH = "../data/api/canvas/quiz_objects"
 
 
-
-def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH):
+def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH):
     sns.color_palette('bright')
 
     data448_ids = gradebook[GradeBookSchema.STUDENT_ID]
