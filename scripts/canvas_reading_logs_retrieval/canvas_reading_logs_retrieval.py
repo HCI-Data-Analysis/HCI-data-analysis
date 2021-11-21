@@ -32,7 +32,6 @@ def setup_reading_logs_filepath(parent_dir: str, sub_dir: str) -> str:
     Get the correct filepath for a reading logs download
     :param parent_dir: the parent directory path
     :param sub_dir: the name of the sub directory for this object type's submissions to be saved
-    :param assignment: the assignment we are retrieving the reading logs for
     :return: a string filepath
     """
     output_path = os.path.join(parent_dir, sub_dir)
