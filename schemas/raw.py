@@ -15,6 +15,9 @@ class RawSurveySchema:
     SECTION_ID = 'section_id'
     SUBMITTED = 'submitted'
     ATTEMPT = 'attempt'
+    BACKGROUND_SV_FRIENDS = '3430864: Identify at most three students that you would like to be in the same team. We ' \
+                            'will do our best to keep you guys together.\n\nFirst choice\n[First_choice]\n\n\nSecond ' \
+                            'choice\n[Second_choice]\n\n\nThird choice\n[Third_choice]\n\n'
 
 
 class RawTASurveySchema:
