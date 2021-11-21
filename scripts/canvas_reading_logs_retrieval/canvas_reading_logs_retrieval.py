@@ -59,6 +59,6 @@ def download_reading_logs(submissions, output_filepath: str, encoder: Encoder):
                 ssl._create_default_https_context = ssl.create_default_context()
                 with urlopen(submission_url, context=context) as file:
                     file_name, file_extension = os.path.splitext(file.headers.get_filename())
-                    with open(os.path.join(output, f'file-{count}.{file_extension}'), 'wb') as f:
+                    with open(os.path.join(output, f'file-{count}{file_extension}'), 'wb') as f:
                         f.write(file.read())
                 count += 1
