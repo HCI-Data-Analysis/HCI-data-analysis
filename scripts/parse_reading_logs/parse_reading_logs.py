@@ -4,7 +4,7 @@ import os
 import json
 
 
-def unzip_reading_logs_in_module(module_path:str):
+def unzip_reading_logs_in_module(module_path: str):
     for data448_id in os.listdir(module_path):
         data448id_path = os.path.join(module_path, data448_id)
         for filename in os.listdir(data448id_path):
@@ -22,28 +22,46 @@ def parse_reading_logs(module_path, module_paragraphs_path, module_number):
     """
 
     number_of_pages = get_num_pages_in_module(module_paragraphs_path, module_number)
-    df_columns = []
 
-    for page in range(1, number_of_pages):
-        df_columns.append('module:' + module_number + '_page:' + str(page))
-    df_module = pd.DataFrame(columns=df_columns)
+    module = {module_number + "-" + str(page): pd.DataFrame() for page in range(1, number_of_pages+1)}
 
     for data448_id in os.listdir(module_path):
         data448id_path = os.path.join(module_path, data448_id)
+
         for reading_log_folder in os.listdir(data448id_path):
             reading_log_folder_path = os.path.join(data448id_path, reading_log_folder)
+            convert_reading_logs_to_json(reading_log_folder_path)
+
             if os.path.isdir(reading_log_folder_path):
                 for reading_log in os.listdir(reading_log_folder_path):
+                    if '(' in reading_log:  #check for duplicate files
+                        continue
+                    # reading log file name in the format of
+                    # 'COSC341-0-1-Reading-Logs.json', when splitting by '-':
+                    # at index 1 is module number and index 2 is page number
+                    # page_num = reading_log.split('-')[2]
+                    page_num = reading_log.split('-')[2]
                     reading_log_path = os.path.join(reading_log_folder_path, reading_log)
+
                     with open(reading_log_path, 'r') as f:
-                        reading_log_content = f.read()
-                        reading_log_json = json.dumps(reading_log_content)
-                        reading_log_dict = json.loads(reading_log_json)  # this is a god damn string for some reason
-                        df_reading_log_columns = ["start_time"]
-                        # print(reading_log_dict.get("eachContinue"))
-                        # for i in reading_log_dict['eachContinue']:
-                        #     print(i)
-                        df_reading_log = pd.DataFrame(columns=reading_log_dict.keys())
+                        reading_log_json = json.loads(f.read())
+
+                        # For each page, build a dictionary with:
+                        # keys of start_time, [section_names], end_time.
+                        # Values of corresponding time stamps
+                        reading_log_dict = {"start_time": reading_log_json['startTime']}
+                        for i in reading_log_json['eachContinue']:
+                            section_name = i['section']
+                            section_time = i['time']
+                            reading_log_dict[section_name] = section_time
+                        reading_log_dict['end_time'] = reading_log_json['endTime']
+                            # student_entry = pd.DataFrame.from_dict(reading_log_dict)
+
+                            # print(reading_log_dict.keys())
+                            # module_df = pd.DataFrame(columns=reading_log_dict.keys())
+                        module[module_number + "-" + page_num] = module[module_number + "-" + page_num].append(reading_log_dict, ignore_index=True)
+    print(module)
+    return module
 
 
 def get_num_pages_in_module(module_paragraphs_path, module_number):
@@ -59,9 +77,20 @@ def get_num_pages_in_module(module_paragraphs_path, module_number):
         print("module_paragraph.json not found!!")
 
 
+def convert_reading_logs_to_json(reading_log_path):
+    if os.path.isdir(reading_log_path):
+        for file in os.listdir(reading_log_path):
+            if file.endswith(".txt"):
+                file_path = os.path.join(reading_log_path, file)
+                os.rename(src=file_path, dst=file_path.replace('.txt', '.json'))
+
+
+# def get_section_names():
+
+
 if __name__ == "__main__":
     module_path = "../../data/api/canvas/reading_logs/741711"
     module_paragraphs_path = "../../data/module_paragraphs/module_paragraphs.json"
     # get_num_pages_in_module(module_paragraphs_path, "0")
     parse_reading_logs(module_path, module_paragraphs_path, '0')
-    #unzip_reading_logs_in_module(MODULE_PATH)
+    # unzip_reading_logs_in_module(MODULE_PATH)
