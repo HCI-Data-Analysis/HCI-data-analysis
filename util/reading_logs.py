@@ -8,7 +8,10 @@ cached_module_paragraphs_data: dict = {}
 
 
 def get_module_paragraphs_dict() -> dict:
-    f = open(MODULE_PARAGRAPHS_OUTPUT_FILEPATH, mode='r')
+    try:
+        f = open(MODULE_PARAGRAPHS_OUTPUT_FILEPATH, mode='r')
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f'{e}\nRun "python parse_module_paragraphs.py" first.')
     module_paragraphs = json.load(f)
 
     return module_paragraphs
