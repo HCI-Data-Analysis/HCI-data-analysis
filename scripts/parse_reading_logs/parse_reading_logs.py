@@ -46,7 +46,6 @@ def parse_reading_logs(module_path, module_paragraphs_path, module_number):
                         df_reading_log = pd.DataFrame(columns=reading_log_dict.keys())
 
 
-
 def get_num_pages_in_module(module_paragraphs_path, module_number):
     try:
         with open(module_paragraphs_path, 'r') as f:
