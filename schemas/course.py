@@ -1,5 +1,4 @@
 class CourseSchema:
-    # TODO: verify these
     OPTIONAL_MODULES = [
         9,
         11

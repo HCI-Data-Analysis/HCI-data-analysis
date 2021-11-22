@@ -1,11 +1,9 @@
 from textwrap import wrap
 
-from schemas import CourseSchema
-from util import get_module_paragraphs_dict, get_average_adjusted_reading_speed, get_page_num_paragraphs
-
 from matplotlib import pyplot as plt
 
-from util.plots import set_plot_settings
+from schemas import CourseSchema
+from util import get_module_paragraphs_dict, get_average_adjusted_reading_speed, get_page_num_paragraphs, set_plot_settings
 
 
 def analyze_num_paragraphs():
@@ -33,7 +31,7 @@ def page_is_valid(module_num, page_content) -> bool:
 def plot_scatter(x: [], y: [], title):
     set_plot_settings()
     plt.scatter(x, y)
-    plt.xlabel("Num Paragraphs")
+    plt.xlabel("Number of Paragraphs")
     plt.ylabel("Adjusted Reading Speed")
     plt.title("\n".join(wrap(f"{title}")))
     plt.show()

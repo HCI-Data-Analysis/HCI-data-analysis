@@ -18,7 +18,7 @@ def get_module_paragraphs_dict() -> dict:
 
 
 def get_average_adjusted_reading_speed(module_num: int, page_num: int, module_paragraphs_dict: dict = None) -> float:
-    # in adjusted WPM
+    # in adjusted WPM/difficulty
     paragraph_list = get_paragraph_list(module_num, page_num, module_paragraphs_dict)
     difficulty = get_text_difficulty_index(' '.join(paragraph_list))
 
