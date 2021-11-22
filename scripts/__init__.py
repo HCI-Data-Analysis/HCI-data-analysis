@@ -7,3 +7,5 @@ from .clustering import prepare_data_for_clustering, clean_background_survey, cl
     average_kmeans_iterations, clustering_tendency
 from .attendance import graph_attendance
 from .performance_by_activity_type import performance_by_activity_type
+from .student_grouping import group_students
+from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
