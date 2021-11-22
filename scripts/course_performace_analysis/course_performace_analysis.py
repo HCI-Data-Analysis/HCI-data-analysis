@@ -24,9 +24,6 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
 
     overall_pre_test = gradebook[GradeBookSchema.PRE_TEST_SCORE]
     overall_post_test = gradebook[GradeBookSchema.POST_TEST_SCORE]
-    overall_pre_post_grade = GradeBookSchema.COMBINED_PRE_POST_WORTH
-    total_quiz_worth = GradeBookSchema.COMBINED_PRE_POST_WORTH
-    total_quiz_possible_score = GradeBookSchema.TOTAL_QUIZ_POSSIBLE_SCORE
 
     df_first_attempt = pd.DataFrame(
         columns=['DATA448_ID', 'QUIZ_ID', 'score', 'time', 'possible_points']
@@ -79,6 +76,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
     QUIZ_POINTS_POSSIBLE = "quiz_points_possible"
     FIRST_ATTEMPT_FINAL_SCORE = 'first_attempt_final_score'
     FINAL_SCORE = 'final_score'
+    COMBINED_PRE_POST_WORTH = 40
 
     # Get first attempt only quiz mark out of JSON files
     number_of_quizzes = 0
@@ -127,7 +125,9 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
 
         pre_test_grade = overall_pre_test[index]
         post_test_grade = overall_post_test[index]
+        
         overall_quiz_grade = (pre_test_grade + post_test_grade) / total_quiz_worth
+        first_attempt_final_score_percentage = (total_score / total_possible_points) * COMBINED_PRE_POST_WORTH
 
         first_attempt_final_score_percentage = (total_score / total_quiz_possible_score) * total_quiz_worth
         first_attempt_final_score = final_score_percentage - (

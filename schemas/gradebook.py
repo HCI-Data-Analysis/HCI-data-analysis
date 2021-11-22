@@ -13,5 +13,3 @@ class GradeBookSchema:
     FINAL_SCORE = 'Overall Final Score'
     PRE_TEST_SCORE = 'Overall Pre-Tests (880658)'
     POST_TEST_SCORE = 'Overall Post-Tests (880660)'
-    COMBINED_PRE_POST_WORTH = 40
-    TOTAL_QUIZ_POSSIBLE_SCORE = 84  # not including post/pre test 0 and post/pre test 9 since not in the gradebook
