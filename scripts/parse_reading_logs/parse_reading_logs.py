@@ -123,8 +123,3 @@ def convert_reading_logs_to_json(reading_log_path):
             if file.endswith(".txt"):
                 file_path = os.path.join(reading_log_path, file)
                 os.rename(src=file_path, dst=file_path.replace('.txt', '.json'))
-
-
-# def get_section_names():
-
-
