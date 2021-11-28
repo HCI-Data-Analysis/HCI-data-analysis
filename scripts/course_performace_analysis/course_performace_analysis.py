@@ -77,6 +77,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
     FIRST_ATTEMPT_FINAL_SCORE = 'first_attempt_final_score'
     FINAL_SCORE = 'final_score'
     COMBINED_PRE_POST_WORTH = 40
+    TOTAL_QUIZ_POSSIBLE_SCORE = 84
 
     # Get first attempt only quiz mark out of JSON files
     number_of_quizzes = 0
@@ -126,13 +127,13 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
         pre_test_grade = overall_pre_test[index]
         post_test_grade = overall_post_test[index]
         
-        overall_quiz_grade = (pre_test_grade + post_test_grade) / total_quiz_worth
-        first_attempt_final_score_percentage = (total_score / total_possible_points) * COMBINED_PRE_POST_WORTH
+        overall_quiz_grade = (pre_test_grade + post_test_grade) / COMBINED_PRE_POST_WORTH
+        first_attempt_final_score_percentage = (total_score / TOTAL_QUIZ_POSSIBLE_SCORE) * COMBINED_PRE_POST_WORTH
 
-        first_attempt_final_score_percentage = (total_score / total_quiz_possible_score) * total_quiz_worth
+        first_attempt_final_score_percentage = (total_score / TOTAL_QUIZ_POSSIBLE_SCORE) * COMBINED_PRE_POST_WORTH
         first_attempt_final_score = final_score_percentage - (
                 pre_test_grade + post_test_grade) + first_attempt_final_score_percentage
-        first_attempt_quiz_score = total_score / total_quiz_possible_score * 100
+        first_attempt_quiz_score = total_score / TOTAL_QUIZ_POSSIBLE_SCORE * 100
 
         df_student_grade_first_attempt = df_student_grade_first_attempt.append({
             'DATA448_ID': data448_id,
