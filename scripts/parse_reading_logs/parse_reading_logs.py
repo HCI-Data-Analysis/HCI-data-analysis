@@ -49,7 +49,6 @@ def parse_reading_logs(module_path, module_paragraphs_path, module_number):
                         parsing_reading_log_json(reading_log_folder_path, module_number, data448_id, module)
 
     cleaned_module = anomolies_deletion(module)
-    print(cleaned_module)
     return cleaned_module
 
 
@@ -97,8 +96,6 @@ def anomolies_deletion(module: dict) -> (dict):
     for key, value in module.items():
         # if more than half of the data in a column is NA, drop the column
         value.dropna(axis='columns', thresh=math.floor(len(value)/2), inplace=True)
-        NAN_value = value[value.isna().any(axis=1)]
-        print(NAN_value)
         value.dropna(axis='index', how="any", inplace=True)
 
     return module
