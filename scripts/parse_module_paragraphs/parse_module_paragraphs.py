@@ -40,11 +40,20 @@ def parse_module_paragraphs(module_lectures_path, output_filepath):
                             'title': parse_html_contents(title),
                             'paragraphs': []
                         }
-                        paragraphs = div.find_all('p', recursive=False)
+                        paragraphs = div.find_all('p')
                         for paragraph in paragraphs:
                             paragraph_parsed = parse_html_contents(paragraph)
+                            if paragraph_parsed != '':
+                                module_paragraphs[module][module_page]['sections'][index]['paragraphs'].append(
+                                    paragraph_parsed)
+                        quotes = div.find_all('blockquote')
+                        if quotes:
+                            quote_paragraph = ''
+                            for quote in quotes:
+                                quote_parsed = parse_html_contents(quote)
+                                quote_paragraph += quote_parsed
                             module_paragraphs[module][module_page]['sections'][index]['paragraphs'].append(
-                                paragraph_parsed)
+                                quote_paragraph)
 
     with open(output_filepath, 'w') as f:
         f.write(json.dumps(module_paragraphs, indent=4))
