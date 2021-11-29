@@ -12,10 +12,12 @@ def analyze_num_paragraphs():
     num_paragraphs_list = []
     module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
-        for page_num, page_content in page_dict.items():
-            if not page_is_valid(module_num, page_content):
+        for page_num, page_data in page_dict.items():
+            if not page_is_valid(module_num, page_data):
                 continue
-            num_paragraphs_list.append(len(page_content['paragraphs']))
+            num_paragraphs_list.append(
+                len(reading_logs_data.get_paragraph_list(module_num, page_num))
+            )
             adjusted_reading_speeds.append(
                 reading_logs_data.page_reading_speed(module_num, page_num)
             )
@@ -24,7 +26,7 @@ def analyze_num_paragraphs():
 
 
 def page_is_valid(module_num, page_content) -> bool:
-    if page_content['title'] in CourseSchema.OPTIONAL_PAGE_TITLES or module_num in CourseSchema.OPTIONAL_MODULES:
+    if page_content['name'] in CourseSchema.OPTIONAL_PAGE_TITLES or module_num in CourseSchema.OPTIONAL_MODULES:
         return False
     return True
 
