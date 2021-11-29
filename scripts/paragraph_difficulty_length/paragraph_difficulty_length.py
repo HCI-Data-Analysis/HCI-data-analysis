@@ -1,14 +1,19 @@
 import json
+import os.path
 
 import pandas as pd
 
 from util.readability import get_flesch_reading_ease
 
 
-def parse_module_paragraphs_with_difficulty_length(module_paragraphs_filepath, parsed_modules_paragraphs_path, parsed_pages_paragraphs_path, parsed_sections_paragraphs_path):
+def parse_module_paragraphs_with_difficulty_length(module_paragraphs_filepath, parsed_modules_paragraphs_path,
+                                                   parsed_pages_paragraphs_path, parsed_sections_paragraphs_path):
     """
     Perform a difficulty and length analysis on the module paragraphs
     :param module_paragraphs_filepath: Filepath of the module paragraphs data
+    :param parsed_sections_paragraphs_path: Path of the parsed sections data
+    :param parsed_modules_paragraphs_path: Path of the parsed modules data
+    :param parsed_pages_paragraphs_path: Path of the pages module data
     """
 
     with open(module_paragraphs_filepath, 'r') as f:
@@ -17,17 +22,13 @@ def parse_module_paragraphs_with_difficulty_length(module_paragraphs_filepath, p
 
     modules_data_frame = pd.DataFrame(
         columns=['module', 'total_paragraphs', 'average_paragraph_length_words',
-                 'average_paragraph_length_char', 'average_flesch_reading_ease']
+                 'average_paragraph_length_chars', 'average_flesch_reading_ease']
     )
-
-    modules_data = []
-    pages_data = []
-    sections_data = []
 
     for module in module_paragraphs_raw_data:
         pages_data_frame = pd.DataFrame(
             columns=['page', 'title', 'total_paragraphs', 'average_paragraph_length_words',
-                     'average_paragraph_length_char', 'average_flesch_reading_ease']
+                     'average_paragraph_length_chars', 'average_flesch_reading_ease']
         )
 
         module_module_data = {
@@ -41,7 +42,7 @@ def parse_module_paragraphs_with_difficulty_length(module_paragraphs_filepath, p
         for page in module_paragraphs_raw_data[module]:
             sections_data_frame = pd.DataFrame(
                 columns=['section', 'title', 'total_paragraphs', 'average_paragraph_length_words',
-                         'average_paragraph_length_char', 'average_flesch_reading_ease']
+                         'average_paragraph_length_chars', 'average_flesch_reading_ease']
             )
 
             page_data = module_paragraphs_raw_data[module][page]
@@ -93,18 +94,21 @@ def parse_module_paragraphs_with_difficulty_length(module_paragraphs_filepath, p
                     'average_flesch_reading_ease': average_flesch_reading_ease
                 }
                 sections_data_frame = sections_data_frame.append(section_page_data, ignore_index=True)
-            sections_data.append(sections_data_frame)
+            sections_data_frame.to_csv(
+                os.path.join(
+                    parsed_sections_paragraphs_path,
+                    f'sections_page_{page}_module_{module}_difficulty_length.csv'
+                ),
+                index=False
+            )
             pages_data_frame = pages_data_frame.append(page_module_data, ignore_index=True)
-        pages_data.append(pages_data_frame)
+        pages_data_frame.to_csv(
+            os.path.join(parsed_pages_paragraphs_path, f'pages_module_{module}_difficulty_length.csv'),
+            index=False
+        )
         print('FINAL MODULE', module, ':', module_module_data)
         modules_data_frame = modules_data_frame.append(module_module_data, ignore_index=True)
-    modules_data.append(modules_data_frame)
-
-    for module_data in modules_data:
-        module_data.to_csv(parsed_modules_paragraphs_path, index=False)
-
-    for page_data in pages_data:
-        page_data.to_csv(parsed_pages_paragraphs_path, index=False)
-
-    for section_data in sections_data:
-        section_data.to_csv(parsed_sections_paragraphs_path, index=False)
+    modules_data_frame.to_csv(
+        os.path.join(parsed_modules_paragraphs_path, f'modules_difficulty_length.csv'),
+        index=False
+    )
