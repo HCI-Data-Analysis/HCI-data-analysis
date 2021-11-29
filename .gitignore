@@ -1,6 +1,9 @@
 # Jetbrains IDEA
 .idea
 
+# Data
+/data/modules/lectures
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
