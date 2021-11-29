@@ -3,20 +3,21 @@ from textwrap import wrap
 from matplotlib import pyplot as plt
 
 from schemas import CourseSchema
-from util import get_module_paragraphs_dict, average_adjusted_module_reading_speed, get_page_num_paragraphs, set_plot_settings
+from util import ReadingLogsData, set_plot_settings
 
 
 def analyze_num_paragraphs():
+    reading_logs_data = ReadingLogsData()
     adjusted_reading_speeds = []
     num_paragraphs_list = []
-    module_paragraphs_dict = get_module_paragraphs_dict()
+    module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_content in page_dict.items():
             if not page_is_valid(module_num, page_content):
                 continue
             num_paragraphs_list.append(len(page_content['paragraphs']))
             adjusted_reading_speeds.append(
-                get_average_adjusted_reading_speed(module_num, page_num)
+                reading_logs_data.page_reading_speed(module_num, page_num)
             )
 
     plot_scatter(num_paragraphs_list, adjusted_reading_speeds, 'Adjusted reading speeds by page paragraph count')
