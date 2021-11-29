@@ -1,7 +1,7 @@
-from scripts import parse_reading_logs
+from scripts import parse_reading_logs_all
+from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH
 
-MODULE_PATH = "data/api/canvas/reading_logs/741711"
-MODULE_PARAGRAPHS_PATH = "data/module_paragraphs/module_paragraphs.json"
+READING_LOG_PATH = "data/api/canvas/reading_logs"
 
 if __name__ == "__main__":
-    parse_reading_logs(MODULE_PATH, MODULE_PARAGRAPHS_PATH, '0')
+    parse_reading_logs_all(READING_LOG_PATH, MODULE_PARAGRAPHS_OUTPUT_FILEPATH)
