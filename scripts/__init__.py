@@ -9,3 +9,4 @@ from .attendance import graph_attendance
 from .performance_by_activity_type import performance_by_activity_type
 from .student_grouping import group_students
 from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
+from .reading_logs import analyze_num_paragraphs
