@@ -1,1 +1,1 @@
-from .paragraph_difficulty_length import analyze_difficulty_length_module_paragraphs
+from .paragraph_difficulty_length import parse_module_paragraphs_with_difficulty_length
