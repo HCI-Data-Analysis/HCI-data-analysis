@@ -5,19 +5,19 @@ import nltk
 nltk.download('cmudict')
 
 
-def get_syllables(paragraph):
+def _get_syllables(paragraph):
     d = nltk.corpus.cmudict.dict()
 
     parsed = re.sub(r'[^\w\s]', '', paragraph)
     words = parsed.split(' ')
     count = 0
     for word in words:
-        count += get_syllables_word(word, d)
+        count += _get_syllables_word(word, d)
 
     return count
 
 
-def get_syllables_word(word, dict):
+def _get_syllables_word(word, dict):
     try:
         return len(list(y for y in dict[word.lower()][0] if y[-1].isdigit()))
     except KeyError:
@@ -40,7 +40,7 @@ def get_flesch_reading_ease(paragraph):
         del sentences[-1]
     number_of_sentences = len(sentences)
     number_of_words = len(paragraph.split(' '))
-    number_of_syllables = get_syllables(paragraph)
+    number_of_syllables = _get_syllables(paragraph)
 
     try:
         flesch_reading_result = 206.835 - 1.015 * (number_of_words / number_of_sentences) - 84.6 * (
