@@ -39,7 +39,7 @@ class ReadingLogsData:
         duration = page_reading_duration(module_num, page_num, data448_id)
 
         if adjust_for_difficulty:
-            difficulty = get_text_difficulty_index(' '.join(paragraph_list))
+            difficulty = get_text_difficulty_index(module_num, page_num)
             # TODO: return WPM adjusted by difficulty
 
         return num_words / duration
@@ -82,6 +82,6 @@ def module_reading_duration(module_num: int, data448_id: int = None) -> float:
     return random()
 
 
-def get_text_difficulty_index(text: str) -> float:
-    # TODO: fit regression?
+def get_text_difficulty_index(module_num: int, page_num: int = None) -> float:
+    # TODO: read the data stored about the difficulty of each module/page and return the correctly difficulty index
     return 1
