@@ -1,8 +1,8 @@
 import pandas as pd
-from pyunpack import Archive
 import os
 import json
 import math
+from schemas import CourseSchema
 
 
 def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dict, dict):
@@ -32,7 +32,7 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
     return each_continue_dict, each_quiz_submit_dict
 
 
-def parse_reading_logs(module_path, module_paragraphs_path, module_number):
+def parse_reading_logs_module(module_path, module_paragraphs_path, module_number) -> (dict, dict):
     """
     Converts the reading log of given module_each_continue to two dictionary of dataframes. Both dictionary
      have the key in the format of [module_num]-[page_num]. The values being a dataframe that represents the reading log timestamp
@@ -67,6 +67,8 @@ def parse_reading_logs(module_path, module_paragraphs_path, module_number):
         # if reading logs in data448_id_path, then parse data448id_path, else
         contains_reading_log = False
         for reading_log_folder in os.listdir(data448id_path):
+            reading_log_folder_path = os.path.join(data448id_path, reading_log_folder)
+            convert_reading_logs_to_json(reading_log_folder_path)
             if reading_log_folder.endswith(".json"):
                 contains_reading_log = True
                 break

@@ -1,1 +1,1 @@
-from .parse_reading_logs import parse_reading_logs
+from .parse_reading_logs import parse_reading_logs_module, parse_reading_logs_all
