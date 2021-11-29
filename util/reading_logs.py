@@ -1,7 +1,7 @@
 import json
 from random import random
 
-from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH
+from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, normalize
 
 
 class ReadingLogsData:
@@ -38,11 +38,14 @@ class ReadingLogsData:
         num_words = len(' '.join(paragraph_list).split(' '))
         duration = page_reading_duration(module_num, page_num, data448_id)
 
+        speed_wpm = num_words / duration
+
         if adjust_for_difficulty:
             difficulty = get_text_difficulty_index(module_num, page_num)
-            # TODO: return WPM adjusted by difficulty
+            norm_difficulty = normalize(difficulty, 0, 100)
+            return speed_wpm / norm_difficulty
 
-        return num_words / duration
+        return speed_wpm
 
     def module_reading_speed(self, module_num: int, data448_id: int = None,
                              adjust_for_difficulty: bool = None) -> float:
