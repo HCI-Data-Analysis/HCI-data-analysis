@@ -68,6 +68,10 @@ class ReadingLogsData:
         module_paragraphs = self.get_module_paragraphs_dict()
         return module_paragraphs[str(module_num)][str(page_num)]['paragraphs']
 
+    def get_num_pages_in_module(self, module_num: int) -> int:
+        module_paragraphs = self.get_module_paragraphs_dict()
+        return len(module_paragraphs[str(module_num)])
+
 
 def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:
     """Returns the page reading duration in minutes. Average of all students unless given a data_448 id."""

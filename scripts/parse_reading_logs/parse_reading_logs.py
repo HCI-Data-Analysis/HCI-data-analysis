@@ -54,8 +54,8 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
                         respective attempt.
                        dataframe have rows with index of data448_id representing each student.
     """
-
-    number_of_pages = get_num_pages_in_module(module_paragraphs_path, module_number)
+    reading_log_data = ReadingLogsData()
+    number_of_pages = reading_log_data.get_num_pages_in_module(int(module_number))
 
     module_each_continue = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
     module_each_submit = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
@@ -134,7 +134,7 @@ def parsing_each_continue(reading_log_folder_path: str, module_number: str, data
         module[f'{module_number}-{page_num}'] = module[f'{module_number}-{page_num}'].append(reading_log_series)
 
 
-def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, data448_id: str, module: dict) -> (dict):
+def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, data448_id: str, module: dict):
     for reading_log in os.listdir(reading_log_folder_path):
         reading_log_path = os.path.join(reading_log_folder_path, reading_log)
 
@@ -193,19 +193,6 @@ def anomalies_deletion(module: dict) -> dict:
         value.dropna(axis='index', how="any", inplace=True)
 
     return module
-
-
-def get_num_pages_in_module(module_paragraphs_path, module_number):
-    try:
-        with open(module_paragraphs_path, 'r') as f:
-            module_paragraphs = f.read()
-            try:
-                json_file = json.loads(module_paragraphs)
-                return len(json_file[module_number])
-            except ValueError as e:
-                print("invalid json file")
-    except FileNotFoundError:
-        print("module_paragraph.json not found!!")
 
 
 def convert_reading_logs_to_json(reading_log_path):
