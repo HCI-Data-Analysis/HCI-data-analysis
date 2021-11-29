@@ -1,4 +1,5 @@
 class GradeBookSchema:
+    STUDENT_NAME = 'Student'
     STUDENT_ID = 'ID'
     SECTION = 'Section'
     LECTURE = 'Lecture'
@@ -9,3 +10,6 @@ class GradeBookSchema:
     OVERALL_PRE_POST_TESTS_SCORE = 'Pre/Post Tests Final Score'
     OVERALL_READING_LOGS_SCORE = 'Reading Logs Final Score'
     OVERALL_COURSE_SCORE = 'Final Score'
+    FINAL_SCORE = 'Overall Final Score'
+    PRE_TEST_SCORE = 'Overall Pre-Tests (880658)'
+    POST_TEST_SCORE = 'Overall Post-Tests (880660)'
