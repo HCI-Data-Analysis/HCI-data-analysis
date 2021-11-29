@@ -58,15 +58,18 @@ class ReadingLogsData:
         :return: a float representing reading speed in word per minute (WPM)
         """
         page_reading_speeds = []
-        module_paragraphs_dict = self.module_paragraphs_dict()
+        module_paragraphs_dict = self.get_module_paragraphs_dict()
         for page_num in module_paragraphs_dict[str(module_num)].keys():
             return self.page_reading_speed(module_num, int(page_num), data448_id, adjust_for_difficulty)
 
         return sum(page_reading_speeds) / len(page_reading_speeds)
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
-        module_paragraphs = self.get_module_paragraphs_dict()
-        return module_paragraphs[str(module_num)][str(page_num)]['paragraphs']
+        module_paragraphs_dict = self.get_module_paragraphs_dict()
+        page_paragraphs = []
+        for section_id, data in module_paragraphs_dict[str(module_num)][str(page_num)]['sections'].items():
+            page_paragraphs += data['paragraphs']
+        return page_paragraphs
 
 
 def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:
