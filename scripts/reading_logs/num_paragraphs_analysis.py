@@ -20,7 +20,7 @@ def analyze_num_paragraphs():
                 reading_logs_data.page_reading_speed(module_num, page_num)
             )
 
-    plot_scatter(num_paragraphs_list, adjusted_reading_speeds, 'Adjusted reading speeds by page paragraph count')
+    plot_scatter(num_paragraphs_list, adjusted_reading_speeds, 'Reading speeds as a function of page paragraph count')
 
 
 def page_is_valid(module_num, page_content) -> bool:
@@ -33,6 +33,6 @@ def plot_scatter(x: [], y: [], title):
     set_plot_settings()
     plt.scatter(x, y)
     plt.xlabel("Number of Paragraphs")
-    plt.ylabel("Adjusted Reading Speed")
+    plt.ylabel("Average Class Reading Speed")
     plt.title("\n".join(wrap(f"{title}")))
     plt.show()
