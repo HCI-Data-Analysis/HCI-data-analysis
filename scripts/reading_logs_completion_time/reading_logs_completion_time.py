@@ -40,8 +40,8 @@ def _plot_reading_logs(modules, actual_reading_times, expected_reading_times):
     }
     df = pd.DataFrame(actual_data)
     ax = plt.gca()
-    df.plot(kind='line', x='Module', y='Actual Time', ax=ax, x_compat=True)
-    df.plot(kind='line', x='Module', y='Expected Time', color='red', ax=ax, x_compat=True)
+    df.plot(kind='line', x='Module', y='Actual Time', ax=ax, x_compat=True, yerr=df['Actual Time'].std())
+    df.plot(kind='line', x='Module', y='Expected Time', color='red', ax=ax, x_compat=True, yerr=df['Expected Time'].std())
     plt.xticks(modules)
     plt.ylabel('Time')
     plt.show()
