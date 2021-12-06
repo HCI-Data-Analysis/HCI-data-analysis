@@ -126,7 +126,7 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
 
         pre_test_grade = overall_pre_test[index]
         post_test_grade = overall_post_test[index]
-        
+
         overall_quiz_grade = (pre_test_grade + post_test_grade) / COMBINED_PRE_POST_WORTH
         first_attempt_final_score_percentage = (total_score / TOTAL_QUIZ_POSSIBLE_SCORE) * COMBINED_PRE_POST_WORTH
 
@@ -216,8 +216,9 @@ def course_performance_analysis(gradebook, QUIZSCOREJSON_PATH, QUIZ_OBJECT_PATH)
     data_graph_colors = ['b', 'r']
     overall_mean_std = "Overall Quiz Score\nMean: " + str(round(quiz_mean, 2)) + "  " + "Std Dev: " + str(
         round(quiz_std, 2))
-    first_attempt_mean_std = "First Attempt Quiz Score\nMean: " + str(round(first_time_quiz_mean, 2)) + "  " + "Std Dev: " + str(
-        round(first_time_quiz_std, 2))
+    first_attempt_mean_std = "First Attempt Quiz Score\nMean: "
+    + str(round(first_time_quiz_mean, 2)) + "  " + "Std Dev: "
+    + str(round(first_time_quiz_std, 2))
     for index, data in enumerate([final_score, df_student_grade_first_attempt['first_attempt_quiz_score']]):
         sns.histplot(data, kde=True, bins=30, line_kws={'linewidth': 1}, color=data_graph_colors[index], ax=ax1).set(
             title='Overall Quiz Score vs First Attempt Quiz Score',
