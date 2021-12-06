@@ -140,9 +140,6 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
             continue
 
         reading_log_name_array = reading_log.split('-')
-        # print(reading_log_name_array)
-        if reading_log_name_array[0] != "COSC341":  # make sure the file is a reading_log
-            continue
         if reading_log_name_array[1] != module_number:  # make sure the reading log file is for the correct module
             continue
 
