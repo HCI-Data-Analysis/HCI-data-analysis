@@ -58,7 +58,7 @@ def get_quiz_name(quiz_id, quiz_object_path):
 
 def get_quiz_object(quiz_id, quiz_object_path):
     """
-    Returns the path of the quiz object with the corresponding quiz_id
+    Returns the path of the quiz object with the corresponding quiz_id if the quiz object file exist
     :param quiz_object_path: a string containing the directory of where the quiz objects are stored
     :param quiz_id: a string containing the quiz id
     :return: the path of the quiz object with the corresponding quiz_id

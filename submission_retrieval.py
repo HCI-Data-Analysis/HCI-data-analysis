@@ -3,7 +3,6 @@ import sys
 
 from api import get_default_course_id
 from scripts import canvas_submission_retrieval
-from scripts import quiz_retrieval
 from util import Encoder, KEY_PATH, mkdir_if_not_exists
 
 EXPORT_DIR = 'data/canvas_submission'
