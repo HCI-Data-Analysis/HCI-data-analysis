@@ -79,6 +79,19 @@ class ReadingLogsData:
         return len(module_paragraphs[str(module_num)])
 
 
+def is_reading_log_file(reading_log_file_name) -> bool:
+    if not reading_log_file_name.endswith('.json'):
+        return False
+    if '(' in reading_log_file_name and ')' in reading_log_file_name:  # check for duplicate files
+        return False
+
+    reading_log_name_array = reading_log_file_name.split('-')
+    # print(reading_log_name_array)
+    if reading_log_name_array[0] != "COSC341" & reading_log_name_array[3] != "Reading" & reading_log_name_array[
+        4] != "Logs":  # make sure the file is a reading_log
+        return False
+
+
 def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:
     """Returns the page reading duration in minutes. Average of all students unless given a data_448 id."""
     # TODO: get average student reading duration for this page

@@ -3,7 +3,7 @@ import os
 import json
 import math
 from schemas import CourseSchema
-from util import ReadingLogsData
+from util import ReadingLogsData, is_reading_log_file
 
 
 def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dict, dict):
@@ -98,14 +98,10 @@ def parsing_each_continue(reading_log_folder_path: str, module_number: str, data
     for reading_log in os.listdir(reading_log_folder_path):
         reading_log_path = os.path.join(reading_log_folder_path, reading_log)
 
-        if not reading_log.endswith('.json'):
+        if not is_reading_log_file(reading_log):
             continue
 
         reading_log_name_array = reading_log.split('-')
-        if '(' in reading_log and ')' in reading_log:  # check for duplicate files
-            continue
-        if reading_log_name_array[0] != "COSC341":  # make sure the file is a reading_log
-            continue
         if reading_log_name_array[1] != module_number:  # make sure the reading log file is for the correct module
             continue
 
@@ -140,9 +136,7 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
     for reading_log in os.listdir(reading_log_folder_path):
         reading_log_path = os.path.join(reading_log_folder_path, reading_log)
 
-        if not reading_log.endswith('.json'):
-            continue
-        if '(' in reading_log and ')' in reading_log:  # check for duplicate files
+        if not is_reading_log_file(reading_log):
             continue
 
         reading_log_name_array = reading_log.split('-')
