@@ -1,7 +1,9 @@
-import pandas as pd
-import os
 import json
 import math
+import os
+
+import pandas as pd
+
 from schemas import CourseSchema
 from util import ReadingLogsData
 

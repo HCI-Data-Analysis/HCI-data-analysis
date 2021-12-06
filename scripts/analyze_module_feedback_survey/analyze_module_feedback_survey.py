@@ -47,6 +47,7 @@ def preprocess_module_feedback_survey(survey_df: DataFrame) -> DataFrame:
 
 def remove_id_from_question_titles(survey_df: DataFrame) -> DataFrame:
     """Removes question ids from the header strings of a DataFrame"""
+
     def remove_id_prefix(col_name):
         regex = r'^([0-9]{7}: )'
         id_stripped_string = re.sub(regex, '', col_name)

@@ -2,7 +2,7 @@ import json
 import os
 
 from api import CanvasAPI
-from util import setup_submissions_filepath, get_quiz_id_from_file_name, DateTimeEncoder
+from util import setup_submissions_filepath, DateTimeEncoder
 
 
 def quiz_object_retrieval(output_dir):
