@@ -24,10 +24,10 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
         module_each_continue_dict = module_tuple[0]
         module_each_quiz_submit_dict = module_tuple[1]
         for k, v in module_each_continue_dict.items():
-            each_continue_dict.setdefault(k, []).append(v)
+            each_continue_dict[k] = v
 
         for k, v in module_each_quiz_submit_dict.items():
-            each_quiz_submit_dict.setdefault(k, []).append(v)
+            each_quiz_submit_dict[k] = v
 
     return each_continue_dict, each_quiz_submit_dict
 
@@ -56,6 +56,7 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
     """
     reading_log_data = ReadingLogsData()
     number_of_pages = reading_log_data.get_num_pages_in_module(int(module_number))
+    print(number_of_pages)
 
     module_each_continue = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
     module_each_submit = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
