@@ -3,12 +3,15 @@ from collections import defaultdict
 import pandas as pd
 
 
-from scripts import parse_reading_logs_all, get_outlier_id_list
+from scripts import parse_reading_logs_all, get_outlier_id_list, analyze_num_paragraphs
 
 MODULE_PATH = "data/api/canvas/reading_logs"
 MODULE_PARAGRAPHS_PATH = "data/processed/module_paragraphs.json"
 
 if __name__ == "__main__":
+    analyze_num_paragraphs()
+
+    # Outlier Categorization
     sin_dict = defaultdict(dict)
     reading_log_dict, quiz_dict = parse_reading_logs_all(MODULE_PATH, MODULE_PARAGRAPHS_PATH)
     for item in reading_log_dict:
