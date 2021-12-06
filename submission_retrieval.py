@@ -18,3 +18,4 @@ if __name__ == '__main__':
         canvas_course_id = get_default_course_id()
 
     canvas_submission_retrieval(EXPORT_DIR, encoder, canvas_course_id)
+
