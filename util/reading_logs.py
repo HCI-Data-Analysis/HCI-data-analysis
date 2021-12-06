@@ -136,6 +136,8 @@ def is_reading_log_file(reading_log_file_name) -> bool:
     if (reading_log_name_array[0] != "COSC341"):  #& (reading_log_name_array[3] != "Reading") & (reading_log_name_array[4] != "Logs"):
         return False
 
+    return True
+
 
 def ms_to_minutes(duration_ms: int):
     return duration_ms / 1000 / 60

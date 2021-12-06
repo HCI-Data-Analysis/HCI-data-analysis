@@ -6,4 +6,4 @@ from .canvas_api import setup_submissions_filepath, get_quiz_id_from_file_name, 
 from .data_cleaner import keep_latest_survey_attempt
 from .util import normalize
 from .plots import set_plot_settings
-from .reading_logs import ReadingLogsData, get_text_difficulty_index
+from .reading_logs import ReadingLogsData, get_text_difficulty_index, is_reading_log_file
