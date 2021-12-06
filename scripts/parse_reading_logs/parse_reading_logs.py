@@ -157,8 +157,11 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
             # For each page, build a dictionary with:
             # keys of start_time, quiz_submit_time, [question name], end_time.
             # Values of corresponding time stamps
+            last_section_continue_time = reading_log_json['eachContinue'][-1]
+            print(last_section_continue_time)
             reading_log_dict = {"start_time": reading_log_json['startTime'],
-                                "end_time": reading_log_json['endTime']}
+                                "end_time": reading_log_json['endTime'],
+                                "last_section_continue_time": last_section_continue_time}
 
             for i in reading_log_json['eachQuizSubmit']:
                 for key, value in i.items():

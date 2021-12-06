@@ -86,9 +86,8 @@ def is_reading_log_file(reading_log_file_name) -> bool:
         return False
 
     reading_log_name_array = reading_log_file_name.split('-')
-    # print(reading_log_name_array)
-    if reading_log_name_array[0] != "COSC341" & reading_log_name_array[3] != "Reading" & reading_log_name_array[
-        4] != "Logs":  # make sure the file is a reading_log
+    # make sure the file is a reading_log
+    if (reading_log_name_array[0] != "COSC341"):  #& (reading_log_name_array[3] != "Reading") & (reading_log_name_array[4] != "Logs"):
         return False
 
 
