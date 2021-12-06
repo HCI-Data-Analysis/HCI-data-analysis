@@ -3,6 +3,7 @@ import os
 import json
 import math
 from schemas import CourseSchema
+from util import ReadingLogsData
 
 
 def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dict, dict):
