@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+from statistics import stdev
 from pathlib import Path
 from statistics import mean
 from matplotlib import pyplot as plt
@@ -21,27 +22,37 @@ def reading_logs_completion_time(directory, expected_reading_times):
             completion_times = []
             for student in Path(entry).iterdir():
                 completion_times.append(_calculate_completion_time(student))
-            average_completion[_get_module_name(entry.name)] = (mean(completion_times) / (1000 * 60)) % 60
+            average_completion[_get_module_name(entry.name)] = {
+                'average_completion_time': (mean(completion_times) / (1000 * 60)) % 60,
+                'std': (stdev(completion_times) / (1000 * 60)) % 60
+            }
     average_completion = _sort_dict_by_key(average_completion)
-    _plot_reading_logs(list(average_completion.keys()), list(average_completion.values()), expected_reading_times)
+    modules_std = []
+    average_completion_times = []
+    for module in list(average_completion.values()):
+        average_completion_times.append(module['average_completion_time'])
+        modules_std.append(module['std'])
+    _plot_reading_logs(list(average_completion.keys()), average_completion_times, expected_reading_times, modules_std)
 
 
-def _plot_reading_logs(modules, actual_reading_times, expected_reading_times):
+def _plot_reading_logs(modules, actual_reading_times, expected_reading_times, stds):
     """
     Plots the average reading time vs. the expected reading time.
     :param modules: A list of the module numbers.
     :param actual_reading_times: A list of the reading times corresponding to the module numbers.
     :param expected_reading_times: A list of the expected reading times corresponding to the module numbers.
+    :param stds: A list of the standard deviation in reading times for each module.
     """
     actual_data = {
         'Module': modules,
         'Actual Time': actual_reading_times,
-        'Expected Time': expected_reading_times
+        'Expected Time': expected_reading_times,
+        'STD': stds
     }
     df = pd.DataFrame(actual_data)
     ax = plt.gca()
-    df.plot(kind='line', x='Module', y='Actual Time', ax=ax, x_compat=True, yerr=df['Actual Time'].std())
-    df.plot(kind='line', x='Module', y='Expected Time', color='red', ax=ax, x_compat=True, yerr=df['Expected Time'].std())
+    df.plot(kind='line', x='Module', y='Actual Time', ax=ax, x_compat=True, yerr=df['STD'])
+    df.plot(kind='line', x='Module', y='Expected Time', color='red', ax=ax, x_compat=True)
     plt.xticks(modules)
     plt.ylabel('Time')
     plt.show()
