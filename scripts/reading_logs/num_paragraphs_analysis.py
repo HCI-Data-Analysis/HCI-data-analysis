@@ -1,6 +1,8 @@
 from textwrap import wrap
 
+import numpy as np
 from matplotlib import pyplot as plt
+from scipy.stats import gaussian_kde
 
 from schemas import CourseSchema
 from util import ReadingLogsData, set_plot_settings
@@ -34,7 +36,17 @@ def page_is_valid(module_num, page_content) -> bool:
 def plot_scatter(x: [], y: [], title):
     set_plot_settings()
     plt.scatter(x, y)
+    xy = np.vstack([x, y])
+    z = gaussian_kde(xy)(xy)
+
+    fig, ax = plt.subplots()
+    ax.scatter(x, y, c=z, s=80)
+
     plt.xlabel("Number of Paragraphs")
     plt.ylabel("Average Class Reading Speed")
     plt.title("\n".join(wrap(f"{title}")))
+    plt.show()
+
+    plt.hist2d(x, y, (50, 50), cmap=plt.cm.jet)
+    plt.colorbar()
     plt.show()

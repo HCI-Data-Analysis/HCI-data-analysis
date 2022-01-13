@@ -13,4 +13,3 @@ def set_plot_settings():
         'titlesize': 10,
     }
     matplotlib.rc('axes', **axes)
-

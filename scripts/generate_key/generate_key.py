@@ -1,8 +1,9 @@
-import os
 import pandas as pd
 import random
 
-from schemas import RawGradeBookSchema, KeySchema
+import pandas as pd
+
+from schemas import KeySchema
 
 
 def generate_key(gradebook_path, output_path, seed=123456):
