@@ -5,6 +5,10 @@ import dill
 
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, normalize, CACHE_FOLDER
 
+START_TIME_KEY = 'start_time'
+END_TIME_KEY = 'end_time'
+DURATION_KEY = 'duration'
+
 
 class ReadingLogsData:
     READING_LOG_PATH = "data/api/canvas/reading_logs_extras"
@@ -104,13 +108,13 @@ class ReadingLogsData:
         reading_duration_df = self.reading_duration_dict[f'{module_num}-{page_num}']
 
         if data448_id:
-            start_time = reading_duration_df['start_time'][f'{data448_id}']
-            end_time = reading_duration_df['end_time'][f'{data448_id}']
+            start_time = reading_duration_df[START_TIME_KEY][f'{data448_id}']
+            end_time = reading_duration_df[END_TIME_KEY][f'{data448_id}']
             duration_ms = int(end_time - start_time)
             return ms_to_minutes(duration_ms)
 
-        reading_duration_df['duration'] = reading_duration_df['end_time'] - reading_duration_df['start_time']
-        return ms_to_minutes(reading_duration_df['duration'].mean())
+        reading_duration_df[DURATION_KEY] = reading_duration_df[END_TIME_KEY] - reading_duration_df[START_TIME_KEY]
+        return ms_to_minutes(reading_duration_df[DURATION_KEY].mean())
 
     def module_reading_duration(self, module_num: int, data448_id: int = None) -> float:
         """Returns the module reading duration (average of all page reading durations) in minutes.
@@ -131,4 +135,5 @@ def ms_to_minutes(duration_ms: int):
 
 def get_text_difficulty_index(module_num: int, page_num: int = None) -> float:
     # TODO: read the data stored about the difficulty of each module/page and return the correctly difficulty index
+    # TODO: switch so 0 means easy and 1 means difficult
     return 1
