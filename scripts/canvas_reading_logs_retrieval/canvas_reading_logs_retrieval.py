@@ -1,9 +1,9 @@
 import os
 import ssl
+from urllib.request import urlopen
 
 from api import CanvasAPI, get_default_course_id
 from util import Encoder, mkdir_if_not_exists
-from urllib.request import urlopen
 
 SUBMISSION_TYPE = 'online_upload'
 

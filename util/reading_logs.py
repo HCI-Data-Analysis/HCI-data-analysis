@@ -1,7 +1,7 @@
 import json
 from random import random
 
-from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH
+from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, normalize
 
 
 class ReadingLogsData:
@@ -38,11 +38,14 @@ class ReadingLogsData:
         num_words = len(' '.join(paragraph_list).split(' '))
         duration = page_reading_duration(module_num, page_num, data448_id)
 
+        speed_wpm = num_words / duration
+
         if adjust_for_difficulty:
             difficulty = get_text_difficulty_index(module_num, page_num)
-            # TODO: return WPM adjusted by difficulty
+            norm_difficulty = normalize(difficulty, 0, 100)
+            return speed_wpm / norm_difficulty
 
-        return num_words / duration
+        return speed_wpm
 
     def module_reading_speed(self, module_num: int, data448_id: int = None,
                              adjust_for_difficulty: bool = None) -> float:
@@ -58,15 +61,22 @@ class ReadingLogsData:
         :return: a float representing reading speed in word per minute (WPM)
         """
         page_reading_speeds = []
-        module_paragraphs_dict = self.module_paragraphs_dict()
+        module_paragraphs_dict = self.get_module_paragraphs_dict()
         for page_num in module_paragraphs_dict[str(module_num)].keys():
             return self.page_reading_speed(module_num, int(page_num), data448_id, adjust_for_difficulty)
 
         return sum(page_reading_speeds) / len(page_reading_speeds)
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
+        module_paragraphs_dict = self.get_module_paragraphs_dict()
+        page_paragraphs = []
+        for section_id, data in module_paragraphs_dict[str(module_num)][str(page_num)]['sections'].items():
+            page_paragraphs += data['paragraphs']
+        return page_paragraphs
+
+    def get_num_pages_in_module(self, module_num: int) -> int:
         module_paragraphs = self.get_module_paragraphs_dict()
-        return module_paragraphs[str(module_num)][str(page_num)]['paragraphs']
+        return len(module_paragraphs[str(module_num)])
 
 
 def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:

@@ -1,4 +1,5 @@
-from .canvas_submission_retrieval import canvas_submission_retrieval
+from .canvas_submission_retrieval import canvas_submission_retrieval, setup_submissions_filepath
+from .quiz_retrieval import quiz_object_retrieval, get_quiz_name, get_quiz_object
 from .generate_key import generate_key
 from .anonymize_gradebook import gradebook_anonymize
 from .anonymize_survey import survey_anonymize
@@ -10,3 +11,5 @@ from .performance_by_activity_type import performance_by_activity_type
 from .student_grouping import group_students
 from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
 from .average_module_paragraph_reading_speed import graph_average_module_paragraph_reading_speed
+from .parse_reading_logs import parse_reading_logs_module, parse_reading_logs_all
+from .reading_logs import analyze_num_paragraphs

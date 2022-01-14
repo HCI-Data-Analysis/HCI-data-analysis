@@ -1,4 +1,3 @@
-import os
 import sys
 
 from api import get_default_course_id
