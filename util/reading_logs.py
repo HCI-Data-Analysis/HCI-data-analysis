@@ -1,11 +1,21 @@
 import json
-from random import random
+import os
 
-from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, normalize
+import dill
+
+from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, normalize, CACHE_FOLDER
+
+START_TIME_KEY = 'start_time'
+END_TIME_KEY = 'end_time'
+DURATION_KEY = 'duration'
 
 
 class ReadingLogsData:
+    READING_LOG_PATH = "data/api/canvas/reading_logs_extras"
+
     module_paragraphs_dict = None
+    reading_duration_dict = None
+    content_quiz_performance_dict = None
 
     def get_module_paragraphs_dict(self) -> dict:
         if self.module_paragraphs_dict:
@@ -19,6 +29,18 @@ class ReadingLogsData:
         module_paragraphs = json.load(f)
         self.module_paragraphs_dict = module_paragraphs
         return module_paragraphs
+
+    def get_parsed_reading_log_data(self) -> (dict, dict):
+        if not self.reading_duration_dict and not self.content_quiz_performance_dict:
+            try:
+                with open(os.path.join(CACHE_FOLDER, 'reading_durations_dict.pkl'), 'rb') as f:
+                    self.reading_duration_dict = dill.load(f)
+                with open(os.path.join(CACHE_FOLDER, 'content_quiz_performance_dict.pkl'), 'rb') as f:
+                    self.content_quiz_performance_dict = dill.load(f)
+            except FileNotFoundError as e:
+                raise FileNotFoundError(f'{e}\nRun "python parse_reading_logs.py" first.')
+
+        return self.reading_duration_dict, self.content_quiz_performance_dict
 
     def page_reading_speed(self, module_num: int, page_num: int, data448_id: int = None,
                            adjust_for_difficulty: bool = None) -> float:
@@ -36,7 +58,7 @@ class ReadingLogsData:
         paragraph_list = self.get_paragraph_list(module_num, page_num)
 
         num_words = len(' '.join(paragraph_list).split(' '))
-        duration = page_reading_duration(module_num, page_num, data448_id)
+        duration = self.page_reading_duration(module_num, page_num, data448_id)
 
         speed_wpm = num_words / duration
 
@@ -78,20 +100,40 @@ class ReadingLogsData:
         module_paragraphs = self.get_module_paragraphs_dict()
         return len(module_paragraphs[str(module_num)])
 
+    def page_reading_duration(self, module_num: int, page_num: int, data448_id: int = None) -> float:
+        """Returns the page reading duration in minutes. Average of all students unless given a data_448 id."""
+        self.reading_duration_dict, _ = self.get_parsed_reading_log_data()
 
-def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:
-    """Returns the page reading duration in minutes. Average of all students unless given a data_448 id."""
-    # TODO: get average student reading duration for this page
-    return random()
+        # Retrieve the correct DataFrame for the requested page.
+        reading_duration_df = self.reading_duration_dict[f'{module_num}-{page_num}']
+
+        if data448_id:
+            start_time = reading_duration_df[START_TIME_KEY][f'{data448_id}']
+            end_time = reading_duration_df[END_TIME_KEY][f'{data448_id}']
+            duration_ms = int(end_time - start_time)
+            return ms_to_minutes(duration_ms)
+
+        reading_duration_df[DURATION_KEY] = reading_duration_df[END_TIME_KEY] - reading_duration_df[START_TIME_KEY]
+        return ms_to_minutes(reading_duration_df[DURATION_KEY].mean())
+
+    def module_reading_duration(self, module_num: int, data448_id: int = None) -> float:
+        """Returns the module reading duration (average of all page reading durations) in minutes.
+        Average of all students unless given a data_448 id. """
+
+        num_pages = self.get_num_pages_in_module(module_num)
+        page_durations = []
+
+        for page_num in range(1, num_pages + 1):
+            page_durations.append(self.page_reading_speed(module_num, page_num, data448_id))
+
+        return sum(page_durations) / len(page_durations)
 
 
-def module_reading_duration(module_num: int, data448_id: int = None) -> float:
-    """Returns the module reading duration (average of all page reading durations) in minutes.
-    Average of all students unless given a data_448 id. """
-    # TODO: get average student reading duration for this page
-    return random()
+def ms_to_minutes(duration_ms: int):
+    return duration_ms / 1000 / 60
 
 
 def get_text_difficulty_index(module_num: int, page_num: int = None) -> float:
     # TODO: read the data stored about the difficulty of each module/page and return the correctly difficulty index
+    # TODO: switch so 0 means easy and 1 means difficult
     return 1

@@ -11,5 +11,4 @@ from .performance_by_activity_type import performance_by_activity_type
 from .student_grouping import group_students
 from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
 from .average_module_paragraph_reading_speed import graph_average_module_paragraph_reading_speed
-from .parse_reading_logs import parse_reading_logs_module, parse_reading_logs_all
-from .reading_logs import analyze_num_paragraphs
+from .reading_logs import analyze_num_paragraphs, parse_reading_logs_module, parse_reading_logs_all
