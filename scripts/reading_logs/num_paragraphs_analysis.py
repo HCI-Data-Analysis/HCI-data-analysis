@@ -33,20 +33,29 @@ def page_is_valid(module_num, page_content) -> bool:
     return True
 
 
-def plot_scatter(x: [], y: [], title):
+def plot_scatter(x: [], y: [], title, y_err: [] = None):
+    print(y_err)
     set_plot_settings()
-    plt.scatter(x, y)
     xy = np.vstack([x, y])
     z = gaussian_kde(xy)(xy)
 
     fig, ax = plt.subplots()
-    ax.scatter(x, y, c=z, s=80)
 
-    plt.xlabel("Number of Paragraphs")
-    plt.ylabel("Average Class Reading Speed")
-    plt.title("\n".join(wrap(f"{title}")))
+    # Marker size is proportional to stdev
+    # ss = [error * 0.1 for error in y_err]
+    # ax.scatter(x, y, c=z, s=ss)
+
+    # Marker size constant + stdev bars
+    # print(y_err)
+    ax.scatter(x, y, c=z, s=5)
+    if y_err:
+        ax.errorbar(x, y, yerr=y_err, fmt="o", elinewidth=0.7)
+
+    plt.xlabel('Number of Paragraphs')
+    plt.ylabel('Average Class Reading Speed')
+    plt.title('\n'.join(wrap(f'{title}')))
     plt.show()
 
-    plt.hist2d(x, y, (50, 50), cmap=plt.cm.jet)
-    plt.colorbar()
-    plt.show()
+    # plt.hist2d(x, y, (50, 50), cmap=plt.cm.jet)
+    # plt.colorbar()
+    # plt.show()
