@@ -6,3 +6,5 @@ KEY_FILENAME = 'Key.csv'
 KEY_PATH = os.path.join(KEY_DIR, KEY_FILENAME)
 
 MODULE_PARAGRAPHS_OUTPUT_FILEPATH = os.path.join('data', 'processed', 'module_paragraphs.json')
+
+CACHE_FOLDER = os.path.join('data', 'cache')

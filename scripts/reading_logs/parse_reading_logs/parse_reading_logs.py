@@ -15,7 +15,7 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
     :param reading_log_path: a string containing reading_log_path
     :param module_paragraph_json_path: a string containing where the parsed module_paragraph.json is stored
     :return: a tuple of dictionaries of dataframes.
-                keys: in the format of [module_number]_[page_number]
+                keys: in the format of [module_number]-[page_number]
                 value: corresponding dataframe for either reading timestamp or quiz submission timestamp/answer
     """
     each_continue_dict = {}
