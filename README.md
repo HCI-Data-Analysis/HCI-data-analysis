@@ -96,8 +96,7 @@ each module.
 
 > #### Instructions
 > 1. Navigate to the root directory.
-> 2. Ensure the cleaned reading logs are downloaded from the shared drive and exist at `data/cleaned_reading_logs`.
-> 3. Open `reading_logs_completion_time.py` and ensure that the names and file paths of each file are accurate.
-> 4. Run `pip install -r requirements.txt`.
-> 5. Run `python reading_logs_completion.py`
-> 6. The plot will be displayed upon the completion of the script.
+> 2. Open `reading_logs_completion_time.py` and ensure that the names and file paths of each file are accurate.
+> 3. Run `pip install -r requirements.txt`.
+> 4. Run `python reading_logs_completion.py`
+> 5. The plot will be displayed upon the completion of the script.
