@@ -12,8 +12,6 @@ DURATION_KEY = 'duration'
 
 
 class ReadingLogsData:
-    READING_LOG_PATH = 'data/api/canvas/reading_logs_extras'
-
     module_paragraphs_dict = None
     reading_duration_dict = None
     content_quiz_performance_dict = None
@@ -156,18 +154,24 @@ class ReadingLogsData:
             duration, _ = self.page_reading_duration(module_num, page_num, data448_id)
             page_durations.append(duration)
 
-        return mean_and_sd(page_durations)
+        return mean_and_sd(page_durations, False)
 
 
 def ms_to_minutes(duration_ms: float):
     return duration_ms / 1000 / 60
 
 
-def mean_and_sd(values: []) -> (float, float):
+def mean_and_sd(values: [], mean=True) -> (float, float):
     values_list = list(values)
-    mean = sum(values_list) / len(values_list)
-    sd = statistics.stdev(values_list)
-    return mean, sd
+    if len(values_list) > 1:
+        sd = statistics.stdev(values_list)
+    else:
+        sd = 0
+    if mean:
+        mean = sum(values_list) / len(values_list)
+        return mean, sd
+    else:
+        return sum(values_list), sd
 
 
 def get_text_difficulty_index(module_num: int, page_num: int = None) -> float:

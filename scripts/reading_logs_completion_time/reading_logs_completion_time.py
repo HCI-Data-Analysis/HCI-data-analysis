@@ -1,32 +1,23 @@
-import json
 import pandas as pd
-from statistics import stdev
-from pathlib import Path
-from statistics import mean
 from matplotlib import pyplot as plt
+from util import ReadingLogsData
 
-from schemas import ReadingLogsSchema
 
-
-def reading_logs_completion_time(directory, expected_reading_times):
+def reading_logs_completion_time(expected_reading_times):
     """
     Gets the reading logs and determines the average completion for each module. It then plots the average reading
     time vs. the expected reading time.
-    :param directory: The directory where reading logs are stored.
     :param expected_reading_times: The list of expected reading times in minutes.
     """
     average_completion = {}
-    entries = Path(directory)
-    for entry in entries.iterdir():
-        if entry.is_dir():
-            completion_times = []
-            for student in Path(entry).iterdir():
-                completion_times.append(_calculate_completion_time(student))
-            average_completion[_get_module_name(entry.name)] = {
-                'average_completion_time': (mean(completion_times) / (1000 * 60)) % 60,
-                'std': (stdev(completion_times) / (1000 * 60)) % 60
-            }
-    average_completion = _sort_dict_by_key(average_completion)
+    reading_logs = ReadingLogsData()
+    for i in range(12):
+        print(i)
+        reading_duration = reading_logs.module_reading_duration(i)
+        average_completion[i] = {
+            'average_completion_time': reading_duration[0],
+            'std': reading_duration[1]
+        }
     modules_std = []
     average_completion_times = []
     for module in list(average_completion.values()):
@@ -56,42 +47,3 @@ def _plot_reading_logs(modules, actual_reading_times, expected_reading_times, st
     plt.xticks(modules)
     plt.ylabel('Time')
     plt.show()
-
-
-def _calculate_completion_time(directory):
-    """
-    Calculates the average completion time for a student.
-    :param directory: The directory where the student's reading logs exist.
-    :return: The total time it took the student to complete reading the module.
-    """
-    files = Path(directory).glob('*.txt')
-    completion_times = []
-    for file in files:
-        with open(file) as f:
-            try:
-                contents = json.loads(f.read())
-                completion_times.append(contents['endTime'] - contents['startTime'])
-            except:
-                print(f'{file} has an issue.')
-                continue
-    return sum(completion_times)
-
-
-def _get_module_name(module):
-    """
-    Gets the module name.
-    :param module: The module to get the name for.
-    :return: The correct name based on the assignment number.
-    """
-    return ReadingLogsSchema.MODULE_NAMES.get(module)
-
-
-def _sort_dict_by_key(dictionary):
-    """
-    The reading logs on the shared drive are sorted numerically by assignment id. This is not the same order of the
-    modules, this function ensures that the dict is sorted in order of the modules instead of assignment id.
-    :param dictionary: The dictionary to sort by keys.
-    :return: The sorted dictionary.
-    """
-    sorted_items = sorted(dictionary.items())
-    return dict(sorted_items)
