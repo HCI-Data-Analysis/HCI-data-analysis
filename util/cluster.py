@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from pandas import DataFrame
-from sklearn.cluster import KMeans
 import pandas as pd
 import seaborn as sns
+from pandas import DataFrame
+from sklearn.cluster import KMeans
 
 
 def plot_inertia_graph(max_k, cluster_data):
