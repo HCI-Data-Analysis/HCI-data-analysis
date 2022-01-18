@@ -1,5 +1,6 @@
 import pandas as pd
 from matplotlib import pyplot as plt
+from schemas import CourseSchema
 from util import ReadingLogsData
 
 
@@ -11,10 +12,9 @@ def reading_logs_completion_time(expected_reading_times):
     """
     average_completion = {}
     reading_logs = ReadingLogsData()
-    for i in range(12):
-        print(i)
-        reading_duration = reading_logs.module_reading_duration(i)
-        average_completion[i] = {
+    for module in CourseSchema.MODULE_NUM_KEY.values():
+        reading_duration = reading_logs.module_reading_duration(module)
+        average_completion[module] = {
             'average_completion_time': reading_duration[0],
             'std': reading_duration[1]
         }
