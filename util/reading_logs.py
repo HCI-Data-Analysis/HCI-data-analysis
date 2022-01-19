@@ -1,7 +1,9 @@
 import json
+import pandas as pd
 from random import random
 
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH
+from scripts import parse_reading_logs_module
 
 
 class ReadingLogsData:
@@ -67,6 +69,23 @@ class ReadingLogsData:
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs = self.get_module_paragraphs_dict()
         return module_paragraphs[str(module_num)][str(page_num)]['paragraphs']
+
+    def content_quiz_performance(self, module_path, module_number) ->(dict):
+        cleaned_module_each_continue, cleaned_module_each_submit = parse_reading_logs_module(module_path, MODULE_PARAGRAPHS_OUTPUT_FILEPATH, module_number)
+        content_quiz_performance = {}
+        reading_log_headers = cleaned_module_each_submit.keys()
+        for student in cleaned_module_each_submit:
+            data448_id = student.Index.name
+            num_first_attmept_correct = 0
+            num_attempt_to_correct = []
+            for element in student:
+                if type(element) is list:
+                    if element[0] == "ans":
+                        num_first_attmept_correct += 1
+                    
+        return 
+
+
 
 
 def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:
