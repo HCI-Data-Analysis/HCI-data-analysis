@@ -73,17 +73,28 @@ class ReadingLogsData:
     def content_quiz_performance(self, module_path, module_number) ->(dict):
         cleaned_module_each_continue, cleaned_module_each_submit = parse_reading_logs_module(module_path, MODULE_PARAGRAPHS_OUTPUT_FILEPATH, module_number)
         content_quiz_performance = {}
-        reading_log_headers = cleaned_module_each_submit.keys()
-        for student in cleaned_module_each_submit:
-            data448_id = student.Index.name
-            num_first_attmept_correct = 0
-            num_attempt_to_correct = []
-            for element in student:
-                if type(element) is list:
-                    if element[0] == "ans":
-                        num_first_attmept_correct += 1
-                    
-        return 
+        for reading_log_headers, pages in cleaned_module_each_submit.items():
+            print(pages)
+            data448_id = pages.index.values
+            page_quiz_performance = {}
+            for row in pages.iterrows():
+                num_attempt_to_correct = 0
+                num_first_attmept_correct = False
+                for index, element in row.items():
+                    if type(element) is list:
+                        if isinstance(element[0], str) &element[0] == "ans":
+                            num_first_attmept_correct = True
+                        elif isinstance(element[0], str):
+                            for submit in element:
+                                if submit != "ans":
+                                    num_attempt_to_correct += 1
+                                else:
+                                    break
+                    page_quiz_performance[index] = [num_first_attmept_correct, num_attempt_to_correct]
+            page_quiz_series = pd.Series(page_quiz_performance, name=data448_id)
+            content_quiz_performance[reading_log_headers] = content_quiz_performance[reading_log_headers].append(page_quiz_series)
+            
+        return content_quiz_performance
 
 
 
@@ -104,3 +115,9 @@ def module_reading_duration(module_num: int, data448_id: int = None) -> float:
 def get_text_difficulty_index(module_num: int, page_num: int = None) -> float:
     # TODO: read the data stored about the difficulty of each module/page and return the correctly difficulty index
     return 1
+
+
+if __name__ == "__main__":
+    READING_LOG_PATH = "data/api/canvas/reading_logs"
+    x = ReadingLogsData()
+    x.content_quiz_performance(READING_LOG_PATH, MODULE_PARAGRAPHS_OUTPUT_FILEPATH)
