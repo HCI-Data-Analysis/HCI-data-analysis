@@ -48,6 +48,15 @@ class ReadingLogsData:
         return self.content_quiz_performance_dict if self.content_quiz_performance_dict else \
             self.get_parsed_reading_log_data()[1]
 
+    def get_page_word_count(self, module_num: int, page_num: int) -> int:
+        """
+        Gets the word count for the page in a specified module.
+        :param module_num: The module number.
+        :param page_num: The page number.
+        """
+        paragraph_list = self.get_paragraph_list(module_num, page_num)
+        return len(' '.join(paragraph_list).split(' '))
+
     def page_reading_speed(self, module_num: int, page_num: int, data448_id: int = None) -> (float, float):
         """
         Retrieves the reading speed for a page. If given a data448_id, only retrieves that student's reading speed

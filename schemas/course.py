@@ -8,6 +8,8 @@ class CourseSchema:
         'interview'
     ]
 
+    AVERAGE_READING_SPEED = 75
+
     MODULE_NUM_KEY = {
         741711: 0,
         741731: 1,
