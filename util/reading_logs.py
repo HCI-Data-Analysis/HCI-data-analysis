@@ -148,7 +148,7 @@ class ReadingLogsData:
 
         return all_durations
 
-    def module_reading_duration(self, module_num: int, data448_id: int = None) -> (float, float):
+    def module_reading_duration(self, module_num: int, data448_id: int = None, mean=True) -> (float, float):
         """
         Returns the module reading duration (average of all page reading durations) in minutes.
         Average of all students unless given a data_448 id.
@@ -163,7 +163,7 @@ class ReadingLogsData:
             duration, _ = self.page_reading_duration(module_num, page_num, data448_id)
             page_durations.append(duration)
 
-        return mean_and_sd(page_durations, False)
+        return mean_and_sd(page_durations, mean)
 
 
 def ms_to_minutes(duration_ms: float):

@@ -16,7 +16,7 @@ def reading_logs_completion_time(expected_reading_times):
     average_completion = {}
     reading_logs = ReadingLogsData()
     for module in CourseSchema.MODULE_NUM_KEY.values():
-        reading_duration = reading_logs.module_reading_duration(module)
+        reading_duration = reading_logs.module_reading_duration(module, False)
         average_completion[module] = {
             'average_completion_time': reading_duration[0],
             'std': reading_duration[1]
