@@ -53,8 +53,7 @@ class ReadingLogsData:
     def page_reading_speed(self, module_num: int, page_num: int, data448_id: int = None) -> (float, float):
         """
         Retrieves the reading speed for a page. If given a data448_id, only retrieves that student's reading speed
-        for the page. Without a data448_id, retrieves the average reading speed of that page. If desired,
-        this reading speed can be adjusted to factor in difficulty.
+        for the page. Without a data448_id, retrieves the average reading speed of that page.
 
         Standard deviation is None if a data448_id is given
 
@@ -80,9 +79,8 @@ class ReadingLogsData:
     def module_reading_speed(self, module_num: int, data448_id: int = None) -> (float, float):
         """
         Retrieves the reading speed for a module. If given a data448_id, only retrieves that student's reading speed
-        for the page. Without a data448_id, retrieves the average reading speed of that page. If desired,
-        this reading speed can be adjusted to factor in difficulty. In all cases, the returned value is the average
-        reading speed from all pages within the module.
+        for the page. Without a data448_id, retrieves the average reading speed of that page. In all cases,
+        the returned value is the average reading speed from all pages within the module.
 
         Note: Averages across pages, then students.
 
@@ -97,6 +95,60 @@ class ReadingLogsData:
             page_reading_speeds.append(page_reading_speed)
 
         return mean_and_sd(page_reading_speeds)
+
+    def page_content_quiz_num_attempts(self, module_num: int, page_num: int, data448_id: int = None) -> (float, float):
+        """
+        Retrieves the average number of content quiz attempts before a correct answer for a page. If given a
+        data448_id, only retrieves that student's reading speed for the page. Without a data448_id, retrieves the
+        average reading speed of that page.
+
+        Returns None if this page has no content quiz questions.
+        Standard deviation is None if a data448_id is given.
+
+        :param module_num: The module number
+        :param page_num: The page number
+        :param data448_id: A student's Data 448 id
+        :return: (float representing the average number of content quiz attempts, standard deviation for this average)
+        """
+        page_content_quiz_df = self.get_content_quiz_performance_dict()[f'{module_num}-{page_num}']
+
+        def num_before_ans(*args):
+            lists = []
+            for val in args:
+                lists.append(val) if isinstance(val, list) else lists.append([val])
+
+            # Discard if they tampered with the numbers so questions have a different number of attempts
+            if not all(len(response_set) == len(lists[0]) for response_set in lists):
+                return -1
+
+            all_correct = ['ans'] * len(lists)
+            count = 0
+            for question_responses in zip(*lists):
+                if list(question_responses) == all_correct:
+                    return count
+                else:
+                    count += 1
+
+        zip_set = [page_content_quiz_df[col] for col in page_content_quiz_df if col.startswith('q')]
+        if not zip_set:
+            return None
+
+        page_content_quiz_df['num_before_ans'] = [num_before_ans(*a) for a in zip(*zip_set)]
+
+        if data448_id:
+            return page_content_quiz_df['num_before_ans'][f'{data448_id}'], None
+
+        all_num_attempts = [num for num in page_content_quiz_df['num_before_ans'].values if num != -1]
+        return mean_and_sd(all_num_attempts)
+
+    def module_content_quiz_num_attempts(self, module_num: int, data448_id: int = None) -> (float, float):
+        content_quiz_attempts_per_page = []
+        module_paragraphs_dict = self.get_module_paragraphs_dict()
+        for page_num in module_paragraphs_dict[str(module_num)].keys():
+            average_num_attempts, _ = self.page_content_quiz_num_attempts(module_num, int(page_num), data448_id)
+            content_quiz_attempts_per_page.append(average_num_attempts)
+
+        return mean_and_sd(content_quiz_attempts_per_page)
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs_dict = self.get_module_paragraphs_dict()
