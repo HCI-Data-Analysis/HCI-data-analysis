@@ -31,7 +31,7 @@ def get_outlier_id_list(page_df, module_id):
     module, page = module_id.split('-')
     reading_logs = ReadingLogsData()
     if not page_df.empty:
-        page_df['speed'] = page_df.apply(lambda x: reading_logs.page_reading_speed(int(module), int(page), x.name),
+        page_df['speed'] = page_df.apply(lambda x: reading_logs.page_reading_speed(int(module), int(page), x.name)[0],
                                          axis=1)
 
         quartiles = page_df[['speed']].apply(get_q3_q1)

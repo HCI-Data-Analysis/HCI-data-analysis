@@ -2,18 +2,18 @@ from collections import defaultdict
 
 import pandas as pd
 
-
-from scripts import parse_reading_logs_all, get_outlier_id_list, analyze_num_paragraphs
+from util import ReadingLogsData
+from scripts import get_outlier_id_list
 
 MODULE_PATH = "data/api/canvas/reading_logs"
 MODULE_PARAGRAPHS_PATH = "data/processed/module_paragraphs.json"
 
 if __name__ == "__main__":
-    analyze_num_paragraphs()
 
     # Outlier Categorization
     sin_dict = defaultdict(dict)
-    reading_log_dict, quiz_dict = parse_reading_logs_all(MODULE_PATH, MODULE_PARAGRAPHS_PATH)
+    reading_logs_data = ReadingLogsData()
+    reading_log_dict, quiz_dict = reading_logs_data.get_parsed_reading_log_data()
     for item in reading_log_dict:
         sped, lag = get_outlier_id_list(reading_log_dict.get(item), item)
         for sp in sped:
