@@ -82,7 +82,7 @@ class ReadingLogsData:
         all_durations = self.page_reading_duration_list(module_num, page_num)
         student_reading_speeds = [(num_words / d) for d in all_durations]
 
-        return mean_and_sd(student_reading_speeds)
+        return aggregate_and_sd(student_reading_speeds)
 
     def module_reading_speed(self, module_num: int, data448_id: int = None) -> (float, float):
         """
@@ -103,7 +103,7 @@ class ReadingLogsData:
             page_reading_speed, _ = self.page_reading_speed(module_num, int(page_num), data448_id)
             page_reading_speeds.append(page_reading_speed)
 
-        return mean_and_sd(page_reading_speeds)
+        return aggregate_and_sd(page_reading_speeds)
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs_dict = self.get_module_paragraphs_dict()
@@ -163,14 +163,14 @@ class ReadingLogsData:
             duration, _ = self.page_reading_duration(module_num, page_num, data448_id)
             page_durations.append(duration)
 
-        return mean_and_sd(page_durations, mean)
+        return aggregate_and_sd(page_durations, mean)
 
 
 def ms_to_minutes(duration_ms: float):
     return duration_ms / 1000 / 60
 
 
-def mean_and_sd(values: [], mean=True) -> (float, float):
+def aggregate_and_sd(values: [], mean=True) -> (float, float):
     values_list = list(values)
     if len(values_list) > 1:
         sd = statistics.stdev(values_list)
