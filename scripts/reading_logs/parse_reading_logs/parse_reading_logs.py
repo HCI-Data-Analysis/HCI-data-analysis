@@ -1,7 +1,9 @@
-import pandas as pd
-import os
 import json
 import math
+import os
+
+import pandas as pd
+
 from schemas import CourseSchema
 from util import ReadingLogsData
 
@@ -13,7 +15,7 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
     :param reading_log_path: a string containing reading_log_path
     :param module_paragraph_json_path: a string containing where the parsed module_paragraph.json is stored
     :return: a tuple of dictionaries of dataframes.
-                keys: in the format of [module_number]_[page_number]
+                keys: in the format of [module_number]-[page_number]
                 value: corresponding dataframe for either reading timestamp or quiz submission timestamp/answer
     """
     each_continue_dict = {}
@@ -57,6 +59,7 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
     """
     reading_log_data = ReadingLogsData()
     number_of_pages = reading_log_data.get_num_pages_in_module(int(module_number))
+    print(number_of_pages)
 
     module_each_continue = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
     module_each_submit = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
@@ -145,7 +148,7 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
             continue
 
         reading_log_name_array = reading_log.split('-')
-        # print(reading_log_name_array)
+        # TODO: (remove) print(reading_log_name_array)
         if reading_log_name_array[0] != "COSC341":  # make sure the file is a reading_log
             continue
         if reading_log_name_array[1] != module_number:  # make sure the reading log file is for the correct module
