@@ -20,8 +20,8 @@ def get_iqr(col):
 
 def get_outlier_id_list(page_df, module_id):
     """
-    This method takes in a dataframe for each page in a module and returns a two lists that contain the speedrunners,
-    and the laggers outliers based on calculated IQR.
+    This method takes in a duration dataframe for each page in a module and returns two lists that contain the
+    speedrunners, and the laggers outliers based on calculated IQR.
     :param module_id: id of module-page
     :param page_df: Dataframe of module page with completion times as columns
     :return: [speedrunners, laggers]
