@@ -21,6 +21,8 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
     each_continue_dict = {}
     each_quiz_submit_dict = {}
     for module in os.listdir(reading_log_path):
+        if module == '.DS_Store':
+            continue
         module_path = os.path.join(reading_log_path, module)
         module_num = CourseSchema.MODULE_NUM_KEY[int(module)]
         module_tuple = parse_reading_logs_module(module_path, module_paragraph_json_path, str(module_num))
@@ -67,6 +69,8 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
     for data448_id in os.listdir(module_path):
         # data448_id is a folder containing the student's reading logs. The folder's name is data448_id
         data448id_path = os.path.join(module_path, data448_id)
+        if data448id_path.endswith('.DS_Store'):
+            continue
 
         # if reading logs in data448_id_path, then parse data448id_path, else
         contains_reading_log = False
