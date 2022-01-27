@@ -12,8 +12,6 @@ DURATION_KEY = 'duration'
 
 
 class ReadingLogsData:
-    READING_LOG_PATH = 'data/api/canvas/reading_logs_extras'
-
     module_paragraphs_dict = None
     reading_duration_dict = None
     content_quiz_performance_dict = None
@@ -50,6 +48,15 @@ class ReadingLogsData:
         return self.content_quiz_performance_dict if self.content_quiz_performance_dict else \
             self.get_parsed_reading_log_data()[1]
 
+    def get_page_word_count(self, module_num: int, page_num: int) -> int:
+        """
+        Gets the word count for the page in a specified module.
+        :param module_num: The module number.
+        :param page_num: The page number.
+        """
+        paragraph_list = self.get_paragraph_list(module_num, page_num)
+        return len(' '.join(paragraph_list).split(' '))
+
     def page_reading_speed(self, module_num: int, page_num: int, data448_id: int = None) -> (float, float):
         """
         Retrieves the reading speed for a page. If given a data448_id, only retrieves that student's reading speed
@@ -75,7 +82,7 @@ class ReadingLogsData:
         all_durations = self.page_reading_duration_list(module_num, page_num)
         student_reading_speeds = [(num_words / d) for d in all_durations]
 
-        return mean_and_sd(student_reading_speeds)
+        return aggregate_and_sd(student_reading_speeds)
 
     def module_reading_speed(self, module_num: int, data448_id: int = None) -> (float, float):
         """
@@ -96,7 +103,7 @@ class ReadingLogsData:
             page_reading_speed, _ = self.page_reading_speed(module_num, int(page_num), data448_id)
             page_reading_speeds.append(page_reading_speed)
 
-        return mean_and_sd(page_reading_speeds)
+        return aggregate_and_sd(page_reading_speeds)
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs_dict = self.get_module_paragraphs_dict()
@@ -141,7 +148,7 @@ class ReadingLogsData:
 
         return all_durations
 
-    def module_reading_duration(self, module_num: int, data448_id: int = None) -> (float, float):
+    def module_reading_duration(self, module_num: int, data448_id: int = None, mean=True) -> (float, float):
         """
         Returns the module reading duration (average of all page reading durations) in minutes.
         Average of all students unless given a data_448 id.
@@ -156,18 +163,24 @@ class ReadingLogsData:
             duration, _ = self.page_reading_duration(module_num, page_num, data448_id)
             page_durations.append(duration)
 
-        return mean_and_sd(page_durations)
+        return aggregate_and_sd(page_durations, mean)
 
 
 def ms_to_minutes(duration_ms: float):
     return duration_ms / 1000 / 60
 
 
-def mean_and_sd(values: []) -> (float, float):
+def aggregate_and_sd(values: [], mean=True) -> (float, float):
     values_list = list(values)
-    mean = sum(values_list) / len(values_list)
-    sd = statistics.stdev(values_list)
-    return mean, sd
+    if len(values_list) > 1:
+        sd = statistics.stdev(values_list)
+    else:
+        sd = 0
+    if mean:
+        mean = sum(values_list) / len(values_list)
+        return mean, sd
+    else:
+        return sum(values_list), sd
 
 
 def get_text_difficulty_index(module_num: int, page_num: int = None) -> float:
