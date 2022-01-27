@@ -25,7 +25,7 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
             continue
         module_path = os.path.join(reading_log_path, module)
         module_num = CourseSchema.MODULE_NUM_KEY[int(module)]
-        module_tuple = parse_reading_logs_module(module_path, module_paragraph_json_path, str(module_num))
+        module_tuple = parse_reading_logs_module(module_path, str(module_num))
         module_each_continue_dict = module_tuple[0]
         module_each_quiz_submit_dict = module_tuple[1]
         for k, v in module_each_continue_dict.items():
@@ -37,14 +37,13 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
     return each_continue_dict, each_quiz_submit_dict
 
 
-def parse_reading_logs_module(module_path, module_paragraphs_path, module_number) -> (dict, dict):
+def parse_reading_logs_module(module_path, module_number) -> (dict, dict):
     """
     Converts the reading log of given module_each_continue to two dictionary of dataframes. Both dictionary
      have the key in the format of [module_num]-[page_num]. The values being a dataframe that represents the reading log timestamp
     information for each students. The dataframe have columns of "start_time" [each section name] and
     "end_time", and rows with indexs of data448_id representing each student.
     :param module_path: A string containing the path to the reading logs module_each_continue
-    :param module_paragraphs_path: A string containing the path of the module_paragraphs
     :param module_number: A string containing the module_each_continue number
     :return: a tuple with two dictionaries:
             module_each_continue:

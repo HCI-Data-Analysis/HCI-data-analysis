@@ -1,13 +1,8 @@
 import json
-import pandas as pd
-from random import random
 import os
 import statistics
-
+import pandas as pd
 import dill
-
-from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH
-from scripts import parse_reading_logs_module
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, CACHE_FOLDER
 
 START_TIME_KEY = 'start_time'
@@ -205,35 +200,6 @@ class ReadingLogsData:
 
         return all_durations
 
-    def content_quiz_performance(self, module_path, module_number) -> (dict):
-        cleaned_module_each_continue, cleaned_module_each_submit = parse_reading_logs_module(module_path,
-                                                                                             MODULE_PARAGRAPHS_OUTPUT_FILEPATH,                                                                      module_number)
-        content_quiz_performance = {}
-        for reading_log_headers, pages in cleaned_module_each_submit.items():
-            print(pages)
-            data448_id = pages.index.values
-            page_quiz_performance = {}
-            for row in pages.iterrows():
-                num_attempt_to_correct = 0
-                num_first_attmept_correct = False
-                for index, element in row.items():
-                    if type(element) is list:
-                        if isinstance(element[0], str) & element[0] == "ans":
-                            num_first_attmept_correct = True
-                        elif isinstance(element[0], str):
-                            for submit in element:
-                                if submit != "ans":
-                                    num_attempt_to_correct += 1
-                                else:
-                                    break
-                    page_quiz_performance[index] = [num_first_attmept_correct, num_attempt_to_correct]
-            page_quiz_series = pd.Series(page_quiz_performance, name=data448_id)
-            content_quiz_performance[reading_log_headers] = content_quiz_performance[reading_log_headers].append(
-                page_quiz_series)
-
-        return content_quiz_performance
-
-
     def module_reading_duration(self, module_num: int, data448_id: int = None, mean=True) -> (float, float):
         """
         Returns the module reading duration (average of all page reading durations) in minutes.
@@ -250,6 +216,77 @@ class ReadingLogsData:
             page_durations.append(duration)
 
         return aggregate_and_sd(page_durations, mean)
+
+    def content_quiz_performance(self) -> dict:
+        """
+
+        :return: A dictionary with keys in the format of [module_num]_[page_num] and values of a list:
+                    number of entries, a list of number of attempts each students used,
+                    a list of grades each student get on their first attempt, number of total attempts
+        """
+        content_quiz_dict = self.get_content_quiz_performance_dict()
+        num_attempt_to_correct = {}
+        for reading_log_headers, page in content_quiz_dict.items():
+            number_of_entries = 0
+            num_attempt = []
+            first_attempt_grade = []
+            num_questions = len(page.columns)-3
+            for student in page.iterrows():
+                for series in student:
+                    num_corrects = 0
+                    if isinstance(series, pd.Series):
+                        for index, elements in series.items():
+                            if isinstance(elements, str):
+                                number_of_entries += 1
+                                num_attempt.append(1)
+                                if elements == "ans":
+                                    num_corrects += 1
+                            elif isinstance(elements, list):
+                                if isinstance(elements[0], str):
+                                    number_of_entries += 1
+                                    individual_attempts = 0
+                                    for submit in elements:
+                                        if submit != 'ans':
+                                            individual_attempts += 1
+                                        else:
+                                            individual_attempts += 1
+                                            num_attempt.append(individual_attempts)
+                                            break
+                                    if elements[0] == "ans":
+                                        num_corrects += 1
+                if num_questions > 0:
+                    student_first_attempt_grade = num_corrects/num_questions
+                    first_attempt_grade.append(student_first_attempt_grade)
+            performance_list = [number_of_entries, num_attempt, first_attempt_grade, sum(num_attempt)]
+            num_attempt_to_correct[reading_log_headers] = performance_list
+
+
+
+        # content_quiz_performance_dict = {}
+        # for reading_log_headers, pages in cleaned_module_each_submit.items():
+        #     print(pages)
+        #     data448_id = pages.index.values
+        #     page_quiz_performance = {}
+        #     for row in pages.iterrows():
+        #         num_attempt_to_correct = 0
+        #         num_first_attempt_correct = False
+        #         for index, element in row.items():
+        #             if type(element) is list:
+        #                 if isinstance(element[0], str) & element[0] == "ans":
+        #                     num_first_attempt_correct = True
+        #                 elif isinstance(element[0], str):
+        #                     for submit in element:
+        #                         if submit != "ans":
+        #                             num_attempt_to_correct += 1
+        #                         else:
+        #                             break
+        #             page_quiz_performance[index] = [num_first_attempt_correct, num_attempt_to_correct]
+        #     page_quiz_series = pd.Series(page_quiz_performance, name=data448_id)
+        #     content_quiz_performance_dict[reading_log_headers] = content_quiz_performance_dict[
+        #         reading_log_headers].append(
+        #         page_quiz_series)
+
+        return num_attempt_to_correct
 
 
 def ms_to_minutes(duration_ms: float):
@@ -268,8 +305,3 @@ def aggregate_and_sd(values: [], mean=True) -> (float, float):
     else:
         return sum(values_list), sd
 
-
-if __name__ == "__main__":
-    READING_LOG_PATH = "data/api/canvas/reading_logs"
-    x = ReadingLogsData()
-    x.content_quiz_performance(READING_LOG_PATH, MODULE_PARAGRAPHS_OUTPUT_FILEPATH)
