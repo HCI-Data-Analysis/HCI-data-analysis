@@ -10,5 +10,6 @@ from .attendance import graph_attendance
 from .performance_by_activity_type import performance_by_activity_type
 from .student_grouping import group_students
 from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
+from .quantify_answer_spamming.answer_spamming import answer_spamming
 from .reading_logs import analyze_num_paragraphs, parse_reading_logs_module, parse_reading_logs_all, \
     reading_logs_completion_time
