@@ -120,18 +120,18 @@ class ReadingLogsData:
         page_content_quiz_df = self.get_content_quiz_performance_dict()[f'{module_num}-{page_num}']
 
         def num_before_ans(*args):
-            lists = []
+            q_response_lists = []
             for val in args:
-                lists.append(val) if isinstance(val, list) else lists.append([val])
+                q_response_lists.append(val) if isinstance(val, list) else q_response_lists.append([val])
 
             # Discard if they tampered with the numbers so questions have a different number of attempts
-            if not all(len(response_set) == len(lists[0]) for response_set in lists):
+            if not all(len(response_set) == len(q_response_lists[0]) for response_set in q_response_lists):
                 return -1
 
-            all_correct = ['ans'] * len(lists)
+            all_correct = ['ans'] * len(q_response_lists)
             count = 0
-            for question_responses in zip(*lists):
-                if list(question_responses) == all_correct:
+            for q_response_set in zip(*q_response_lists):
+                if list(q_response_set) == all_correct:
                     return count
                 else:
                     count += 1
@@ -233,9 +233,3 @@ def aggregate_and_sd(values: [], mean=True) -> (float, float):
         return mean, sd
     else:
         return sum(values_list), sd
-
-
-def get_text_difficulty_index(module_num: int, page_num: int = None) -> float:
-    # TODO: read the data stored about the difficulty of each module/page and return the correctly difficulty index
-    # TODO: switch so 0 means easy and 1 means difficult
-    return 1
