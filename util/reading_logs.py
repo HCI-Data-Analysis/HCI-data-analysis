@@ -262,29 +262,6 @@ class ReadingLogsData:
 
 
 
-        # content_quiz_performance_dict = {}
-        # for reading_log_headers, pages in cleaned_module_each_submit.items():
-        #     print(pages)
-        #     data448_id = pages.index.values
-        #     page_quiz_performance = {}
-        #     for row in pages.iterrows():
-        #         num_attempt_to_correct = 0
-        #         num_first_attempt_correct = False
-        #         for index, element in row.items():
-        #             if type(element) is list:
-        #                 if isinstance(element[0], str) & element[0] == "ans":
-        #                     num_first_attempt_correct = True
-        #                 elif isinstance(element[0], str):
-        #                     for submit in element:
-        #                         if submit != "ans":
-        #                             num_attempt_to_correct += 1
-        #                         else:
-        #                             break
-        #             page_quiz_performance[index] = [num_first_attempt_correct, num_attempt_to_correct]
-        #     page_quiz_series = pd.Series(page_quiz_performance, name=data448_id)
-        #     content_quiz_performance_dict[reading_log_headers] = content_quiz_performance_dict[
-        #         reading_log_headers].append(
-        #         page_quiz_series)
 
         return num_attempt_to_correct
 
