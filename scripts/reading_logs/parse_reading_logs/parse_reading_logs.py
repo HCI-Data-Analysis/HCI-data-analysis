@@ -1,8 +1,11 @@
-import pandas as pd
-import os
 import json
 import math
+import os
+
+import pandas as pd
+
 from schemas import CourseSchema
+from util import ReadingLogsData
 
 
 def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dict, dict):
@@ -12,22 +15,24 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
     :param reading_log_path: a string containing reading_log_path
     :param module_paragraph_json_path: a string containing where the parsed module_paragraph.json is stored
     :return: a tuple of dictionaries of dataframes.
-                keys: in the format of [module_number]_[page_number]
+                keys: in the format of [module_number]-[page_number]
                 value: corresponding dataframe for either reading timestamp or quiz submission timestamp/answer
     """
     each_continue_dict = {}
     each_quiz_submit_dict = {}
     for module in os.listdir(reading_log_path):
+        if module == '.DS_Store':
+            continue
         module_path = os.path.join(reading_log_path, module)
         module_num = CourseSchema.MODULE_NUM_KEY[int(module)]
         module_tuple = parse_reading_logs_module(module_path, module_paragraph_json_path, str(module_num))
         module_each_continue_dict = module_tuple[0]
         module_each_quiz_submit_dict = module_tuple[1]
         for k, v in module_each_continue_dict.items():
-            each_continue_dict.setdefault(k, []).append(v)
+            each_continue_dict[k] = v
 
         for k, v in module_each_quiz_submit_dict.items():
-            each_quiz_submit_dict.setdefault(k, []).append(v)
+            each_quiz_submit_dict[k] = v
 
     return each_continue_dict, each_quiz_submit_dict
 
@@ -54,8 +59,9 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
                         respective attempt.
                        dataframe have rows with index of data448_id representing each student.
     """
-
-    number_of_pages = get_num_pages_in_module(module_paragraphs_path, module_number)
+    reading_log_data = ReadingLogsData()
+    number_of_pages = reading_log_data.get_num_pages_in_module(int(module_number))
+    print(number_of_pages)
 
     module_each_continue = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
     module_each_submit = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
@@ -63,6 +69,8 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
     for data448_id in os.listdir(module_path):
         # data448_id is a folder containing the student's reading logs. The folder's name is data448_id
         data448id_path = os.path.join(module_path, data448_id)
+        if data448id_path.endswith('.DS_Store'):
+            continue
 
         # if reading logs in data448_id_path, then parse data448id_path, else
         contains_reading_log = False
@@ -134,7 +142,7 @@ def parsing_each_continue(reading_log_folder_path: str, module_number: str, data
         module[f'{module_number}-{page_num}'] = module[f'{module_number}-{page_num}'].append(reading_log_series)
 
 
-def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, data448_id: str, module: dict) -> (dict):
+def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, data448_id: str, module: dict):
     for reading_log in os.listdir(reading_log_folder_path):
         reading_log_path = os.path.join(reading_log_folder_path, reading_log)
 
@@ -144,7 +152,7 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
             continue
 
         reading_log_name_array = reading_log.split('-')
-        # print(reading_log_name_array)
+        # TODO: (remove) print(reading_log_name_array)
         if reading_log_name_array[0] != "COSC341":  # make sure the file is a reading_log
             continue
         if reading_log_name_array[1] != module_number:  # make sure the reading log file is for the correct module
@@ -193,19 +201,6 @@ def anomalies_deletion(module: dict) -> dict:
         value.dropna(axis='index', how="any", inplace=True)
 
     return module
-
-
-def get_num_pages_in_module(module_paragraphs_path, module_number):
-    try:
-        with open(module_paragraphs_path, 'r') as f:
-            module_paragraphs = f.read()
-            try:
-                json_file = json.loads(module_paragraphs)
-                return len(json_file[module_number])
-            except ValueError as e:
-                print("invalid json file")
-    except FileNotFoundError:
-        print("module_paragraph.json not found!!")
 
 
 def convert_reading_logs_to_json(reading_log_path):
