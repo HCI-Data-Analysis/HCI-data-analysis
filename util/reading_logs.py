@@ -118,6 +118,7 @@ class ReadingLogsData:
         :return: (float representing the average number of content quiz attempts, standard deviation for this average)
         """
         page_content_quiz_df = self.get_content_quiz_performance_dict()[f'{module_num}-{page_num}']
+        TAMPERED = -1
 
         def num_before_ans(*args):
             q_response_lists = []
@@ -126,7 +127,7 @@ class ReadingLogsData:
 
             # Discard if they tampered with the numbers so questions have a different number of attempts
             if not all(len(response_set) == len(q_response_lists[0]) for response_set in q_response_lists):
-                return -1
+                return TAMPERED
 
             all_correct = ['ans'] * len(q_response_lists)
             count = 0
@@ -145,7 +146,7 @@ class ReadingLogsData:
         if data448_id:
             return page_content_quiz_df['num_before_ans'][f'{data448_id}'], None
 
-        all_num_attempts = [num for num in page_content_quiz_df['num_before_ans'].values if num != -1]
+        all_num_attempts = [num for num in page_content_quiz_df['num_before_ans'].values if num != TAMPERED]
         return aggregate_and_sd(all_num_attempts)
 
     def module_content_quiz_num_attempts(self, module_num: int, data448_id: int = None) -> (float, float):
