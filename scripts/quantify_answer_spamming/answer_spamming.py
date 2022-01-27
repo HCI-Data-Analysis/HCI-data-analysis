@@ -22,11 +22,11 @@ def answer_spamming(content_quiz_dict):
                                         content_quiz_submit_time.append(time_interval)
     #print(content_quiz_submit_time)
     
-    q75, q25 = np.percentile(content_quiz_submit_time, [75 ,25])
+    q99, q25 = np.percentile(content_quiz_submit_time, [99 ,25])
     
     print("25 percent IQR is: " + str(q25))
     
-    sns.displot(content_quiz_submit_time, binwidth=0.5)
-    plt.xlim(0, 25)
+    sns.displot(content_quiz_submit_time, binwidth=1)
+    plt.xlim(0, q99)
     plt.show()
                                     
