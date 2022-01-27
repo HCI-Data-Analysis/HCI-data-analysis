@@ -179,7 +179,7 @@ class ReadingLogsData:
         if len(num_words_in_each_paragraph) == 1:
             return num_words_in_each_paragraph[0], 0
 
-        return mean_and_sd(num_words_in_each_paragraph)
+        return aggregate_and_sd(num_words_in_each_paragraph)
 
     def page_reading_duration(self, module_num: int, page_num: int, data448_id: int = None) -> (float, float):
         """
