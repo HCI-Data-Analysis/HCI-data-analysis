@@ -88,3 +88,15 @@ that `data/anonymized/attendance.csv` exists and conforms to the schema in `sche
 > 4. Run `pip install -r requirements.txt`
 > 5. Run `python student_attendance.py` in your terminal.
 > 6. The plot will be displayed upon the completion of the script.
+
+## Compare Completion Times for Reading Logs
+
+Run `python reading_logs_completion.py`, which will plot the average completion time vs. the expected completion time of
+each module.
+
+> #### Instructions
+> 1. Navigate to the root directory.
+> 2. Open `reading_logs_completion_time.py` and ensure that the names and file paths of each file are accurate.
+> 3. Run `pip install -r requirements.txt`.
+> 4. Run `python reading_logs_completion.py`
+> 5. The plot will be displayed upon the completion of the script.
