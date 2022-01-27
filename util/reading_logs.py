@@ -146,7 +146,7 @@ class ReadingLogsData:
             return page_content_quiz_df['num_before_ans'][f'{data448_id}'], None
 
         all_num_attempts = [num for num in page_content_quiz_df['num_before_ans'].values if num != -1]
-        return mean_and_sd(all_num_attempts)
+        return aggregate_and_sd(all_num_attempts)
 
     def module_content_quiz_num_attempts(self, module_num: int, data448_id: int = None) -> (float, float):
         content_quiz_attempts_per_page = []
@@ -155,7 +155,7 @@ class ReadingLogsData:
             average_num_attempts, _ = self.page_content_quiz_num_attempts(module_num, int(page_num), data448_id)
             content_quiz_attempts_per_page.append(average_num_attempts)
 
-        return mean_and_sd(content_quiz_attempts_per_page)
+        return aggregate_and_sd(content_quiz_attempts_per_page)
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs_dict = self.get_module_paragraphs_dict()
