@@ -70,31 +70,34 @@ class ReadingLogsData:
         module_paragraphs = self.get_module_paragraphs_dict()
         return module_paragraphs[str(module_num)][str(page_num)]['paragraphs']
 
-    def content_quiz_performance(self, module_path, module_number) ->(dict):
-        cleaned_module_each_continue, cleaned_module_each_submit = parse_reading_logs_module(module_path, MODULE_PARAGRAPHS_OUTPUT_FILEPATH, module_number)
+    def content_quiz_performance(self, content_quiz_dict) ->(dict):
         content_quiz_performance = {}
-        for reading_log_headers, pages in cleaned_module_each_submit.items():
-            print(pages)
-            data448_id = pages.index.values
-            page_quiz_performance = {}
+        for reading_log_headers, pages in content_quiz_dict.items():
+            number_of_entries = 0
+            num_attempt = []
             for row in pages.iterrows():
-                num_attempt_to_correct = 0
-                num_first_attmept_correct = False
-                for index, element in row.items():
-                    if type(element) is list:
-                        if isinstance(element[0], str) &element[0] == "ans":
-                            num_first_attmept_correct = True
-                        elif isinstance(element[0], str):
-                            for submit in element:
-                                if submit != "ans":
-                                    num_attempt_to_correct += 1
-                                else:
-                                    break
-                    page_quiz_performance[index] = [num_first_attmept_correct, num_attempt_to_correct]
-            page_quiz_series = pd.Series(page_quiz_performance, name=data448_id)
-            content_quiz_performance[reading_log_headers] = content_quiz_performance[reading_log_headers].append(page_quiz_series)
+                for series in row:
+                    if isinstance(series, pd.Series):
+                        for index, elements in series.items():
+                            if isinstance(elements, str):
+                                number_of_entries += 1
+                                num_attempt.append(1)
+                            elif isinstance(elements, list):
+                                if isinstance(elements[0], str):
+                                    number_of_entries += 1
+                                    individual_attempts = 0
+                                    for submit in elements:
+                                        if submit != 'ans':
+                                            individual_attempts += 1
+                                        else:
+                                            individual_attempts += 1
+                                            num_attempt.append(individual_attempts)
+                                            break
+                                    
+            performance_list = [number_of_entries, num_attempt, sum(num_attempt)]
+            content_quiz_performance[reading_log_headers] = performance_list
             
-        return content_quiz_performance
+            return content_quiz_performance
 
 
 
