@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # Outlier Categorization
     sin_dict = defaultdict(dict)
     reading_logs_data = ReadingLogsData()
-    reading_log_dict, quiz_dict = reading_logs_data.get_parsed_reading_log_data()
+    reading_log_dict = reading_logs_data.get_parsed_reading_log_data()[0]
     for item in reading_log_dict:
         sped, lag = get_outlier_id_list(reading_log_dict.get(item), item)
         for sp in sped:
