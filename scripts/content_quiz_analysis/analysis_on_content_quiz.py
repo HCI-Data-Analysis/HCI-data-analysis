@@ -28,7 +28,7 @@ def content_quiz_analysis(content_quiz_dict):
                                     
         performance_list = [number_of_entries, num_attempt, sum(num_attempt)]
         num_attempt_to_correct[reading_log_headers] = performance_list
-        print(reading_log_headers)
+        #print(reading_log_headers)
     
     #  Overall content quiz attempt and  individual content quiz attemp
     overall_num_attempt = []
@@ -62,7 +62,7 @@ def content_quiz_analysis(content_quiz_dict):
     ax1.set_xlabel("Attempt")
     ax1.set_title('Mean and standard deviation of content quiz attempt')
     fig.tight_layout()
-    #plt.show()
+    plt.show()
     
                         
 
