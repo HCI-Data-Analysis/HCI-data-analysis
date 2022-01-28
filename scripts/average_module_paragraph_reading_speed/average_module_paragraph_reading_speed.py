@@ -53,9 +53,9 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
 
     print('-------------------------------------')
 
-    values_x = [x for x in processed_module_speed_data['par_len']]
+    values_x = [x for x in processed_module_speed_data['difficulty']]
     values_y = [y for y in processed_module_speed_data['speed']]
-    values_x_std = [std for std in processed_module_speed_data['par_len_std']]
+    values_x_std = [std for std in processed_module_speed_data['diff_std']]
     values_y_std = [std for std in processed_module_speed_data['speed_std']]
     values_mod = [mod for mod in processed_module_speed_data['module']]
     for i, c in zip(range(len(values_x)), colours):
@@ -64,23 +64,24 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
             label=f'Module {int(values_mod[i])}'
         )
         print(f'Module {int(values_mod[i])}: '
-              f'(Speed: {round(values_y[i], 2)}, '
+              f'Speed: {round(values_y[i], 2)}, '
               f'Speed STD: {round(values_y_std[i], 2)}, '
-              f'Par Len: {round(values_x[i], 2)}, '
-              f'Par STD: {round(values_x_std[i], 2)})')
-        plt.errorbar(values_x[i], values_y[i], xerr=values_x_std[i], yerr=values_y_std[i], capsize=4, color=c)
+              f'Difficulty: {round(values_x[i], 2)}, '
+              f'Difficulty STD: {round(values_x_std[i], 2)})')
+        plt.errorbar(values_x[i], values_y[i], xerr=values_x_std[i], yerr=values_y_std[i],
+                     capsize=4, color=c, elinewidth=1)
     plt.legend(bbox_to_anchor=(1, 1), loc="upper left")
-    plt.xlabel('Average Paragraph Length (words)')
+    plt.xlabel('Difficulty (flesch reading ease)')
     plt.ylabel('Speed (words/minute)')
-    plt.title('Speed vs Average Paragraph Length of Modules')
+    plt.title('Speed vs Difficulty of Modules')
     plt.tight_layout()
     plt.show()
 
     print('-------------------------------------')
 
-    values_x = [x for x in processed_module_speed_data['par_len']]
+    values_x = [x for x in processed_module_speed_data['difficulty']]
     values_y = [y for y in processed_module_speed_data['content_quiz_perf']]
-    values_x_std = [std for std in processed_module_speed_data['par_len_std']]
+    values_x_std = [std for std in processed_module_speed_data['diff_std']]
     values_y_std = [std for std in processed_module_speed_data['content_quiz_perf_std']]
     values_mod = [mod for mod in processed_module_speed_data['module']]
     for i, c in zip(range(len(values_x)), colours):
@@ -91,12 +92,13 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
         print(f'Module {int(values_mod[i])}: '
               f'Content Quiz Performance: {round(values_y[i], 2)}, '
               f'Content Quiz Performance STD: {round(values_y_std[i], 2)}, '
-              f'Par Len: {round(values_x[i], 2)}, '
-              f'Par STD: {round(values_x_std[i], 2)})')
-        plt.errorbar(values_x[i], values_y[i], xerr=values_x_std[i], yerr=values_y_std[i], capsize=4, color=c)
+              f'Difficulty: {round(values_x[i], 2)}, '
+              f'Difficulty STD: {round(values_x_std[i], 2)})')
+        plt.errorbar(values_x[i], values_y[i], xerr=values_x_std[i], yerr=values_y_std[i],
+                     capsize=4, color=c, elinewidth=1)
     plt.legend(bbox_to_anchor=(1, 1), loc="upper left")
-    plt.xlabel('Average Paragraph Length (words)')
+    plt.xlabel('Difficulty (flesch reading ease)')
     plt.ylabel('Content Quiz Performance')
-    plt.title('Content Quiz Performance vs Average Paragraph Length of Modules')
+    plt.title('Content Quiz Performance vs Difficulty of Modules')
     plt.tight_layout()
     plt.show()
