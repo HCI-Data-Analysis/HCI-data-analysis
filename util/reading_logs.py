@@ -230,21 +230,6 @@ class ReadingLogsData:
 
         return aggregate_and_sd(page_durations, mean)
 
-    def section_reading_speeds(self, module_num: int, page_num: int) -> dict:
-        """
-        Return dictionary mapping each section title to the average reading speed of that section across the page.
-        :returns dict => {section_title: avg_reading_speed, ...}
-        """
-        module_paragraphs_dict = self.get_module_paragraphs_dict()
-        reading_duration_dict = self.get_reading_duration_dict()
-        page_duration_df = reading_duration_dict[f'{module_num}-{page_num}']
-        page_sections_dict = module_paragraphs_dict[f'{module_num}'][f'{page_num}']['sections']
-
-        for _, section_data in page_sections_dict.items():
-            pass
-
-        pass
-
 
 def ms_to_minutes(duration_ms: float):
     return duration_ms / 1000 / 60
