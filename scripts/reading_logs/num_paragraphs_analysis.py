@@ -10,6 +10,107 @@ from schemas import CourseSchema
 from util import ReadingLogsData, set_plot_settings
 
 
+def analyze_paragraph_length_reading_speed():
+    reading_logs_data = ReadingLogsData()
+    module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
+    reading_duration_dict = reading_logs_data.get_reading_duration_dict()
+
+    section_lengths = []
+    reading_speeds = []
+
+    for module_num, module_data in module_paragraphs_dict.items():
+        for page_num, page_data in module_data.items():
+            page_duration_df = reading_duration_dict[f'{module_num}-{page_num}']
+            for section_num, section_data in page_data['sections'].items():
+                # NOTE: We didn't collect paragraph specific data
+                section_title = section_data['title']
+                pass
+    pass
+
+
+def analyze_avg_paragraph_length():
+    reading_logs_data = ReadingLogsData()
+    adjusted_reading_speeds, v_err = [], []
+    num_attempts, n_err = [], []
+    avg_para_lengths, p_err = [], []
+    avg_para_lengths_mod, p_mod_err = [], []
+    module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
+    for module_num, page_dict in module_paragraphs_dict.items():
+        for page_num, page_data in page_dict.items():
+            p, pe = reading_logs_data.average_words_per_paragraphs_on_page(module_num, page_num)
+            v, ve = reading_logs_data.page_reading_speed(module_num, page_num)
+            adjusted_reading_speeds.append(v)
+            v_err.append(ve)
+            avg_para_lengths.append(p)
+            p_err.append(pe)
+
+            n_val = reading_logs_data.page_content_quiz_num_attempts(module_num, page_num)
+            if n_val is not None:
+                avg_para_lengths_mod.append(p)
+                p_mod_err.append(pe)
+                n, ne = n_val
+                num_attempts.append(n)
+                n_err.append(ne)
+
+    set_plot_settings()
+    _, ax = plt.subplots()
+    ax.errorbar(avg_para_lengths, adjusted_reading_speeds, ls='none', xerr=p_err, yerr=v_err, capsize=2, elinewidth=0.4,
+                marker='.', markersize=4)
+    plt.xlabel('Average Page Paragraph Length')
+    plt.ylabel('Average reading speed (WPM)')
+    plt.title('\n'.join(wrap('Average reading speed as a function of the number of paragraphs on a page')))
+
+    _, ax2 = plt.subplots()
+    ax2.errorbar(avg_para_lengths_mod, num_attempts, ls='none', xerr=p_mod_err, yerr=n_err, capsize=2, elinewidth=0.4,
+                 marker='.', markersize=4)
+    plt.xlabel('Average Page Paragraph Length')
+    plt.ylabel('Content Quiz Attempt Number')
+    plt.title('\n'.join(wrap('Content quiz attempt number as a function of the number of paragraphs on a page')))
+
+    plt.show()
+
+
+def analyze_num_paragraphs():
+    reading_logs_data = ReadingLogsData()
+    adjusted_reading_speeds, v_err = [], []
+    num_attempts, n_err = [], []
+    num_paragraphs_list = []
+    num_paragraphs_list_mod = []
+    module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
+    for module_num, page_dict in module_paragraphs_dict.items():
+        for page_num, page_data in page_dict.items():
+            num_paragraphs = len(reading_logs_data.get_paragraph_list(module_num, page_num))
+
+            num_paragraphs_list.append(num_paragraphs)
+            v, ve = reading_logs_data.page_reading_speed(module_num, page_num)
+            adjusted_reading_speeds.append(v)
+            v_err.append(ve)
+
+            n_val = reading_logs_data.page_content_quiz_num_attempts(module_num, page_num)
+            if n_val is not None:
+                n, ne = n_val
+                num_paragraphs_list_mod.append(num_paragraphs)
+                num_attempts.append(n)
+                n_err.append(ne)
+
+    set_plot_settings()
+    _, ax = plt.subplots()
+    ax.errorbar(num_paragraphs_list, adjusted_reading_speeds, ls='none', yerr=v_err, capsize=2, elinewidth=0.4,
+                marker='.', markersize=4)
+    plt.xlabel('Number of paragraphs')
+    plt.ylabel('Average reading speed (WPM)')
+    plt.title('\n'.join(wrap('Average reading speed as a function of the number of paragraphs on a page')))
+
+    _, ax2 = plt.subplots()
+    ax2.errorbar(num_paragraphs_list_mod, num_attempts, ls='none', yerr=n_err, capsize=2, elinewidth=0.4,
+                 marker='.', markersize=4)
+    plt.xlabel('Number of paragraphs')
+    plt.ylabel('Content Quiz Attempt Number')
+    plt.title('\n'.join(wrap('Content quiz attempt number as a function of the number of paragraphs on a page')))
+
+    plt.show()
+
+
 def analyze_num_paragraphs_reading_speed():
     reading_logs_data = ReadingLogsData()
     adjusted_reading_speeds = []
@@ -20,8 +121,8 @@ def analyze_num_paragraphs_reading_speed():
     module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
-            if not page_is_valid(module_num, page_data):
-                continue
+            # if not page_is_valid(module_num, page_data):
+            #     continue
             adjusted_reading_speed, error = reading_logs_data.page_reading_speed(
                 module_num,
                 page_num
@@ -40,14 +141,14 @@ def analyze_num_paragraphs_reading_speed():
                 average_words_in_paras.append(average_words_in_para)
                 average_words_in_paras_error.append(average_words_in_para_error)
 
-    for i in range(1, 5):
+    for i in range(1, 3):
         plot_scatter(
             average_words_in_paras,
             adjusted_reading_speeds,
             num_paragraphs_list,
-            'Reading speeds as a function of average paragraph word-count',
+            'Reading speeds as a function of average page paragraph length',
             i,
-            'Average Class Reading Speed',
+            'Average Reading Speed (WPM)',
             average_words_in_paras_error,
             adjusted_reading_speeds_error
         )
@@ -64,8 +165,8 @@ def analyze_num_paragraphs_content_quiz():
     module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
-            if not page_is_valid(module_num, page_data):
-                continue
+            # if not page_is_valid(module_num, page_data):
+            #     continue
             average_words_in_para, average_words_in_para_error = reading_logs_data.average_words_per_paragraphs_on_page(
                 module_num,
                 page_num
@@ -87,14 +188,14 @@ def analyze_num_paragraphs_content_quiz():
                 num_attempts_neeeded.append(average_num_attempts)
                 num_attempts_neeeded_error.append(average_num_attempts_error)
 
-    for i in range(1, 5):
+    for i in range(1, 3):
         plot_scatter(
             average_words_in_paras,
             num_attempts_neeeded,
             num_paragraphs_list,
-            'Number of content quiz attempts needed as a function of average paragraph word-count',
+            'Content quiz attempt number needed as a function of average page paragraph length',
             i,
-            'Number of Content Quiz Attempts Needed to Correctly Answer',
+            'Content Quiz Attempt Number',
             average_words_in_paras_error,
             num_attempts_neeeded_error
         )
@@ -153,7 +254,7 @@ def plot_scatter(x: [], y: [], num_paragraphs_list: [], title, version: int, y_l
         if version == 4:
             ax.errorbar(xi, yi, xerr=xe, yerr=ye, capsize=2, elinewidth=0.4, c=c, marker='.', markersize=4)
 
-    plt.xlabel('Average Paragraph Word-Count on Page')
+    plt.xlabel('Average Page Paragraph Length')
     # plt.ylabel('Average Class Reading Speed')  # for speed
     plt.ylabel(y_label)  # for speed
     # plt.ylabel('Average Number of Content Quiz Attempts before correct')
