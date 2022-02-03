@@ -12,4 +12,4 @@ from .student_grouping import group_students
 from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
 from .reading_logs import analyze_num_paragraphs, parse_reading_logs_module, parse_reading_logs_all, \
     reading_logs_completion_time
-from .reading_logs_analysis import get_outlier_id_list
+from .reading_logs_analysis import get_outlier_id_list, get_outlier_list_from_dataframe

@@ -3,7 +3,7 @@ from collections import defaultdict
 import pandas as pd
 
 from util import ReadingLogsData
-from scripts import get_outlier_id_list
+from scripts import get_outlier_id_list, get_outlier_list_from_dataframe
 
 MODULE_PATH = "data/api/canvas/reading_logs"
 MODULE_PARAGRAPHS_PATH = "data/processed/module_paragraphs.json"
@@ -23,3 +23,4 @@ if __name__ == "__main__":
             sin_dict.setdefault(la, defaultdict(int))['Lagging'] += 1
 
     sin_df = pd.DataFrame.from_dict(sin_dict, orient='index')
+    print(f"Outlier IDs: {get_outlier_list_from_dataframe(sin_df[['Lagging']])}")

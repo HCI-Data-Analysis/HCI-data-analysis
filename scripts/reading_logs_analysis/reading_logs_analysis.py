@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -18,13 +17,38 @@ def get_iqr(col):
     return np.subtract(*get_q3_q1(col))
 
 
-def get_outlier_id_list(page_df, module_id):
+def get_outlier_list_from_dataframe(df):
+    """
+    This method takes in a dataframe with one column and returns a list of all the IDs of the outliers
+    :param df: Dataframe with one column of numeric values
+    :return: a list of all the outliers' IDs
+    """
+    speedrunners = []
+    laggers = []
+    if not df.empty:
+        quartiles = df.apply(get_q3_q1)
+        # Use iloc here to get the values of the first column without needing the column name explicitly
+        q1 = quartiles.iloc[1][0]
+        q3 = quartiles.iloc[0][0]
+
+        # Multiply IQR by 1.5 due to outlier filter by the IQR rule
+        iqr = df.apply(get_iqr)[0] * 1.5
+
+        # df.iloc[:,0] will return the first column of the dataframe
+        speedrunners = df.index[df.iloc[:, 0] < (q1 - iqr)].to_list()
+        laggers = df.index[df.iloc[:, 0] > (q3 + iqr)].to_list()
+
+    return speedrunners + laggers
+
+
+def get_outlier_id_list(page_df, module_id, graph=False):
     """
     This method takes in a duration dataframe for each page in a module and returns two lists that contain the
     speedrunners, and the laggers outliers based on calculated IQR.
     :param module_id: id of module-page
     :param page_df: Dataframe of module page with completion times as columns
-    :return: [speedrunners, laggers]
+    :param graph: value that determines whether to graph the outliers. default is False
+    :return: (speedrunners, laggers)
     """
     speedrunners = []
     laggers = []
@@ -44,10 +68,12 @@ def get_outlier_id_list(page_df, module_id):
         speedrunners = page_df.index[page_df['speed'] < (q1 - iqr)].to_list()
         laggers = page_df.index[page_df['speed'] > (q3 + iqr)].to_list()
 
-        # Graph it
-        sns.boxplot(x='speed', data=page_df)
-        plt.title(f'Boxplot for speeds of module {module_id}')
-        plt.axvline(x=int((q3 + iqr)))
-        plt.show()
+        if graph:
+            # Graph it
+            sns.boxplot(x='speed', data=page_df)
+            plt.title(f'Boxplot for speeds of module {module_id}')
+            plt.xlabel('Speed (in Words-per-Minute)')
+            plt.show()
+            plt.axvline(x=int((q3 + iqr)), color='r')
 
     return speedrunners, laggers
