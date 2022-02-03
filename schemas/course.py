@@ -1,16 +1,7 @@
 class CourseSchema:
-    CANCELLED_MODULES = [
-        9
-    ]
-
-    OPTIONAL_MODULES = [
-        11
-    ]
-
-    SUMMARY_MODULES = [
-        10
-    ]
-
+    CANCELLED_MODULES = [9]
+    OPTIONAL_MODULES = [11]
+    SUMMARY_MODULES = [10]
     OPTIONAL_PAGES = {
         1: [6],
         2: [6],
@@ -20,10 +11,6 @@ class CourseSchema:
         8: [5],
         11: [1, 2, 3, 4, 5]  # All
     }
-
-    OPTIONAL_PAGE_TITLES = [
-        'interview'
-    ]
 
     AVERAGE_READING_SPEED = 75
 
