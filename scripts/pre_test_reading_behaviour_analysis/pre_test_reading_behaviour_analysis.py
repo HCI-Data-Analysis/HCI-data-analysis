@@ -1,60 +1,90 @@
-import numpy as np
-from matplotlib import cm, pyplot as plt
+import json
+import os
 
-from schemas import GradeBookSchema
+import numpy as np
+from matplotlib import pyplot as plt
+
 from util import ReadingLogsData
 import pandas as pd
+import seaborn as sns
 
 
-def pre_test_reading_behaviour_analysis(gradebook):
+def pre_test_reading_behaviour_analysis(QUIZSCOREJSON_PATH):
     reading_logs_data = ReadingLogsData()
 
-    data448_ids = gradebook[GradeBookSchema.STUDENT_ID]
-    pre_test_1 = gradebook[GradeBookSchema.PRE_TEST_1]
-    pre_test_2 = gradebook[GradeBookSchema.PRE_TEST_2]
-    pre_test_3 = gradebook[GradeBookSchema.PRE_TEST_3]
-    pre_test_4 = gradebook[GradeBookSchema.PRE_TEST_4]
-    pre_test_5 = gradebook[GradeBookSchema.PRE_TEST_5]
-    pre_test_6 = gradebook[GradeBookSchema.PRE_TEST_6]
-    pre_test_7 = gradebook[GradeBookSchema.PRE_TEST_7]
-    pre_test_8 = gradebook[GradeBookSchema.PRE_TEST_8]
+    df_first_attempt = pd.DataFrame(
+        columns=['data448_id', 'quiz_id', 'percentage', 'reading_speed', 'module']
+    )
+    pre_test_quiz_ids = {
+        198836: [1, 'Module 1'],
+        283275: [2, 'Module 2'],
+        202001: [3, 'Module 3'],
+        217150: [4, 'Module 4'],
+        217153: [5, 'Module 5'],
+        317728: [6, 'Module 6'],
+        210300: [7, 'Module 7'],
+        329675: [8, 'Module 8'],
+    }
 
-    df_pre_test_reading_behaviour = pd.DataFrame(columns=[
-        'data448_id', 'pre_test_1', 'module_reading_1', 'pre_test_2', 'module_reading_2',
-        'pre_test_3', 'module_reading_3', 'pre_test_4', 'module_reading_4', 'pre_test_5', 'module_reading_5',
-        'pre_test_6', 'module_reading_6', 'pre_test_7', 'module_reading_7', 'pre_test_8', 'module_reading_8'
-    ])
+    QUIZ_POINTS_POSSIBLE = 'quiz_points_possible'
 
-    pre_test_modules = [
-        (1, pre_test_1, GradeBookSchema.MAX_PRE_TEST_1), (2, pre_test_2, GradeBookSchema.MAX_PRE_TEST_2),
-        (3, pre_test_3, GradeBookSchema.MAX_PRE_TEST_3), (4, pre_test_4, GradeBookSchema.MAX_PRE_TEST_4),
-        (5, pre_test_5, GradeBookSchema.MAX_PRE_TEST_5), (6, pre_test_6, GradeBookSchema.MAX_PRE_TEST_6),
-        (7, pre_test_7, GradeBookSchema.MAX_PRE_TEST_7), (8, pre_test_8, GradeBookSchema.MAX_PRE_TEST_8)
-    ]
-    for index, data448_id in enumerate(data448_ids):
-        data448_id = int(data448_id)
-        df_data = {'data448_id': data448_id}
-        for [module, pre_test, max_pre_test_score] in pre_test_modules:
-            try:
-                [module_reading, module_reading_std] = reading_logs_data.module_reading_speed(module, data448_id)
-            except KeyError:
-                [module_reading, module_reading_std] = [None, None]
-            df_data[f'pre_test_{module}'] = pre_test[index] / max_pre_test_score * 100
-            df_data[f'module_reading_{module}'] = module_reading
-        df_pre_test_reading_behaviour = df_pre_test_reading_behaviour.append(df_data, ignore_index=True)
+    for i in os.listdir(QUIZSCOREJSON_PATH):
+        if i.endswith('.json'):
+            full_path = os.path.join(QUIZSCOREJSON_PATH, i)
+            with open(full_path, 'r') as f:
+                _gradebook = f.read()
+                json_file = json.loads(_gradebook)
+                if json_file:
+                    for quiz_id in pre_test_quiz_ids.keys():
+                        if quiz_id == json_file[0]['quiz_id']:
+                            for json_block in json_file:
+                                if json_block[QUIZ_POINTS_POSSIBLE] > 0:
+                                    if json_block['attempt'] > 1:
+                                        for previous_json_block in json_block['previous_submissions']:
+                                            if previous_json_block['attempt'] == 1:
+                                                json_block = previous_json_block
+                                    try:
+                                        [module_reading, module_reading_std] = reading_logs_data.module_reading_speed(
+                                            pre_test_quiz_ids[json_block['quiz_id']][0], json_block['user_id'])
+                                        student_first_attempt_data = {
+                                            'data448_id': json_block['user_id'],
+                                            'quiz_id': json_block['quiz_id'],
+                                            'reading_speed': module_reading,
+                                            'reading_speed_std': module_reading_std,
+                                            'percentage': json_block['score'] / json_block[QUIZ_POINTS_POSSIBLE] * 100,
+                                            'module': pre_test_quiz_ids[json_block['quiz_id']][1]
+                                        }
+                                        df_first_attempt = df_first_attempt.append(student_first_attempt_data,
+                                                                                   ignore_index=True)
+                                    except KeyError:
+                                        print('nan')
 
-    c_map = cm.get_cmap('Dark2')
-    colours = c_map(np.linspace(0, 1, len(pre_test_modules)))
+    print(df_first_attempt)
 
-    for index, [module, _, _] in enumerate(pre_test_modules):
-        values_x = [x for x in df_pre_test_reading_behaviour[f'pre_test_{module}']]
-        values_y = [y for y in df_pre_test_reading_behaviour[f'module_reading_{module}']]
-        plt.scatter(values_x, values_y, color=colours[index], label=f'Pre Test/Module {module}')
-        print(f'{module}: Average Reading Speed: {np.mean([y for y in values_y if y > 0])}')
-        print(f'{module}: Average Pre Test Grade: {np.mean([x for x in values_x if x > 0])}')
-    plt.legend(bbox_to_anchor=(1, 1), loc="upper left")
-    plt.xlabel(f'Pre Test Scores (%)')
-    plt.ylabel(f'Module Reading Speeds (words/minute)')
-    plt.title(f'Pre Test Scores vs Module Reading Speeds')
-    plt.tight_layout()
+    g = sns.lmplot(x="percentage", y="reading_speed", col="module", hue="module", data=df_first_attempt,
+                   col_wrap=4, ci=None, palette="muted", height=4,
+                   scatter_kws={"s": 50, "alpha": 1})
+    g.set_axis_labels("First Attempt Pre Test Score (%)", "Reading Speed (words/minute)")
     plt.show()
+
+    for quiz_id in pre_test_quiz_ids.keys():
+        temp_df = df_first_attempt[df_first_attempt['quiz_id'] == quiz_id]
+        print(pre_test_quiz_ids[quiz_id][1], 'averages:')
+        print('Average reading speed:', np.mean(temp_df['reading_speed']))
+        print('Average percentage:', np.mean(temp_df['percentage']))
+        print('-------')
+
+    print('Overall averages:')
+    print('Average reading speed:', np.mean(df_first_attempt['reading_speed']))
+    print('Average percentage:', np.mean(df_first_attempt['percentage']))
+    print('-------')
+
+    for quiz_id in pre_test_quiz_ids.keys():
+        temp_df = df_first_attempt[df_first_attempt['quiz_id'] == quiz_id]
+        print(pre_test_quiz_ids[quiz_id][1], 'correlations:')
+        print(np.corrcoef(temp_df['reading_speed'], temp_df['percentage']))
+        print('-------')
+
+    print('Overall correlations:')
+    print(np.corrcoef(df_first_attempt['reading_speed'], df_first_attempt['percentage']))
+    print('-------')
