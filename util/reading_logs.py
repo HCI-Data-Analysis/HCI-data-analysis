@@ -27,7 +27,10 @@ class ReadingLogsData:
         dicts_of_dfs = [self.reading_duration_dict, self.content_quiz_performance_dict]
         for dict_df in dicts_of_dfs:
             for _, df in dict_df.items():
-                df.drop(excluded_ids, inplace=True)
+                try:
+                    df.drop(excluded_ids, inplace=True)
+                except KeyError:
+                    continue
 
     def get_module_paragraphs_dict(self) -> dict:
         if self.module_paragraphs_dict:

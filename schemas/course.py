@@ -30,7 +30,7 @@ class CourseSchema:
     }
 
     OUTLIER_DATA448_IDS = [
-        # TODO: add outlier student ids
+        1838508, 2409463, 6078374, 6257926, 6393986, 6609618, 7801377, 8145375, 8799357, 9002921, 9810479
     ]
 
     @staticmethod
