@@ -1,3 +1,5 @@
+import pandas as pd
+import os
 import json
 import math
 import os
@@ -5,7 +7,7 @@ import os
 import pandas as pd
 
 from schemas import CourseSchema
-from util import ReadingLogsData, is_reading_log_file
+from util import ReadingLogsData
 
 
 def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dict, dict):
@@ -104,7 +106,9 @@ def parsing_each_continue(reading_log_folder_path: str, module_number: str, data
     for reading_log in os.listdir(reading_log_folder_path):
         reading_log_path = os.path.join(reading_log_folder_path, reading_log)
 
-        if not is_reading_log_file(reading_log):
+        r = ReadingLogsData()
+
+        if not r.is_reading_log_file(reading_log):
             continue
 
         reading_log_name_array = reading_log.split('-')
@@ -142,7 +146,9 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
     for reading_log in os.listdir(reading_log_folder_path):
         reading_log_path = os.path.join(reading_log_folder_path, reading_log)
 
-        if not is_reading_log_file(reading_log):
+        r = ReadingLogsData()
+
+        if not r.is_reading_log_file(reading_log):
             continue
 
         reading_log_name_array = reading_log.split('-')
