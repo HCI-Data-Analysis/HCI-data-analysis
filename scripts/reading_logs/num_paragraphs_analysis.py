@@ -82,7 +82,3 @@ def linear_regression_data(x_list: [], y_list: [], title: str = None) -> None:
     if title:
         print(title)
     print(f'y = {reg.coef_[0]}*x + ({reg.intercept_})\tR^2 = {reg.score(x_points, y_list)}')
-
-
-def page_is_valid(m: int, s: int) -> bool:
-    return False
