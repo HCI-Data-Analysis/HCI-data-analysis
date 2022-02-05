@@ -3,6 +3,7 @@ import os
 import statistics
 
 import dill
+import pandas as pd
 
 from schemas import CourseSchema
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, CACHE_FOLDER
@@ -196,7 +197,8 @@ class ReadingLogsData:
 
         # Retrieve the correct DataFrame for the requested page.
         reading_duration_df = reading_duration_dict[f'{module_num}-{page_num}']
-        reading_duration_df[DURATION_KEY] = reading_duration_df[END_TIME_KEY] - reading_duration_df[START_TIME_KEY]
+        end_time_key = self.get_last_non_review_section_name(module_num, page_num)
+        reading_duration_df[DURATION_KEY] = reading_duration_df[end_time_key] - reading_duration_df[START_TIME_KEY]
 
         if data448_id:
             duration_ms = reading_duration_df[DURATION_KEY][f'{data448_id}']
@@ -213,7 +215,8 @@ class ReadingLogsData:
 
         # Retrieve the correct DataFrame for the requested page.
         reading_duration_df = reading_duration_dict[f'{module_num}-{page_num}']
-        reading_duration_df[DURATION_KEY] = reading_duration_df[END_TIME_KEY] - reading_duration_df[START_TIME_KEY]
+        end_time_key = self.get_last_non_review_section_name(module_num, page_num)
+        reading_duration_df[DURATION_KEY] = reading_duration_df[end_time_key] - reading_duration_df[START_TIME_KEY]
         all_durations = [ms_to_minutes(d) for d in reading_duration_df[DURATION_KEY]]
 
         return all_durations
@@ -234,6 +237,15 @@ class ReadingLogsData:
             page_durations.append(duration)
 
         return aggregate_and_sd(page_durations, mean)
+
+    def get_last_non_review_section_name(self, module_num: int, page_num: int) -> str:
+        module_sections_dict = self.get_module_paragraphs_dict()[f'{module_num}'][f'{page_num}']['sections']
+
+        last_section_title = list(module_sections_dict.values())[-1]
+        if last_section_title == 'Review Form':
+            last_section_title = list(module_sections_dict.values())[-2]
+
+        return last_section_title['title']
 
 
 def ms_to_minutes(duration_ms: float):
