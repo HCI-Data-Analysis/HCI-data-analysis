@@ -1,7 +1,7 @@
 import json
 import os
-import statistics
 import numpy as np
+import pandas as pd
 from random import random
 
 import dill
@@ -109,7 +109,7 @@ class ReadingLogsData:
         """
         Retrieves the average number of content quiz attempts before a correct answer for a page. If given a
         data448_id, only retrieves that student's reading speed for the page. Without a data448_id, retrieves the
-        average reading speed of that page.
+        average number of attempts of that page.
 
         Returns None if this page has no content quiz questions.
         Standard deviation is None if a data448_id is given.
@@ -159,6 +159,55 @@ class ReadingLogsData:
             content_quiz_attempts_per_page.append(average_num_attempts)
 
         return aggregate_and_sd(content_quiz_attempts_per_page)
+
+    def page_content_quiz_first_attempt_grade(self, module_num: int, page_num: int, data448_id: int = None) -> float:
+        """
+        Retrieves the average first attempt grade for content quiz. If given a data448_id, only retrieves that student's
+        reading speed for the page. Without a data448_id, retrieves the average first attempt grade of that page.
+
+        Returns None if this page has no content quiz questions.
+
+        :param module_num: The module number
+        :param page_num: The page number
+        :param data448_id: A student's Data 448 id
+        :return: (float representing the average first attempt grade of the given content quiz, standard deviation of
+        this average)
+        """
+
+        page_content_quiz_df = self.get_content_quiz_performance_dict()[f'{module_num}-{page_num}']
+
+        zip_set = [page_content_quiz_df[col] for col in page_content_quiz_df if col.startswith('q')]
+
+        if not zip_set:
+            return None
+
+        cols = [col for col in page_content_quiz_df if col.startswith('q')]
+        questions_df = page_content_quiz_df[cols]
+        questions_df = questions_df.reset_index()
+        questions_df = questions_df.T
+
+        def first_attempt_grade(row):
+            count = 0
+            for element in row:
+                if element == 'ans' or element[0] == 'ans':
+                    count += 1
+            return count/len(row)
+
+        questions_df['first_attempt_grade'] = questions_df.apply(lambda x: first_attempt_grade(x), axis=1)
+
+        if data448_id:
+            return questions_df['first_attempt_grade'][f'{data448_id}'], None
+
+        return aggregate_and_sd(questions_df['first_attempt_grade'])
+
+    def module_content_quiz_first_attempt_grade(self, module_num: int, data448_id: int = None) -> (float, float):
+        content_quiz_first_attempt_grade = []
+        module_paragraphs_dict = self.get_module_paragraphs_dict()
+        for page_num in module_paragraphs_dict[str(module_num)].keys():
+            average_num_attempts, _ = self.page_content_quiz_first_attempt_grade(module_num, int(page_num), data448_id)
+            content_quiz_first_attempt_grade.append(average_num_attempts)
+
+        return aggregate_and_sd(content_quiz_first_attempt_grade)
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs_dict = self.get_module_paragraphs_dict()
