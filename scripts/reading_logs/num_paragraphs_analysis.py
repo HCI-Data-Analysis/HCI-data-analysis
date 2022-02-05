@@ -39,7 +39,7 @@ def analyze_num_paragraphs():
                 marker='.', markersize=4)
     plt.xlabel('Number of paragraphs')
     plt.ylabel('Average reading speed (WPM)')
-    plt.title('\n'.join(wrap('Average reading speed as a function of the number of paragraphs on a page')))
+    plt.title('\n'.join(wrap('Average reading speed as a function of page paragraph count')))
     plt.xlim(0, max(num_paragraphs_list) + 2)
 
     plot_best_fit(num_paragraphs_list, adjusted_reading_speeds)
@@ -53,7 +53,7 @@ def analyze_num_paragraphs():
                  marker='.', markersize=4)
     plt.xlabel('Number of paragraphs')
     plt.ylabel('Content Quiz Attempt Number')
-    plt.title('\n'.join(wrap('Content quiz attempt number as a function of the number of paragraphs on a page')))
+    plt.title('\n'.join(wrap('Content quiz attempt number as a function of page paragraph count')))
     plt.xlim(0, max(num_paragraphs_list_mod) + 2)
 
     plot_best_fit(num_paragraphs_list_mod, num_attempts)
