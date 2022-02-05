@@ -16,7 +16,7 @@ def analyze_num_paragraphs():
     module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
-            if not CourseSchema.page_is_valid(module_num, page_data):
+            if not CourseSchema.page_is_valid(module_num, page_num):
                 continue
 
             num_paragraphs = len(reading_logs_data.get_paragraph_list(module_num, page_num))
