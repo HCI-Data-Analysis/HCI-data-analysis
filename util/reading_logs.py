@@ -150,7 +150,7 @@ class ReadingLogsData:
             count = 0
             for q_response_set in zip(*q_response_lists):
                 if list(q_response_set) == all_correct:
-                    return count
+                    return count / len(q_response_lists)
                 else:
                     count += 1
 
