@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -49,6 +48,12 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
 
     print('Speed vs difficulty correlation coefficient')
     print(np.corrcoef(processed_module_speed_data['difficulty'], processed_module_speed_data['speed']))
+    print('R^2')
+    print(np.square(0.17327886))
+    print('-----------')
+    print('Speed vs difficulty averages')
+    print('Speed:', np.average(processed_module_speed_data['speed']))
+    print('Difficulty:', np.average(processed_module_speed_data['difficulty']))
     print('-----------')
 
     g = sns.lmplot(x="difficulty", y="content_quiz_perf", col="module", hue="module",
@@ -71,4 +76,10 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
 
     print('Quiz perf vs difficulty correlation coefficient')
     print(np.corrcoef(df, qp))
+    print('R^2')
+    print(np.square(-0.0956516))
+    print('-----------')
+    print('Quiz perf vs difficulty averages')
+    print('Quiz perf:', np.average(qp))
+    print('Difficulty:', np.average(df))
     print('-----------')

@@ -66,6 +66,9 @@ def pre_test_reading_behaviour_analysis(QUIZSCOREJSON_PATH):
                    scatter_kws={"s": 50, "alpha": 1})
     g.set_axis_labels("First Attempt Pre Test Score (%)", "Reading Speed (words/minute)")
     plt.show()
+    g = sns.lmplot(x="percentage", y="reading_speed", data=df_first_attempt)
+    g.set_axis_labels("First Attempt Pre Test Score (%)", "Reading Speed (words/minute)")
+    plt.show()
 
     for quiz_id in pre_test_quiz_ids.keys():
         temp_df = df_first_attempt[df_first_attempt['quiz_id'] == quiz_id]
