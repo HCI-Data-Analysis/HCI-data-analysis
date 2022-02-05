@@ -15,22 +15,16 @@ def analyze_num_paragraphs():
     module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
-            if not page_is_valid(module_num, page_data):
+            if not CourseSchema.page_is_valid(module_num, page_data):
                 continue
             num_paragraphs_list.append(
                 len(reading_logs_data.get_paragraph_list(module_num, page_num))
             )
             adjusted_reading_speeds.append(
-                reading_logs_data.page_reading_speed(module_num, page_num)
+                reading_logs_data.page_reading_speed(module_num, page_num)[1]
             )
 
     plot_scatter(num_paragraphs_list, adjusted_reading_speeds, 'Reading speeds as a function of page paragraph count')
-
-
-def page_is_valid(module_num, page_content) -> bool:
-    if page_content['name'] in CourseSchema.OPTIONAL_PAGE_TITLES or module_num in CourseSchema.OPTIONAL_MODULES:
-        return False
-    return True
 
 
 def plot_scatter(x: [], y: [], title):

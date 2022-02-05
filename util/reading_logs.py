@@ -4,6 +4,7 @@ import statistics
 
 import dill
 
+from schemas import CourseSchema
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, CACHE_FOLDER
 
 START_TIME_KEY = 'start_time'
@@ -16,6 +17,21 @@ class ReadingLogsData:
     reading_duration_dict = None
     content_quiz_performance_dict = None
 
+    def exclude_outliers(self):
+        """
+        Utility method to remove outliers from the class instance versions of the reading/content quiz dictionaries.
+        Modifies these dictionaries so each DataFrame within them removes the ignored ids. This method is called within
+        self.get_parsed_reading_log_data() so all further analysis factors it in inherently.
+        """
+        excluded_ids = [f'{i}' for i in CourseSchema.OUTLIER_DATA448_IDS]  # DF indexes are strings
+        dicts_of_dfs = [self.reading_duration_dict, self.content_quiz_performance_dict]
+        for dict_df in dicts_of_dfs:
+            for _, df in dict_df.items():
+                try:
+                    df.drop(excluded_ids, inplace=True)
+                except KeyError:
+                    continue
+
     def get_module_paragraphs_dict(self) -> dict:
         if self.module_paragraphs_dict:
             return self.module_paragraphs_dict
@@ -27,7 +43,7 @@ class ReadingLogsData:
 
         module_paragraphs = json.load(f)
         self.module_paragraphs_dict = module_paragraphs
-        return module_paragraphs
+        return self.module_paragraphs_dict
 
     def get_parsed_reading_log_data(self) -> (dict, dict):
         if not self.reading_duration_dict or not self.content_quiz_performance_dict:
@@ -38,6 +54,7 @@ class ReadingLogsData:
                     self.content_quiz_performance_dict = dill.load(f)
             except FileNotFoundError as e:
                 raise FileNotFoundError(f'{e}\nRun "python parse_reading_logs.py" first.')
+            self.exclude_outliers()
 
         return self.reading_duration_dict, self.content_quiz_performance_dict
 
@@ -133,7 +150,7 @@ class ReadingLogsData:
             count = 0
             for q_response_set in zip(*q_response_lists):
                 if list(q_response_set) == all_correct:
-                    return count
+                    return count / len(q_response_lists)
                 else:
                     count += 1
 
