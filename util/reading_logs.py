@@ -172,7 +172,9 @@ class ReadingLogsData:
         content_quiz_attempts_per_page = []
         module_paragraphs_dict = self.get_module_paragraphs_dict()
         for page_num in module_paragraphs_dict[str(module_num)].keys():
-            average_num_attempts, _ = self.page_content_quiz_num_attempts(module_num, int(page_num), data448_id)
+            page_attempts = self.page_content_quiz_num_attempts(module_num, int(page_num), data448_id)
+            if page_attempts is not None:
+                average_num_attempts = page_attempts[0]
             content_quiz_attempts_per_page.append(average_num_attempts)
 
         return aggregate_and_sd(content_quiz_attempts_per_page)
@@ -221,8 +223,10 @@ class ReadingLogsData:
         content_quiz_first_attempt_grade = []
         module_paragraphs_dict = self.get_module_paragraphs_dict()
         for page_num in module_paragraphs_dict[str(module_num)].keys():
-            average_num_attempts, _ = self.page_content_quiz_first_attempt_grade(module_num, int(page_num), data448_id)
-            content_quiz_first_attempt_grade.append(average_num_attempts)
+            page_grade = self.page_content_quiz_first_attempt_grade(module_num, int(page_num), data448_id)
+            if page_grade is not None:
+                average_grade = page_grade[0]
+            content_quiz_first_attempt_grade.append(average_grade)
 
         return aggregate_and_sd(content_quiz_first_attempt_grade)
 
