@@ -7,8 +7,8 @@ from schemas import ClusterSchema
 from util import keep_latest_survey_attempt
 
 
-def prepare_data_for_clustering(survey_df: DataFrame, schema_df: DataFrame, survey_path: str,
-                                output_path: str) -> DataFrame:
+def prepare_data_for_clustering(survey_df: DataFrame, schema_df: DataFrame, survey_path: str = None,
+                                output_path: str = None) -> DataFrame:
     """
     Prepare the survey given in <survey_path> in ways that can be input into the clustering model.
     Outputs the file /data/processed/for_clustering_impression_survey.csv containing the above information
@@ -25,9 +25,11 @@ def prepare_data_for_clustering(survey_df: DataFrame, schema_df: DataFrame, surv
 
     prepared_df = prepare_dataframe_for_clustering(survey_df)
 
-    file_name = os.path.basename(survey_path)
-    output_dir = os.path.join(output_path, "for_clustering_" + file_name)
-    prepared_df.to_csv(output_dir, index=False)
+
+    if survey_path and output_path:
+        file_name = os.path.basename(survey_path)
+        output_dir = os.path.join(output_path, "for_clustering_" + file_name)
+        prepared_df.to_csv(output_dir, index=False)
 
     return prepared_df
 

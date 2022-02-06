@@ -1,9 +1,11 @@
 import re
 from collections import defaultdict
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 from schemas import CourseSchema
+from scripts import prepare_data_for_clustering
 from util import ReadingLogsData
 from util.reading_logs import aggregate_and_sd
 
@@ -20,6 +22,44 @@ RELEVANT_QUESTIONS = [
     'I think design and interaction is boring.',
     'I like to use design and interaction to solve problems.',
 ]
+
+
+def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.DataFrame, survey_schema: pd.DataFrame):
+    first_df_mod = prepare_data_for_clustering(first_survey, survey_schema)
+    second_df_mod = prepare_data_for_clustering(second_survey, survey_schema)
+    mutual_ids = overlap(list(first_df_mod['id']), list(second_df_mod['id']))
+    print('First Survey n: ', len(list(first_df_mod['id'])))
+    print('Second Survey n: ', len(list(second_df_mod['id'])))
+    print('Mutual n: ', len(mutual_ids))
+
+    first_df_mod = first_df_mod.loc[first_df_mod['id'].isin(mutual_ids)]
+    second_df_mod = second_df_mod.loc[second_df_mod['id'].isin(mutual_ids)]
+
+    # Sort by id so the each student's interest is the same position in both lists
+    first_df_mod.sort_values(by='id', axis=0, inplace=True, na_position='first')
+    second_df_mod.sort_values(by='id', axis=0, inplace=True, na_position='first')
+
+    first_interest = list(first_df_mod['Interest'])
+    second_interest = list(second_df_mod['Interest'])
+
+    fig, ax = plt.subplots()
+    ax.hist(first_interest, bins=50)
+    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.hist(second_interest, bins=50)
+    plt.show()
+    a = 1
+
+
+def t_test_tail_direction(a: [], b: []) -> []:
+    avg_a, _ = aggregate_and_sd(a)
+    avg_b, _ = aggregate_and_sd(b)
+
+    if avg_a > avg_b:
+        return ''
+
+    pass
 
 
 def analyze_optional_readings(survey_dfs: [pd.DataFrame], question: str):
@@ -149,6 +189,9 @@ TABLE:
 -----------------------|--------------------------------------------|------------------------------------------|--------------------------------------|
 Positively Interested  |  55% (67 / 162)                            |   45% (35 / 67)
 Negatively Interested  |  45% (78 / 162)                            |   45% (35 / 78)
+
+Reading ANY of them
+
 
 None
 All
