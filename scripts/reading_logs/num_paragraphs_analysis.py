@@ -5,6 +5,7 @@ from sklearn.linear_model import LinearRegression
 
 from schemas import CourseSchema
 from util import ReadingLogsData, set_plot_settings
+from util.reading_logs import aggregate_and_sd
 
 
 def analyze_num_paragraphs():
@@ -61,11 +62,20 @@ def analyze_num_paragraphs():
     plt.legend()
     plt.show()
 
+    print(aggregate_and_sd(num_paragraphs_list))
+    print(len(num_paragraphs_list))
+    print([i for i in num_paragraphs_list if i < 2 or i > 18])
+    print(len([i for i in num_paragraphs_list if i < 2 or i > 18]))
+
+    print(aggregate_and_sd(num_paragraphs_list_mod))
+    print(len(num_paragraphs_list_mod))
+
 
 def plot_avg_reading_speed(x_list: []):
     x_for_line = [i for i in range(0, max(x_list) + 10)]
     y_for_line = [CourseSchema.AVERAGE_READING_SPEED for _ in x_for_line]
-    plt.plot(x_for_line, y_for_line, lw=1, color='green', alpha=0.5, label='Normal Human Reading Speed')
+    plt.plot(x_for_line, y_for_line, lw=1, color='green', alpha=0.5,
+             label=f'Normal Human Reading Speed ({CourseSchema.AVERAGE_READING_SPEED} WPM)')
 
 
 def plot_best_fit(x_list: [], y_list: []):
