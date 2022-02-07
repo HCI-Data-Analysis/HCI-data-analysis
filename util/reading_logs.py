@@ -158,7 +158,7 @@ class ReadingLogsData:
             page_attempts = self.page_content_quiz_num_attempts(module_num, int(page_num), data448_id)
             if page_attempts is not None:
                 average_num_attempts = page_attempts[0]
-            content_quiz_attempts_per_page.append(average_num_attempts)
+                content_quiz_attempts_per_page.append(average_num_attempts)
 
         return aggregate_and_sd(content_quiz_attempts_per_page)
 
@@ -226,7 +226,7 @@ class ReadingLogsData:
             page_grade = self.page_content_quiz_first_attempt_grade(module_num, int(page_num), data448_id)
             if page_grade is not None:
                 average_grade = page_grade[0]
-            content_quiz_first_attempt_grade.append(average_grade)
+                content_quiz_first_attempt_grade.append(average_grade)
 
         return aggregate_and_sd(content_quiz_first_attempt_grade)
 
@@ -297,15 +297,9 @@ class ReadingLogsData:
             return False
 
         reading_log_name_array = reading_log_file_name.split('-')
-        # print(reading_log_name_array)
         if reading_log_name_array[0] != "COSC341" & reading_log_name_array[3] != "Reading" & reading_log_name_array[
             4] != "Logs":  # make sure the file is a reading_log
             return False
-
-    def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:
-        """Returns the page reading duration in minutes. Average of all students unless given a data_448 id."""
-        # TODO: get average student reading duration for this page
-        return random()
 
     def page_reading_duration_list(self, module_num: int, page_num: int) -> [float]:
         """Returns a list of student page reading duration in minutes"""
