@@ -15,14 +15,16 @@ def content_quiz_attempts_analysis(content_quiz_dict):
     module_content_quiz_attempt_std = []
     content_quiz_attempt_modules = []
 
+    all_attempts_list = []
+
     module_paragraphs_dict = r.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
-            if not CourseSchema.page_is_valid(module_num, page_data):
+            if not CourseSchema.page_is_valid(module_num, page_num):
                 continue
 
             # set up for per page analysis
-            page_attempt = r.page_content_quiz_num_attempts(module_num=module_num, page_num=page_num)
+            page_attempt = r.page_content_quiz_num_attempts(module_num, page_num)
             if page_attempt is not None:
                 content_quiz_attempt_pages.append(str(module_num)+"-"+str(page_num))
                 page_content_quiz_attempt_mean.append(page_attempt[0])
@@ -35,11 +37,18 @@ def content_quiz_attempts_analysis(content_quiz_dict):
                 module_content_quiz_attempt_mean.append(module_attempt[0])
                 module_content_quiz_attempt_std.append(module_attempt[1])
 
-    # Per page graph
-    page_content_quiz_attempt_mean.append(np.mean(page_content_quiz_attempt_mean))
-    page_content_quiz_attempt_std.append(np.std(page_content_quiz_attempt_std))
+            # set up for overall analysis
+            all_attempts = r.page_content_quiz_attempts_list(module_num, page_num)
+            if all_attempts is not None:
+                all_attempts_list.extend(all_attempts)
+
+    overall_mean = np.mean(all_attempts_list)
+    overall_std = np.std(all_attempts_list)
+    page_content_quiz_attempt_std.append(overall_std)
+    page_content_quiz_attempt_mean.append(overall_mean)
     content_quiz_attempt_pages.append('Overall')
 
+    # Per page graph
     plt.scatter(content_quiz_attempt_pages, page_content_quiz_attempt_mean)
     plt.errorbar(content_quiz_attempt_pages, page_content_quiz_attempt_mean, yerr=page_content_quiz_attempt_std,
                  fmt='o', ecolor="skyblue", elinewidth=0.5)
@@ -50,8 +59,8 @@ def content_quiz_attempts_analysis(content_quiz_dict):
     plt.show()
 
     # Per module graph
-    module_content_quiz_attempt_mean.append(np.mean(module_content_quiz_attempt_mean))
-    module_content_quiz_attempt_std.append(np.std(module_content_quiz_attempt_std))
+    module_content_quiz_attempt_mean.append(overall_mean)
+    module_content_quiz_attempt_std.append(overall_std)
     content_quiz_attempt_modules.append('Overall')
 
     plt.scatter(content_quiz_attempt_modules, module_content_quiz_attempt_mean)
@@ -75,11 +84,16 @@ def content_quiz_grade_analysis(content_quiz_dict):
     module_content_quiz_grade_std = []
     content_quiz_grade_modules = []
 
+    overall_grade_list = []
+
     module_paragraphs_dict = r.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
-            if not CourseSchema.page_is_valid(module_num, page_data):
+            if not CourseSchema.page_is_valid(module_num, page_num):
                 continue
+
+            if module_num == 11 or module_num == 9:
+                a = 1
 
             # set up for per page analysis
             page_grade = r.page_content_quiz_first_attempt_grade(module_num=module_num, page_num=page_num)
@@ -95,11 +109,18 @@ def content_quiz_grade_analysis(content_quiz_dict):
                 module_content_quiz_grade_mean.append(module_grade[0])
                 module_content_quiz_grade_std.append(module_grade[1])
 
-    # Per page graph
-    page_content_quiz_grade_mean.append(np.mean(page_content_quiz_grade_mean))
-    page_content_quiz_grade_std.append(np.std(page_content_quiz_grade_std))
+            # set up for overall analysis
+            overall_grade = r.content_quiz_first_attempt_grade_list(module_num, page_num)
+            if overall_grade is not None:
+                overall_grade_list.extend(overall_grade)
+
+    overall_mean = np.mean(overall_grade_list)
+    overall_std = np.std(overall_grade_list)
+    page_content_quiz_grade_mean.append(overall_mean)
+    page_content_quiz_grade_std.append(overall_std)
     content_quiz_grade_pages.append('Overall')
 
+    # Per page graph
     plt.scatter(content_quiz_grade_pages, page_content_quiz_grade_mean)
     plt.errorbar(content_quiz_grade_pages, page_content_quiz_grade_mean, yerr=page_content_quiz_grade_std,
                  fmt='o', ecolor="skyblue", elinewidth=0.5)
@@ -110,8 +131,8 @@ def content_quiz_grade_analysis(content_quiz_dict):
     plt.show()
 
     # Per module graph
-    module_content_quiz_grade_mean.append(np.mean(module_content_quiz_grade_mean))
-    module_content_quiz_grade_std.append(np.std(module_content_quiz_grade_std))
+    module_content_quiz_grade_mean.append(overall_mean)
+    module_content_quiz_grade_std.append(overall_std)
     content_quiz_grade_modules.append('Overall')
 
     plt.scatter(content_quiz_grade_modules, module_content_quiz_grade_mean)
