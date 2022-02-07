@@ -25,7 +25,7 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
             continue
         module_path = os.path.join(reading_log_path, module)
         module_num = CourseSchema.MODULE_NUM_KEY[int(module)]
-        module_tuple = parse_reading_logs_module(module_path, module_paragraph_json_path, str(module_num))
+        module_tuple = parse_reading_logs_module(module_path, str(module_num))
         module_each_continue_dict = module_tuple[0]
         module_each_quiz_submit_dict = module_tuple[1]
         for k, v in module_each_continue_dict.items():
@@ -34,10 +34,12 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
         for k, v in module_each_quiz_submit_dict.items():
             each_quiz_submit_dict[k] = v
 
+    # temp = each_quiz_submit_dict['1-1']
+    # temp2 = each_continue_dict['1-1']
     return each_continue_dict, each_quiz_submit_dict
 
 
-def parse_reading_logs_module(module_path, module_paragraphs_path, module_number) -> (dict, dict):
+def parse_reading_logs_module(module_path, module_number) -> (dict, dict):
     """
     Converts the reading log of given module_each_continue to two dictionary of dataframes. Both dictionary
      have the key in the format of [module_num]-[page_num]. The values being a dataframe that represents the reading log timestamp
@@ -61,7 +63,6 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
     """
     reading_log_data = ReadingLogsData()
     number_of_pages = reading_log_data.get_num_pages_in_module(int(module_number))
-    print(number_of_pages)
 
     module_each_continue = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
     module_each_submit = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
@@ -83,7 +84,7 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
 
         if contains_reading_log:
             convert_reading_logs_to_json(data448id_path)
-            # TODO: if not correct reading log format, do not parse
+            convert_reading_logs_to_json(data448id_path)
             parsing_each_continue(data448id_path, module_number, data448_id, module_each_continue)
             parsing_each_quiz_submit(data448id_path, module_number, data448_id, module_each_submit)
         else:
@@ -91,13 +92,14 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
                 reading_log_folder_path = os.path.join(data448id_path, reading_log_folder)
                 if os.path.isdir(reading_log_folder_path) and reading_log_folder != "__MACOSX":
                     convert_reading_logs_to_json(reading_log_folder_path)
-                    # TODO: if not correct reading log format, do not parse
                     parsing_each_continue(reading_log_folder_path, module_number, data448_id, module_each_continue)
                     parsing_each_quiz_submit(reading_log_folder_path, module_number, data448_id, module_each_submit)
 
     cleaned_module_each_continue = anomalies_deletion(module_each_continue)
     cleaned_module_each_submit = anomalies_deletion(module_each_submit)
 
+    # temp = cleaned_module_each_continue['1-1']
+    # temp2 = cleaned_module_each_submit['1-1']
     return cleaned_module_each_continue, cleaned_module_each_submit
 
 
