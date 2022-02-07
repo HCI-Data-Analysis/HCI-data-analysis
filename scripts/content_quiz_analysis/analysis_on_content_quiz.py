@@ -5,7 +5,7 @@ from schemas import CourseSchema
 
 
 def content_quiz_attempts_analysis(content_quiz_dict):
-    r = ReadingLogsData()
+    Reading_Logs_Data = ReadingLogsData()
 
     page_content_quiz_attempt_mean = []
     page_content_quiz_attempt_std = []
@@ -15,21 +15,21 @@ def content_quiz_attempts_analysis(content_quiz_dict):
     module_content_quiz_attempt_std = []
     content_quiz_attempt_modules = []
 
-    module_paragraphs_dict = r.get_module_paragraphs_dict()
+    module_paragraphs_dict = Reading_Logs_Data.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
             if not CourseSchema.page_is_valid(module_num, page_data):
                 continue
 
             # set up for per page analysis
-            page_attempt = r.page_content_quiz_num_attempts(module_num=module_num, page_num=page_num)
+            page_attempt = Reading_Logs_Data.page_content_quiz_num_attempts(module_num=module_num, page_num=page_num)
             if page_attempt is not None:
                 content_quiz_attempt_pages.append(str(module_num)+"-"+str(page_num))
                 page_content_quiz_attempt_mean.append(page_attempt[0])
                 page_content_quiz_attempt_std.append(page_attempt[1])
 
             # set up for per module analysis
-            module_attempt = r.module_content_quiz_num_attempts(module_num)
+            module_attempt = Reading_Logs_Data.module_content_quiz_num_attempts(module_num)
             if module_attempt is not None:
                 content_quiz_attempt_modules.append(str(module_num))
                 module_content_quiz_attempt_mean.append(module_attempt[0])
