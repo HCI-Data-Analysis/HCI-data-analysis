@@ -34,8 +34,6 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
         for k, v in module_each_quiz_submit_dict.items():
             each_quiz_submit_dict[k] = v
 
-    # temp = each_quiz_submit_dict['1-1']
-    # temp2 = each_continue_dict['1-1']
     return each_continue_dict, each_quiz_submit_dict
 
 
@@ -84,7 +82,6 @@ def parse_reading_logs_module(module_path, module_number) -> (dict, dict):
 
         if contains_reading_log:
             convert_reading_logs_to_json(data448id_path)
-            convert_reading_logs_to_json(data448id_path)
             parsing_each_continue(data448id_path, module_number, data448_id, module_each_continue)
             parsing_each_quiz_submit(data448id_path, module_number, data448_id, module_each_submit)
         else:
@@ -98,8 +95,6 @@ def parse_reading_logs_module(module_path, module_number) -> (dict, dict):
     cleaned_module_each_continue = anomalies_deletion(module_each_continue)
     cleaned_module_each_submit = anomalies_deletion(module_each_submit)
 
-    # temp = cleaned_module_each_continue['1-1']
-    # temp2 = cleaned_module_each_submit['1-1']
     return cleaned_module_each_continue, cleaned_module_each_submit
 
 

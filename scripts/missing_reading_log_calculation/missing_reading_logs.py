@@ -9,10 +9,10 @@ def number_of_reading_log_per_student(module_paragraphs_dict, reading_dict, data
 
     for module_num, page_dict in module_paragraphs_dict.items():
         for page_num, page_data in page_dict.items():
-            cs = CourseSchema()
-            isValid = cs.page_is_valid(int(module_num), int(page_num))
+
+            is_valid = CourseSchema.page_is_valid(int(module_num), int(page_num))
             
-            if isValid:
+            if is_valid:
                 for data448id_in_rl in reading_dict[f'{module_num}-{page_num}'].index.values:
                     missing_reading_log_df.loc[int(data448id_in_rl)]['num_of_reading_log_submitted'] += 1
                     
