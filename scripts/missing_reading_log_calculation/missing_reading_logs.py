@@ -1,6 +1,5 @@
 from schemas import CourseSchema
 import pandas as pd
-import matplotlib as plt
 
 
 def number_of_reading_log_per_student(module_paragraphs_dict, reading_dict, data448id):
@@ -16,10 +15,5 @@ def number_of_reading_log_per_student(module_paragraphs_dict, reading_dict, data
             if isValid:
                 for data448id_in_rl in reading_dict[f'{module_num}-{page_num}'].index.values:
                     missing_reading_log_df.loc[int(data448id_in_rl)]['num_of_reading_log_submitted'] += 1
-
-
-    print(missing_reading_log_df)
-
-    print(len(missing_reading_log_df[missing_reading_log_df['num_of_reading_log_submitted']>50]))
                     
     return missing_reading_log_df
