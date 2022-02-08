@@ -34,7 +34,8 @@ class CourseSchema:
     ]
 
     @staticmethod
-    def page_is_valid(module_num: int, page_num: int) -> bool:
+    def page_is_valid(module_num: str, page_num: str) -> bool:
+        module_num, page_num = int(module_num), int(page_num)
         if module_num in CourseSchema.CANCELLED_MODULES or \
                 module_num in CourseSchema.OPTIONAL_MODULES or \
                 module_num in CourseSchema.SUMMARY_MODULES:

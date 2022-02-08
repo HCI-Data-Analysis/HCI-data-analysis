@@ -13,6 +13,7 @@ from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, CACHE_FOLDER
 START_TIME_KEY = 'start_time'
 END_TIME_KEY = 'end_time'
 DURATION_KEY = 'duration'
+TAMPERED = -1
 
 
 class ReadingLogsData:
@@ -138,24 +139,6 @@ class ReadingLogsData:
         :return: (float representing the average number of content quiz attempts, standard deviation for this average)
         """
         page_content_quiz_df = self.get_content_quiz_performance_dict()[f'{module_num}-{page_num}']
-        TAMPERED = -1
-
-        def num_before_ans(*args):
-            q_response_lists = []
-            for val in args:
-                q_response_lists.append(val) if isinstance(val, list) else q_response_lists.append([val])
-
-            # Discard if they tampered with the numbers so questions have a different number of attempts
-            if not all(len(response_set) == len(q_response_lists[0]) for response_set in q_response_lists):
-                return TAMPERED
-
-            all_correct = ['ans'] * len(q_response_lists)
-            count = 0
-            for q_response_set in zip(*q_response_lists):
-                if list(q_response_set) == all_correct:
-                    return count / len(q_response_lists)
-                else:
-                    count += 1
 
         zip_set = [page_content_quiz_df[col] for col in page_content_quiz_df if col.startswith('q')]
         if not zip_set:
@@ -176,9 +159,28 @@ class ReadingLogsData:
             page_attempts = self.page_content_quiz_num_attempts(module_num, int(page_num), data448_id)
             if page_attempts is not None:
                 average_num_attempts = page_attempts[0]
-            content_quiz_attempts_per_page.append(average_num_attempts)
+                content_quiz_attempts_per_page.append(average_num_attempts)
 
         return aggregate_and_sd(content_quiz_attempts_per_page)
+
+    def page_content_quiz_attempts_list(self, module_num: int, page_num: int) -> [float]:
+        """
+        returns a list of extra attempts each student took for the content quiz of the given page
+        :param module_num: The module number
+        :param page_num: The page number
+        :return:
+        """
+        page_content_quiz_df = self.get_content_quiz_performance_dict()[f'{module_num}-{page_num}']
+
+        zip_set = [page_content_quiz_df[col] for col in page_content_quiz_df if col.startswith('q')]
+        if not zip_set:
+            return None
+
+        page_content_quiz_df['num_before_ans'] = [num_before_ans(*a) for a in zip(*zip_set)]
+
+        all_num_attempts = [num for num in page_content_quiz_df['num_before_ans'].values if num != TAMPERED]
+
+        return all_num_attempts
 
     def page_content_quiz_first_attempt_grade(self, module_num: int, page_num: int, data448_id: int = None) -> float:
         """
@@ -203,8 +205,6 @@ class ReadingLogsData:
 
         cols = [col for col in page_content_quiz_df if col.startswith('q')]
         questions_df = page_content_quiz_df[cols]
-        questions_df = questions_df.reset_index()
-        questions_df = questions_df.T
 
         def first_attempt_grade(row):
             count = 0
@@ -227,9 +227,37 @@ class ReadingLogsData:
             page_grade = self.page_content_quiz_first_attempt_grade(module_num, int(page_num), data448_id)
             if page_grade is not None:
                 average_grade = page_grade[0]
-            content_quiz_first_attempt_grade.append(average_grade)
+                content_quiz_first_attempt_grade.append(average_grade)
 
         return aggregate_and_sd(content_quiz_first_attempt_grade)
+
+    def content_quiz_first_attempt_grade_list(self, module_num: int, page_num: int):
+        """
+        Returns the list of student's firat attempt grade for the given page
+        :param module_num: the module number
+        :param page_num: the page number
+        :return:
+        """
+        page_content_quiz_df = self.get_content_quiz_performance_dict()[f'{module_num}-{page_num}']
+
+        zip_set = [page_content_quiz_df[col] for col in page_content_quiz_df if col.startswith('q')]
+
+        if not zip_set:
+            return None
+
+        cols = [col for col in page_content_quiz_df if col.startswith('q')]
+        questions_df = page_content_quiz_df[cols]
+
+        def first_attempt_grade(row):
+            count = 0
+            for element in row:
+                if element == 'ans' or element[0] == 'ans':
+                    count += 1
+            return count / len(row)
+
+        questions_df['first_attempt_grade'] = questions_df.apply(lambda x: first_attempt_grade(x), axis=1)
+
+        return [*questions_df['first_attempt_grade']]
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs_dict = self.get_module_paragraphs_dict()
@@ -271,15 +299,9 @@ class ReadingLogsData:
             return False
 
         reading_log_name_array = reading_log_file_name.split('-')
-        # print(reading_log_name_array)
         if reading_log_name_array[0] != "COSC341" & reading_log_name_array[3] != "Reading" & reading_log_name_array[
             4] != "Logs":  # make sure the file is a reading_log
             return False
-
-    def page_reading_duration(module_num: int, page_num: int, data448_id: int = None) -> float:
-        """Returns the page reading duration in minutes. Average of all students unless given a data_448 id."""
-        # TODO: get average student reading duration for this page
-        return random()
 
     def page_reading_duration_list(self, module_num: int, page_num: int) -> [float]:
         """Returns a list of student page reading duration in minutes"""
@@ -335,3 +357,22 @@ def aggregate_and_sd(values: [], mean=True) -> (float, float):
         return mean, sd
     else:
         return sum(values_list), sd
+
+
+def num_before_ans(*args):
+    q_response_lists = []
+    for val in args:
+        q_response_lists.append(val) if isinstance(val, list) else q_response_lists.append([val])
+
+    # Discard if they tampered with the numbers so questions have a different number of attempts
+    if not all(len(response_set) == len(q_response_lists[0]) for response_set in q_response_lists):
+        return TAMPERED
+
+    all_correct = ['ans'] * len(q_response_lists)
+    count = 0
+    for q_response_set in zip(*q_response_lists):
+        if list(q_response_set) == all_correct:
+            return count / len(q_response_lists)
+        else:
+            count += 1
+
