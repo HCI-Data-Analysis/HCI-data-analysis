@@ -10,7 +10,9 @@ from .attendance import graph_attendance
 from .performance_by_activity_type import performance_by_activity_type
 from .student_grouping import group_students
 from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
+from .average_module_paragraph_reading_speed import graph_average_module_paragraph_reading_speed
 from .reading_logs import analyze_num_paragraphs, parse_reading_logs_module, parse_reading_logs_all, \
     reading_logs_completion_time
 from .content_quiz_analysis.analysis_on_content_quiz import *
 from .missing_reading_log_calculation.missing_reading_logs import number_of_reading_log_per_student
+from .pre_test_reading_behaviour_analysis import pre_test_reading_behaviour_analysis
