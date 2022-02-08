@@ -13,4 +13,5 @@ from .analyze_module_feedback_survey import analyze_module_feedback, compare_mod
 from .average_module_paragraph_reading_speed import graph_average_module_paragraph_reading_speed
 from .reading_logs import analyze_num_paragraphs, parse_reading_logs_module, parse_reading_logs_all, \
     reading_logs_completion_time
+from .missing_reading_log_calculation.missing_reading_logs import number_of_reading_log_per_student
 from .pre_test_reading_behaviour_analysis import pre_test_reading_behaviour_analysis
