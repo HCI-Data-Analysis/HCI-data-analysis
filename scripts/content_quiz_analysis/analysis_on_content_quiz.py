@@ -3,17 +3,25 @@ import numpy as np
 from util import ReadingLogsData
 from schemas import CourseSchema
 
+module_content_quiz_attempt_mean = []
+module_content_quiz_attempt_std = []
+content_quiz_attempt_modules = []
 
-def content_quiz_attempts_analysis(content_quiz_dict):
+module_content_quiz_grade_mean = []
+module_content_quiz_grade_std = []
+content_quiz_grade_modules = []
+
+
+def content_quiz_attempts_analysis():
     r = ReadingLogsData()
 
     page_content_quiz_attempt_mean = []
     page_content_quiz_attempt_std = []
     content_quiz_attempt_pages = []
 
-    module_content_quiz_attempt_mean = []
-    module_content_quiz_attempt_std = []
-    content_quiz_attempt_modules = []
+    # module_content_quiz_attempt_mean = []
+    # module_content_quiz_attempt_std = []
+    # content_quiz_attempt_modules = []
 
     module_paragraphs_dict = r.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
@@ -64,16 +72,16 @@ def content_quiz_attempts_analysis(content_quiz_dict):
     plt.show()
 
 
-def content_quiz_grade_analysis(content_quiz_dict):
+def content_quiz_grade_analysis():
     r = ReadingLogsData()
 
     page_content_quiz_grade_mean = []
     page_content_quiz_grade_std = []
     content_quiz_grade_pages = []
 
-    module_content_quiz_grade_mean = []
-    module_content_quiz_grade_std = []
-    content_quiz_grade_modules = []
+    # module_content_quiz_grade_mean = []
+    # module_content_quiz_grade_std = []
+    # content_quiz_grade_modules = []
 
     module_paragraphs_dict = r.get_module_paragraphs_dict()
     for module_num, page_dict in module_paragraphs_dict.items():
@@ -122,3 +130,7 @@ def content_quiz_grade_analysis(content_quiz_dict):
     plt.ylabel("First attempt grades")
     plt.title("Mean and Standard Deviation of First Attempt Grade for Each Module")
     plt.show()
+
+
+def content_quiz_vs_pre_test():
+    hi = ""
