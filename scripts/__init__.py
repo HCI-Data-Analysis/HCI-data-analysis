@@ -13,4 +13,4 @@ from .analyze_module_feedback_survey import analyze_module_feedback, compare_mod
 from .reading_logs import analyze_num_paragraphs, parse_reading_logs_module, parse_reading_logs_all, \
     reading_logs_completion_time
 from .content_quiz_analysis.analysis_on_content_quiz import content_quiz_attempts_analysis, content_quiz_grade_analysis
-
+from .missing_reading_log_calculation.missing_reading_logs import number_of_reading_log_per_student

@@ -27,7 +27,7 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
             continue
         module_path = os.path.join(reading_log_path, module)
         module_num = CourseSchema.MODULE_NUM_KEY[int(module)]
-        module_tuple = parse_reading_logs_module(module_path, module_paragraph_json_path, str(module_num))
+        module_tuple = parse_reading_logs_module(module_path, str(module_num))
         module_each_continue_dict = module_tuple[0]
         module_each_quiz_submit_dict = module_tuple[1]
         for k, v in module_each_continue_dict.items():
@@ -39,7 +39,7 @@ def parse_reading_logs_all(reading_log_path, module_paragraph_json_path) -> (dic
     return each_continue_dict, each_quiz_submit_dict
 
 
-def parse_reading_logs_module(module_path, module_paragraphs_path, module_number) -> (dict, dict):
+def parse_reading_logs_module(module_path, module_number) -> (dict, dict):
     """
     Converts the reading log of given module_each_continue to two dictionary of dataframes. Both dictionary
      have the key in the format of [module_num]-[page_num]. The values being a dataframe that represents the reading log timestamp
@@ -63,7 +63,6 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
     """
     reading_log_data = ReadingLogsData()
     number_of_pages = reading_log_data.get_num_pages_in_module(int(module_number))
-    print(number_of_pages)
 
     module_each_continue = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
     module_each_submit = {f'{module_number}-{str(page)}': pd.DataFrame() for page in range(1, number_of_pages + 1)}
@@ -79,12 +78,12 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
         for reading_log_folder in os.listdir(data448id_path):
             reading_log_folder_path = os.path.join(data448id_path, reading_log_folder)
             convert_reading_logs_to_json(reading_log_folder_path)
-            if reading_log_folder.endswith(".json"):
+            if reading_log_folder.endswith(".json") or reading_log_folder.endswith(".txt"):
                 contains_reading_log = True
                 break
 
         if contains_reading_log:
-            # TODO: if not correct reading log format, do not parse
+            convert_reading_logs_to_json(data448id_path)
             parsing_each_continue(data448id_path, module_number, data448_id, module_each_continue)
             parsing_each_quiz_submit(data448id_path, module_number, data448_id, module_each_submit)
         else:
@@ -92,7 +91,6 @@ def parse_reading_logs_module(module_path, module_paragraphs_path, module_number
                 reading_log_folder_path = os.path.join(data448id_path, reading_log_folder)
                 if os.path.isdir(reading_log_folder_path) and reading_log_folder != "__MACOSX":
                     convert_reading_logs_to_json(reading_log_folder_path)
-                    # TODO: if not correct reading log format, do not parse
                     parsing_each_continue(reading_log_folder_path, module_number, data448_id, module_each_continue)
                     parsing_each_quiz_submit(reading_log_folder_path, module_number, data448_id, module_each_submit)
 
@@ -119,6 +117,8 @@ def parsing_each_continue(reading_log_folder_path: str, module_number: str, data
         # 'COSC341-0-1-Reading-Logs.json', when splitting by '-':
         # at index 1 is module number and index 2 is page number
         page_num = reading_log.split('-')[2]
+        if not page_num.isnumeric():
+            continue
 
         with open(reading_log_path, 'r') as f:
             try:
@@ -162,6 +162,8 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
         # 'COSC341-0-1-Reading-Logs.json', when splitting by '-':
         # at index 1 is module number and index 2 is page number
         page_num = reading_log_name_array[2]
+        if not page_num.isnumeric():
+            continue
 
         with open(reading_log_path, 'r') as f:
             try:
