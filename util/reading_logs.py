@@ -1,10 +1,8 @@
 import json
 import os
-import numpy as np
-import pandas as pd
-from random import random
 
 import dill
+import numpy as np
 import pandas as pd
 
 from schemas import CourseSchema

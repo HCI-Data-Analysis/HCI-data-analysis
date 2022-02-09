@@ -119,6 +119,8 @@ def parsing_each_continue(reading_log_folder_path: str, module_number: str, data
         page_num = reading_log.split('-')[2]
         if not page_num.isnumeric():
             continue
+        if data448_id in module[f'{module_number}-{page_num}'].index:
+            continue
 
         with open(reading_log_path, 'r') as f:
             try:
@@ -163,6 +165,8 @@ def parsing_each_quiz_submit(reading_log_folder_path: str, module_number: str, d
         # at index 1 is module number and index 2 is page number
         page_num = reading_log_name_array[2]
         if not page_num.isnumeric():
+            continue
+        if data448_id in module[f'{module_number}-{page_num}'].index:
             continue
 
         with open(reading_log_path, 'r') as f:
