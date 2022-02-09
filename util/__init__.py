@@ -7,4 +7,4 @@ from .data_cleaner import keep_latest_survey_attempt
 from .reading_logs import ReadingLogsData
 from .plots import set_plot_settings
 from .util import normalize
-
+from .pre_tests import pre_test_get_first_attempt_grade, pre_test_first_attempt_grade_average

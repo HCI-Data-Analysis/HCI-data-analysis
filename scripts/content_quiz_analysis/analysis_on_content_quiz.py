@@ -72,7 +72,7 @@ def content_quiz_attempts_analysis():
     plt.show()
 
 
-def content_quiz_grade_analysis():
+def content_quiz_grade_analysis(data448_ids):
     r = ReadingLogsData()
 
     page_content_quiz_grade_mean = []
@@ -102,6 +102,9 @@ def content_quiz_grade_analysis():
                 content_quiz_grade_modules.append(str(module_num))
                 module_content_quiz_grade_mean.append(module_grade[0])
                 module_content_quiz_grade_std.append(module_grade[1])
+
+            # set up for individual data points
+            page_student_df = r.content_quiz_first_attempt_grade_list(module_num, data448_ids)
 
     # Per page graph
     page_content_quiz_grade_mean.append(np.mean(page_content_quiz_grade_mean))
@@ -134,3 +137,4 @@ def content_quiz_grade_analysis():
 
 def content_quiz_vs_pre_test():
     hi = ""
+

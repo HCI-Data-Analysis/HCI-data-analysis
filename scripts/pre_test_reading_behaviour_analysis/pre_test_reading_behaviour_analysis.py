@@ -43,21 +43,21 @@ def pre_test_reading_behaviour_analysis(QUIZSCOREJSON_PATH):
                                         for previous_json_block in json_block['previous_submissions']:
                                             if previous_json_block['attempt'] == 1:
                                                 json_block = previous_json_block
-                                    try:
-                                        [module_reading, module_reading_std] = reading_logs_data.module_reading_speed(
-                                            pre_test_quiz_ids[json_block['quiz_id']][0], json_block['user_id'])
-                                        student_first_attempt_data = {
-                                            'data448_id': json_block['user_id'],
-                                            'quiz_id': json_block['quiz_id'],
-                                            'reading_speed': module_reading,
-                                            'reading_speed_std': module_reading_std,
-                                            'percentage': json_block['score'] / json_block[QUIZ_POINTS_POSSIBLE] * 100,
-                                            'module': pre_test_quiz_ids[json_block['quiz_id']][1]
-                                        }
-                                        df_first_attempt = df_first_attempt.append(student_first_attempt_data,
-                                                                                   ignore_index=True)
-                                    except KeyError:
-                                        print('nan')
+                                    # try:
+                                    [module_reading, module_reading_std] = reading_logs_data.module_reading_speed(
+                                        pre_test_quiz_ids[json_block['quiz_id']][0], json_block['user_id'])
+                                    student_first_attempt_data = {
+                                        'data448_id': json_block['user_id'],
+                                        'quiz_id': json_block['quiz_id'],
+                                        'reading_speed': module_reading,
+                                        'reading_speed_std': module_reading_std,
+                                        'percentage': json_block['score'] / json_block[QUIZ_POINTS_POSSIBLE] * 100,
+                                        'module': pre_test_quiz_ids[json_block['quiz_id']][1]
+                                    }
+                                    df_first_attempt = df_first_attempt.append(student_first_attempt_data,
+                                                                               ignore_index=True)
+                                    # except KeyError:
+                                    #     print('nan')
 
     print(df_first_attempt)
 
