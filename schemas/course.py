@@ -12,7 +12,7 @@ class CourseSchema:
         11: [1, 2, 3, 4, 5]  # All
     }
 
-    AVERAGE_READING_SPEED = 75
+    AVERAGE_READING_SPEED = 300
 
     MODULE_NUM_KEY = {
         741711: 0,

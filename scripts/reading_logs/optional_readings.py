@@ -49,10 +49,12 @@ https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.shapiro.html
 """
 
 
-def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.DataFrame, survey_schema: pd.DataFrame):
+def get_cleaned_interest_data(first_survey: pd.DataFrame, second_survey: pd.DataFrame, survey_schema: pd.DataFrame):
     first_df_mod = prepare_data_for_clustering(first_survey, survey_schema)
     second_df_mod = prepare_data_for_clustering(second_survey, survey_schema)
     mutual_ids = overlap(list(first_df_mod['id']), list(second_df_mod['id']))
+    print('-' * 50)
+    print('Reporting N')
     print('First Survey n: ', len(list(first_df_mod['id'])))
     print('Second Survey n: ', len(list(second_df_mod['id'])))
     print('Mutual n: ', len(mutual_ids))
@@ -66,11 +68,18 @@ def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.Da
 
     first_interest = list(first_df_mod['Interest'])
     second_interest = list(second_df_mod['Interest'])
+    return first_interest, second_interest
+
+
+def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.DataFrame, survey_schema: pd.DataFrame):
+    first_interest, second_interest = get_cleaned_interest_data(first_survey, second_survey, survey_schema)
 
     check_normality_visually(first_interest, second_interest)
     check_normality(first_interest, second_interest)
     check_variances(first_interest, second_interest)
     compare_interest(first_interest, second_interest)
+
+    plot_optional_reading_proportions([first_interest, second_interest])
 
     # diff = [m1 - m2 for m1, m2 in zip(first_interest, second_interest)]
     # check_normality(diff, [])
@@ -128,94 +137,27 @@ def compare_interest(first_interest: [], second_interest: []):
     print(wilcoxon)
 
 
-def analyze_optional_readings(survey_dfs: [pd.DataFrame], question: str):
-    optional_module_data = {}
-    for optional_module_num in CourseSchema.OPTIONAL_MODULES:
-        student_page_reading_dict = students_reading_module(optional_module_num)
-        optional_module_data[optional_module_num] = {
-            'num_students_reading': len(student_page_reading_dict),
-            'student_list': list(student_page_reading_dict.keys()),
-            'student_reading_dict': student_page_reading_dict,
-            'avg_pages_read': aggregate_and_sd(student_page_reading_dict.values())
-        }
+def plot_optional_reading_proportions(interest_dfs: [pd.DataFrame]):
+    print('-' * 50)
+    print('Optional Reading Analysis')
+    print('Plot')
+    for interest_df in interest_dfs:
+        pass
 
-    all_survey_data = {}
-
-    for survey_index, df in enumerate(survey_dfs):
-        # survey_data = {
-        #     answer: {} for answer in LIKERT_ANSWERS
-        # }
-        survey_data = defaultdict(dict)
-        likert_data = get_likert_counts(df, question)
-        for answer, student_list in likert_data.items():
-            # if answer in survey_data:
-            survey_data[answer]['num_students'] = len(student_list)
-            for module_num, module_data in optional_module_data.items():
-                survey_data[answer][f'num_reading_{module_num}'] = len(
-                    overlap(student_list, module_data['student_list'])
-                )
-                pages_read = [
-                    count for d_id, count in module_data['student_reading_dict'].items()
-                    if d_id in student_list
-                ]
-                survey_data[answer][f'avg_pages_{module_num}'] = aggregate_and_sd(pages_read)
-        all_survey_data[survey_index] = survey_data
-
-    print_results(all_survey_data)
+    pass
 
 
-def print_results(all_survey_data: dict):
-    for i, survey_data in all_survey_data.items():
-        print(f'\t{i}')
+def get_readers_for_page(module_num: int, page_num: int)
 
-        # Headers
-        print(f'\tLikert Answer', end='')
-        headers = list(all_survey_data[i].values())[0].keys()
-        for header in headers:
-            print(f'\t{header}', end='')
-        print('\n', end='')
+def student_interest_grouping():
+    pass
 
-        for likert_answer, info in all_survey_data[i].items():
-            print(f'\t{likert_answer}', end='')
-            for header in headers:
-                try:
-                    print(f'\t{info[header]}', end='')
-                except KeyError:
-                    print(f'\tNA', end='')
-            print('\n', end='')
 
-        print('\n\n', end='')
 
 
 def overlap(a: [], b: []) -> []:
     """Returns list of common elements in 2 input lists"""
     return [i for i in a if i in b]
-
-
-def remove_id_prefix(col_name):
-    regex = r'^([0-9]{7}: )'
-    id_stripped_string = re.sub(regex, '', col_name)
-    return id_stripped_string
-
-
-def get_likert_counts(survey_df: pd.DataFrame, question_text: str) -> dict:
-    """
-    :return: dict<str, [int]> => {
-        likert_answer_label: [data448_id...]
-    }
-    """
-    student_answers = defaultdict(list)
-    col_match_name = None
-    for col_name in survey_df.columns:
-        match_name = remove_id_prefix(col_name)
-        if match_name.endswith(question_text):
-            col_match_name = col_name
-            break
-
-    for data448_id, answer in zip(survey_df['id'], survey_df[col_match_name]):
-        student_answers[answer].append(data448_id)
-
-    return student_answers
 
 
 def students_reading_module(module_num: int) -> dict:
