@@ -25,7 +25,6 @@ def prepare_data_for_clustering(survey_df: DataFrame, schema_df: DataFrame, surv
 
     prepared_df = prepare_dataframe_for_clustering(survey_df)
 
-
     if survey_path and output_path:
         file_name = os.path.basename(survey_path)
         output_dir = os.path.join(output_path, "for_clustering_" + file_name)

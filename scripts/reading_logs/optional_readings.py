@@ -2,7 +2,9 @@ import re
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import scipy.stats
 
 from schemas import CourseSchema
 from scripts import prepare_data_for_clustering
@@ -23,6 +25,29 @@ RELEVANT_QUESTIONS = [
     'I like to use design and interaction to solve problems.',
 ]
 
+"""
+T-Test Plan
+
+- Explain comparison and motivation
+- Histogram observe
+- Note not obvious from histograms so use tests
+- Difference is non normal (outliers don't conceptually make sense with opinions)
+- Switch to Wilcoxon
+- Wilcoxon says reject null, means are equal
+- 
+"""
+
+"""
+References:
+https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide-2.php
+https://statistics.laerd.com/spss-tutorials/dependent-t-test-using-spss-statistics.php
+https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test
+https://statistics.laerd.com/spss-tutorials/wilcoxon-signed-rank-test-using-spss-statistics.php
+https://www.jstor.org/stable/3001968?seq=1#metadata_info_tab_contents
+https://www.investopedia.com/terms/t/t-test.asp
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.shapiro.html
+"""
+
 
 def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.DataFrame, survey_schema: pd.DataFrame):
     first_df_mod = prepare_data_for_clustering(first_survey, survey_schema)
@@ -42,24 +67,65 @@ def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.Da
     first_interest = list(first_df_mod['Interest'])
     second_interest = list(second_df_mod['Interest'])
 
+    check_normality_visually(first_interest, second_interest)
+    check_normality(first_interest, second_interest)
+    check_variances(first_interest, second_interest)
+    compare_interest(first_interest, second_interest)
+
+    # diff = [m1 - m2 for m1, m2 in zip(first_interest, second_interest)]
+    # check_normality(diff, [])
+    # check_normality_visually(diff, [])
+
+
+def check_normality_visually(first_interest: [], second_interest: [] = None):
     fig, ax = plt.subplots()
-    ax.hist(first_interest, bins=50)
+    bins = np.linspace(-2, 2, 70)
+
+    ax.hist(first_interest, bins=bins, color='r', alpha=0.5, label='First Impressions Survey')
+
+    if second_interest:
+        ax.hist(second_interest, bins=bins, color='b', alpha=0.5, label='Second Impressions Survey')
+
+    plt.legend()
     plt.show()
 
-    fig, ax = plt.subplots()
-    ax.hist(second_interest, bins=50)
-    plt.show()
-    a = 1
+
+def check_normality(first_interest: [], second_interest: []):
+    print('-' * 50)
+    print('Check Normality of Data')
+    print('H_0: The data is normally distributed\t', 'a = 0.05')
+    print('Interpretation: p-value < 0.05 means we reject that this data follows a normal distribution')
+    print('First Impressions Survey: ', test_normality(first_interest))
+
+    if second_interest:
+        print('Second Impressions Survey: ', test_normality(second_interest))
 
 
-def t_test_tail_direction(a: [], b: []) -> []:
-    avg_a, _ = aggregate_and_sd(a)
-    avg_b, _ = aggregate_and_sd(b)
+def test_normality(x: []):
+    shapiro_wilks = scipy.stats.shapiro(x)
+    return shapiro_wilks
 
-    if avg_a > avg_b:
-        return ''
 
-    pass
+def check_variances(first_interest: [], second_interest: []):
+    print('-' * 50)
+    print('Check Equality of Variance')
+    var_1 = np.var(first_interest)
+    var_2 = np.var(second_interest)
+    print(var_1, var_2)
+    print('-' * 50)
+    print('Check Equality of Standard Deviation')
+    sd_1 = np.std(first_interest)
+    sd_2 = np.std(second_interest)
+    print(sd_1, sd_2)
+
+
+def compare_interest(first_interest: [], second_interest: []):
+    """
+    H_0 = That the medians are equal
+    H_a = two-sided (so just that their means are not equal
+    """
+    wilcoxon = scipy.stats.wilcoxon(first_interest, second_interest)
+    print(wilcoxon)
 
 
 def analyze_optional_readings(survey_dfs: [pd.DataFrame], question: str):
