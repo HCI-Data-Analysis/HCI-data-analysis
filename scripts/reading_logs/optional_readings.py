@@ -1,6 +1,3 @@
-import re
-from collections import defaultdict
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,92 +6,56 @@ import scipy.stats
 from schemas import CourseSchema
 from scripts import prepare_data_for_clustering
 from util import ReadingLogsData
-from util.reading_logs import aggregate_and_sd
-
-LIKERT_ANSWERS = [
-    'Strongly Agree',
-    'Agree',
-    'Disagree',
-    'Strongly Disagree',
-    'No Response'
-]
-
-RELEVANT_QUESTIONS = [
-    'I think design and interaction is interesting.',
-    'I think design and interaction is boring.',
-    'I like to use design and interaction to solve problems.',
-]
-
-"""
-T-Test Plan
-
-- Explain comparison and motivation
-- Histogram observe
-- Note not obvious from histograms so use tests
-- Difference is non normal (outliers don't conceptually make sense with opinions)
-- Switch to Wilcoxon
-- Wilcoxon says reject null, means are equal
-- 
-"""
-
-"""
-References:
-https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide-2.php
-https://statistics.laerd.com/spss-tutorials/dependent-t-test-using-spss-statistics.php
-https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test
-https://statistics.laerd.com/spss-tutorials/wilcoxon-signed-rank-test-using-spss-statistics.php
-https://www.jstor.org/stable/3001968?seq=1#metadata_info_tab_contents
-https://www.investopedia.com/terms/t/t-test.asp
-https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.shapiro.html
-"""
+from util.list import add_if_not_in, overlap
 
 
 def get_cleaned_interest_data(first_survey: pd.DataFrame, second_survey: pd.DataFrame, survey_schema: pd.DataFrame):
-    first_df_mod = prepare_data_for_clustering(first_survey, survey_schema)
-    second_df_mod = prepare_data_for_clustering(second_survey, survey_schema)
-    mutual_ids = overlap(list(first_df_mod['id']), list(second_df_mod['id']))
+    first_df_mod = prepare_data_for_clustering(first_survey, survey_schema).set_index('id')
+    second_df_mod = prepare_data_for_clustering(second_survey, survey_schema).set_index('id')
+
+    mutual_ids = overlap(list(first_df_mod.index), list(second_df_mod.index))
     print('-' * 50)
     print('Reporting N')
-    print('First Survey n: ', len(list(first_df_mod['id'])))
-    print('Second Survey n: ', len(list(second_df_mod['id'])))
+    print('First Survey n: ', len(list(first_df_mod.index)))
+    print('Second Survey n: ', len(list(second_df_mod.index)))
     print('Mutual n: ', len(mutual_ids))
 
-    first_df_mod = first_df_mod.loc[first_df_mod['id'].isin(mutual_ids)]
-    second_df_mod = second_df_mod.loc[second_df_mod['id'].isin(mutual_ids)]
+    first_df_mod = first_df_mod.loc[first_df_mod.index.isin(mutual_ids)]
+    second_df_mod = second_df_mod.loc[second_df_mod.index.isin(mutual_ids)]
 
     # Sort by id so the each student's interest is the same position in both lists
     first_df_mod.sort_values(by='id', axis=0, inplace=True, na_position='first')
     second_df_mod.sort_values(by='id', axis=0, inplace=True, na_position='first')
 
-    first_interest = list(first_df_mod['Interest'])
-    second_interest = list(second_df_mod['Interest'])
-    return first_interest, second_interest
+    first_interest = first_df_mod['Interest']
+    second_interest = second_df_mod['Interest']
+    return first_interest, second_interest, mutual_ids
 
 
 def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.DataFrame, survey_schema: pd.DataFrame):
-    first_interest, second_interest = get_cleaned_interest_data(first_survey, second_survey, survey_schema)
+    first_interest, second_interest, mutual_ids = get_cleaned_interest_data(first_survey, second_survey, survey_schema)
 
-    check_normality_visually(first_interest, second_interest)
-    check_normality(first_interest, second_interest)
-    check_variances(first_interest, second_interest)
-    compare_interest(first_interest, second_interest)
+    fi, si = list(first_interest), list(second_interest)
+    check_normality_visually(fi, si)
+    check_normality(fi, si)
+    check_variances(fi, si)
+    compare_interest(fi, si)
 
-    plot_optional_reading_proportions([first_interest, second_interest])
+    plot_optional_reading_proportions([first_interest, second_interest], ['First', 'Second'], mutual_ids)
 
+    # Check normality of difference between first and second surveys
     # diff = [m1 - m2 for m1, m2 in zip(first_interest, second_interest)]
-    # check_normality(diff, [])
-    # check_normality_visually(diff, [])
+    # test_normality(diff)
+    # fig, ax = plt.subplots()
+    # bins = np.linspace(-2, 2, 70)
+    # ax.hist(diff, bins=bins, color='r', alpha=0.5, label='Diff Impressions Survey')
 
 
 def check_normality_visually(first_interest: [], second_interest: [] = None):
     fig, ax = plt.subplots()
     bins = np.linspace(-2, 2, 70)
-
     ax.hist(first_interest, bins=bins, color='r', alpha=0.5, label='First Impressions Survey')
-
-    if second_interest:
-        ax.hist(second_interest, bins=bins, color='b', alpha=0.5, label='Second Impressions Survey')
-
+    ax.hist(second_interest, bins=bins, color='b', alpha=0.5, label='Second Impressions Survey')
     plt.legend()
     plt.show()
 
@@ -105,9 +66,7 @@ def check_normality(first_interest: [], second_interest: []):
     print('H_0: The data is normally distributed\t', 'a = 0.05')
     print('Interpretation: p-value < 0.05 means we reject that this data follows a normal distribution')
     print('First Impressions Survey: ', test_normality(first_interest))
-
-    if second_interest:
-        print('Second Impressions Survey: ', test_normality(second_interest))
+    print('Second Impressions Survey: ', test_normality(second_interest))
 
 
 def test_normality(x: []):
@@ -137,43 +96,122 @@ def compare_interest(first_interest: [], second_interest: []):
     print(wilcoxon)
 
 
-def plot_optional_reading_proportions(interest_dfs: [pd.DataFrame]):
+def plot_optional_reading_proportions(interest_dfs: [pd.DataFrame], df_labels: [], mutual_ids: []):
     print('-' * 50)
     print('Optional Reading Analysis')
     print('Plot')
-    for interest_df in interest_dfs:
-        pass
-
-    pass
-
-
-def get_readers_for_page(module_num: int, page_num: int)
-
-def student_interest_grouping():
-    pass
-
-
-
-
-def overlap(a: [], b: []) -> []:
-    """Returns list of common elements in 2 input lists"""
-    return [i for i in a if i in b]
-
-
-def students_reading_module(module_num: int) -> dict:
     reading_logs_data = ReadingLogsData()
     module_paragraphs_dict = reading_logs_data.get_module_paragraphs_dict()
+
+    for interest_df, df_label in zip(interest_dfs, df_labels):
+        pos_page_readers_dict = {}
+        neg_page_readers_dict = {}
+        neg_group_ids, pos_group_ids = student_interest_grouping(interest_df)
+        print(' ' * 25 + '-' * 25)
+        print(df_label)
+        print('Num Students in Positive Group: ', len(pos_group_ids))
+        print('Num Students in Negative Group: ', len(neg_group_ids))
+
+        for module_num, pages in CourseSchema.OPTIONAL_PAGES.items():
+            for page_num in pages:
+                page_sections = module_paragraphs_dict[f'{module_num}']
+                page_sections = page_sections[f'{page_num}']['sections']
+                reader_ids = get_readers_for_page(module_num, page_num, allowed_ids=mutual_ids)
+
+                pos_page_readers_dict[f'{module_num}-{page_num}'] = {
+                    'title': list(page_sections.values())[0]['title'],
+                    'readers': overlap(reader_ids, pos_group_ids)
+                }
+
+                neg_page_readers_dict[f'{module_num}-{page_num}'] = {
+                    'title': list(page_sections.values())[0]['title'],
+                    'readers': overlap(reader_ids, neg_group_ids)
+                }
+
+        plot_stacked_bar(pos_page_readers_dict, neg_page_readers_dict, df_label)
+
+
+def plot_stacked_bar(pos_page_readers_dict: {}, neg_page_readers_dict: {}, df_label: str):
+    interview_labels = []
+    module_11_labels = []
+    for module_num, page_nums in CourseSchema.OPTIONAL_PAGES.items():
+        for page_num in page_nums:
+            if module_num == 11:
+                module_11_labels.append(f'{module_num}-{page_num}')
+            else:
+                interview_labels.append(f'{module_num}-{page_num}')
+
+    figure_titles = ['Number of readers for each interview', 'Number of readers for each page in module 11']
+    x_labels = ['Interview', 'Page']
+    for label_set, fig_title, x_label in zip([interview_labels, module_11_labels], figure_titles, x_labels):
+        pos_num_readers = []
+        neg_num_readers = []
+
+        all_pos_reader_for_label_set = []
+        all_neg_reader_for_label_set = []
+
+        for label in label_set:
+            pos_num_readers.append(len(pos_page_readers_dict[label]['readers']))
+            neg_num_readers.append(len(neg_page_readers_dict[label]['readers']))
+
+            add_if_not_in(pos_page_readers_dict[label]['readers'], all_pos_reader_for_label_set)
+            add_if_not_in(neg_page_readers_dict[label]['readers'], all_neg_reader_for_label_set)
+
+        print(' ' * 25 + '-' * 25)
+        print(f'Pos Group for {x_label}: ', len(all_pos_reader_for_label_set))
+        print(f'Negative Group for {x_label}: ', len(all_neg_reader_for_label_set))
+
+        width = 0.35
+        fig, ax = plt.subplots()
+        ax.bar(label_set, neg_num_readers, width, color='b', label='Negative Interest in HCI')
+        ax.bar(label_set, pos_num_readers, width, color='r', bottom=neg_num_readers, label='Positive Interest in HCI')
+        annotate_bars(ax)
+        ax.set_ylabel('Number of Readers')
+        ax.set_xlabel(f'{x_label}')
+        ax.set_title(f'{fig_title} ({df_label})')
+        ax.legend()
+        plt.show()
+
+
+def annotate_bars(ax):
+    """Taken from https://www.pythoncharts.com/matplotlib/stacked-bar-charts-labels/"""
+    # Let's put the annotations inside the bars themselves by using a
+    # negative offset.
+    y_offset = -5
+    # For each patch (basically each rectangle within the bar), add a label.
+    for bar in ax.patches:
+        ax.text(
+            # Put the text in the middle of each bar. get_x returns the start
+            # so we add half the width to get to the middle.
+            bar.get_x() + bar.get_width() / 2,
+            # Vertically, add the height of the bar to the start of the bar,
+            # along with the offset.
+            bar.get_height() + bar.get_y() / 2 + y_offset,
+            # This is actual value we'll show.
+            round(bar.get_height()),
+            # Center the labels and style them a bit.
+            ha='center',
+            color='w',
+            weight='bold',
+            size=6
+        )
+
+
+def get_readers_for_page(module_num: int, page_num: int, allowed_ids: [] = None):
+    reading_logs_data = ReadingLogsData()
     reading_duration_dict = reading_logs_data.get_reading_duration_dict()
 
-    student_pages_read = defaultdict(int)
+    page_reading_dict = reading_duration_dict[f'{module_num}-{page_num}']
+    reader_data448_ids = [int(i) for i in page_reading_dict.index]
 
-    for page_num in module_paragraphs_dict[f'{module_num}'].keys():
-        page_reading_dict = reading_duration_dict[f'{module_num}-{page_num}']
-        all_students = [int(data448_id) for data448_id in list(page_reading_dict.index)]
-        for data448_id in all_students:
-            student_pages_read[data448_id] += 1
+    return overlap(reader_data448_ids, allowed_ids) if allowed_ids else reader_data448_ids
 
-    return student_pages_read
+
+def student_interest_grouping(interest_df) -> ([int], [int]):
+    """Students with neutral interest are grouped into negative group as indifference is not positive"""
+    negative_group = [i for i in interest_df.index if interest_df.at[i] <= 0]
+    positive_group = [i for i in interest_df.index if interest_df.at[i] > 0]
+    return negative_group, positive_group
 
 
 """
@@ -211,4 +249,27 @@ Presentation
 By Survey
     By Question
             Table
+"""
+
+"""
+T-Test Plan
+
+- Explain comparison and motivation
+- Histogram observe
+- Note not obvious from histograms so use tests
+- Difference is non normal (outliers don't conceptually make sense with opinions)
+- Switch to Wilcoxon
+- Wilcoxon says reject null, means are equal
+- 
+"""
+
+"""
+References:
+https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide-2.php
+https://statistics.laerd.com/spss-tutorials/dependent-t-test-using-spss-statistics.php
+https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test
+https://statistics.laerd.com/spss-tutorials/wilcoxon-signed-rank-test-using-spss-statistics.php
+https://www.jstor.org/stable/3001968?seq=1#metadata_info_tab_contents
+https://www.investopedia.com/terms/t/t-test.asp
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.shapiro.html
 """
