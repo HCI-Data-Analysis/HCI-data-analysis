@@ -12,3 +12,4 @@ from .student_grouping import group_students
 from .analyze_module_feedback_survey import analyze_module_feedback, compare_module_feedback
 from .reading_logs.num_paragraphs_analysis import analyze_num_paragraphs
 from .reading_logs.reading_logs_completion_time import reading_logs_completion_time
+from .missing_reading_log_calculation.missing_reading_logs import number_of_reading_log_per_student
