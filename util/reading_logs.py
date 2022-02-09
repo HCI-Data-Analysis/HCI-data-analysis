@@ -1,9 +1,8 @@
 import json
 import os
-import statistics
 
 import dill
-import pandas as pd
+import numpy as np
 
 from schemas import CourseSchema
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, CACHE_FOLDER
@@ -255,7 +254,7 @@ def ms_to_minutes(duration_ms: float):
 def aggregate_and_sd(values: [], mean=True) -> (float, float):
     values_list = list(values)
     if len(values_list) > 1:
-        sd = statistics.stdev(values_list)
+        sd = np.std(values_list)
     else:
         sd = 0
     if mean:
