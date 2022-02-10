@@ -13,3 +13,4 @@ from .analyze_module_feedback_survey import analyze_module_feedback, compare_mod
 from .reading_logs.num_paragraphs_analysis import analyze_num_paragraphs
 from .reading_logs.reading_logs_completion_time import reading_logs_completion_time
 from .missing_reading_log_calculation.missing_reading_logs import number_of_reading_log_per_student, upper_bound_threshold
+from .reading_logs.parse_reading_logs.parse_reading_logs import parse_reading_logs_all, parse_reading_logs_module
