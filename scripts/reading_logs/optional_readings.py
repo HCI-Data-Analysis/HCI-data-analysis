@@ -36,26 +36,20 @@ def change_in_interest_analysis(first_survey: pd.DataFrame, second_survey: pd.Da
     first_interest, second_interest, mutual_ids = get_cleaned_interest_data(first_survey, second_survey, survey_schema)
 
     fi, si = list(first_interest), list(second_interest)
-    check_normality_visually(fi, si)
+    inspect_data(fi, si)
     check_normality(fi, si)
-    check_variances(fi, si)
+    report_mean_std(fi, si)
     compare_interest(fi, si)
-
     plot_optional_reading_proportions([first_interest, second_interest], ['First', 'Second'], mutual_ids)
 
-    # Check normality of difference between first and second surveys
-    # diff = [m1 - m2 for m1, m2 in zip(first_interest, second_interest)]
-    # test_normality(diff)
-    # fig, ax = plt.subplots()
-    # bins = np.linspace(-2, 2, 70)
-    # ax.hist(diff, bins=bins, color='r', alpha=0.5, label='Diff Impressions Survey')
 
-
-def check_normality_visually(first_interest: [], second_interest: [] = None):
+def inspect_data(first_interest: [], second_interest: []):
     fig, ax = plt.subplots()
     bins = np.linspace(-2, 2, 70)
     ax.hist(first_interest, bins=bins, color='r', alpha=0.5, label='First Impressions Survey')
     ax.hist(second_interest, bins=bins, color='b', alpha=0.5, label='Second Impressions Survey')
+    ax.set_ylabel('Number of Students')
+    ax.set_xlabel('HCI Interest')
     plt.legend()
     plt.show()
 
@@ -68,23 +62,28 @@ def check_normality(first_interest: [], second_interest: []):
     print('First Impressions Survey: ', test_normality(first_interest))
     print('Second Impressions Survey: ', test_normality(second_interest))
 
+    # Check normality of difference between first and second surveys
+    diff = [m1 - m2 for m1, m2 in zip(first_interest, second_interest)]
+    print('Diff Impressions Survey: ', test_normality(diff))
+    fig, ax = plt.subplots()
+    bins = np.linspace(-2, 2, 70)
+    ax.hist(diff, bins=bins, color='green', alpha=0.5, label='Diff Impressions Survey')
+    ax.set_ylabel('Number of Students')
+    ax.set_xlabel('Difference in HCI Interest (First - Second)')
+    ax.set_title('')
+    plt.legend()
+    plt.show()
+
 
 def test_normality(x: []):
     shapiro_wilks = scipy.stats.shapiro(x)
     return shapiro_wilks
 
 
-def check_variances(first_interest: [], second_interest: []):
+def report_mean_std(first_interest: [], second_interest: []):
     print('-' * 50)
-    print('Check Equality of Variance')
-    var_1 = np.var(first_interest)
-    var_2 = np.var(second_interest)
-    print(var_1, var_2)
-    print('-' * 50)
-    print('Check Equality of Standard Deviation')
-    sd_1 = np.std(first_interest)
-    sd_2 = np.std(second_interest)
-    print(sd_1, sd_2)
+    print(f'First Mean: {np.mean(first_interest)} +/- {np.std(first_interest)}')
+    print(f'Second Mean: {np.mean(second_interest)} +/- {np.std(second_interest)}')
 
 
 def compare_interest(first_interest: [], second_interest: []):
@@ -92,7 +91,9 @@ def compare_interest(first_interest: [], second_interest: []):
     H_0 = That the medians are equal
     H_a = two-sided (so just that their means are not equal
     """
-    wilcoxon = scipy.stats.wilcoxon(first_interest, second_interest)
+    diff = [m1 - m2 for m1, m2 in zip(first_interest, second_interest)]
+    wilcoxon = scipy.stats.wilcoxon(diff)
+    print('-' * 50)
     print(wilcoxon)
 
 
