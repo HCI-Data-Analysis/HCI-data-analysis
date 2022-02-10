@@ -34,6 +34,7 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
                     'content_quiz_perf': cqp_t[0] if cqp_t else None,
                     'content_quiz_perf_std': cqp_t[1] if cqp_t else None
                 }, ignore_index=True)
+    print(processed_module_speed_data.to_string())
 
     g = sns.lmplot(x="difficulty", y="speed", col="module", hue="module",
                    data=processed_module_speed_data,

@@ -57,9 +57,7 @@ def pre_test_reading_behaviour_analysis(QUIZSCOREJSON_PATH):
                                         df_first_attempt = df_first_attempt.append(student_first_attempt_data,
                                                                                    ignore_index=True)
                                     except KeyError:
-                                        print('nan')
-
-    print(df_first_attempt)
+                                        pass
 
     g = sns.lmplot(x="percentage", y="reading_speed", col="module", hue="module", data=df_first_attempt,
                    col_wrap=4, ci=None, palette="muted", height=4,
