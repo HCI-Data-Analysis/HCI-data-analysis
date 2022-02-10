@@ -209,13 +209,16 @@ class ReadingLogsData:
             for element in row:
                 if element == 'ans' or element[0] == 'ans':
                     count += 1
-            return count/len(row)
-
+            return count/len(row)*100
 
         questions_df['first_attempt_grade'] = questions_df.apply(lambda x: first_attempt_grade(x), axis=1)
 
         if data448_id:
-            return questions_df['first_attempt_grade'][f'{data448_id}'], None
+            try:
+                a = questions_df['first_attempt_grade'][f'{data448_id}']
+                return questions_df['first_attempt_grade'][f'{data448_id}'], None
+            except KeyError:
+                return None
 
         return aggregate_and_sd(questions_df['first_attempt_grade'])
 
@@ -227,122 +230,15 @@ class ReadingLogsData:
             if page_grade is not None:
                 average_grade = page_grade[0]
                 content_quiz_first_attempt_grade.append(average_grade)
-
-        return aggregate_and_sd(content_quiz_first_attempt_grade)
-
-    def content_quiz_first_attempt_grade_list(self, module_num: int, data448_ids):
-        """
-        end goal: correlation analysis on pretest grade and content quiz grade
-        required data:
-        x-axis: first attempt grade for pretest for each student.
-        y-axis: content quiz average for the module for each student.
-
-        2 sets of graphs
-        a) for each module
-        b) for entire course
-
-        so this is a  function that returns each student's content quiz first attempt average for a module
-
-        :param module_num: the module number
-        :return:
-        """
-        def average_percentage(row):
-            num_correct = 0
-            total_questions = 0
-            for page_num in page_nums:
-                num_correct += row[page_num][0]
-                total_questions += row[page_num][1]
-            return num_correct/total_questions
-
-        def first_attempt_num_correct(row):
-            count = 0
-            for element in row:
-                if element == 'ans' or element[0] == 'ans':
-                    count += 1
-            return [count, len(row)]
-
-        content_quiz_dict = self.get_content_quiz_performance_dict()
-        r = ReadingLogsData()
-        module_paragraphs_dict = r.get_module_paragraphs_dict()
-        page_nums = list(module_paragraphs_dict[module_num].keys())
-
-        first_attempt_grade_df = pd.DataFrame(
-            columns=['data448_id', 'average_percentage']
-        )
-        #each page num col stores
-        # a list with the first one being how many questions did student get correct on the first attempt
-        # second one being how many questions are there on that page
-
-        first_attempt_grade_df['data448_id'] = data448_ids
-
-        for page_num in page_nums:
-            if not CourseSchema.page_is_valid(module_num, page_num):
-                continue
-            page_df = content_quiz_dict[f'{module_num}-{page_num}']
-            cols = [col for col in page_df if col.startswith('q')]
-            # if page does not have content quiz, continue to next page
-            if len(cols) == 0:
-                continue
-            questions_df = page_df[cols]
-            dupe = questions_df[questions_df.index.duplicated()]
-            first_attempt_grade_df[page_num] = questions_df.apply(lambda x: first_attempt_num_correct(x), axis=1)
-
-        first_attempt_grade_df['average_percentage'] = first_attempt_grade_df.apply(
-            lambda x: average_percentage(x), axis=1)
-
-
-        # content_quiz_pages = []
-        # grades_df = pd.DataFrame(columns=page_nums)
-        #
-        # for page_num in page_nums:
-        #     if not CourseSchema.page_is_valid(module_num, page_num):
-        #         continue
-        #
-        #     page_df = content_quiz_dict[f'{module_num}-{page_num}']
-        #     cols = [col for col in page_df if col.startswith('q')]
-        #
-        #     # if page does not have content quiz, continue to next page
-        #     if len(cols) == 0:
-        #         continue
-        #
-        #     questions_df = page_df[cols]
-        #
-        #     grades_df[page_num] = questions_df.apply(lambda x: first_attempt_grade(x), axis=1)
-        #
-        #     first_attempt_grade_df['data448_id'] = grades_df.index
-
-            #
-        # for module_num, page_dict in module_paragraphs_dict.items():
-        #     for page_num, page_data in page_dict.items():
-        #         if not CourseSchema.page_is_valid(module_num, page_num):
-        #             continue
-        #
-        # for key in content_quiz_dict.keys():
-        #     split_key = key.split('-')
-        #     module_num = split_key[0]
-        #     page_num = split_key[1]
-        #
-        #     if not CourseSchema.page_is_valid(module_num, page_num):
-        #         continue
-        #
-        #     page_first_attempt_grade_df = content_quiz_dict[key]
-        #     cols = [col for col in page_first_attempt_grade_df if col.startswith('q')]
-        #     if len(cols) == 0:
-        #         continue
-        #
-        #     def first_attempt_grade(row):
-        #         count = 0
-        #         for element in row:
-        #             if element == 'ans' or element[0] == 'ans':
-        #                 count += 1
-        #         return count / len(row)
-        #
-        #     questions_df = content_quiz_dict[key][cols]
-        #     first_attempt_grade_df[module_num] = questions_df.apply(lambda x: first_attempt_grade(x), axis=1)
-        #
-        #     # first_attempt_grade_df['module'] = module_num
-
-        return first_attempt_grade_df
+        try:
+            if data448_id:
+                if len(content_quiz_first_attempt_grade) > 0:
+                    return np.mean(content_quiz_first_attempt_grade)
+                else:
+                    return None
+            return aggregate_and_sd(content_quiz_first_attempt_grade)
+        except ZeroDivisionError:
+            return None
 
     def get_paragraph_list(self, module_num: int, page_num: int) -> [str]:
         module_paragraphs_dict = self.get_module_paragraphs_dict()
@@ -376,17 +272,6 @@ class ReadingLogsData:
         mean_duration_std = ms_to_minutes(reading_duration_df[DURATION_KEY].std())
 
         return mean_duration, mean_duration_std
-
-    def is_reading_log_file(reading_log_file_name) -> bool:
-        if not reading_log_file_name.endswith('.json'):
-            return False
-        if '(' in reading_log_file_name and ')' in reading_log_file_name:  # check for duplicate files
-            return False
-
-        reading_log_name_array = reading_log_file_name.split('-')
-        if reading_log_name_array[0] != "COSC341" & reading_log_name_array[3] != "Reading" & reading_log_name_array[
-            4] != "Logs":  # make sure the file is a reading_log
-            return False
 
     def page_reading_duration_list(self, module_num: int, page_num: int) -> [float]:
         """Returns a list of student page reading duration in minutes"""

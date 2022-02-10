@@ -3,12 +3,14 @@ import json
 import pandas as pd
 import numpy as np
 
+QUIZ_POINTS_POSSIBLE = 'quiz_points_possible'
 
-def pre_test_get_first_attempt_grade(QUIZSCOREJSON_PATH):
+
+def pre_test_first_attempt_grade(QUIZ_SCORE_JSON_PATH, data448_ids):
     """
     returns a dataframe containing the first attempt grade for each student's each pre-test
-    :param QUIZSCOREJSON_PATH: Path to the quizzes objects json files
-    :return:
+    :param QUIZ_SCORE_JSON_PATH: Path to the quizzes objects json files
+    :return: a dictionary with keys of module_num and values of dataframes with student id and grade for that module
     """
 
     pre_test_quiz_ids = {
@@ -26,11 +28,9 @@ def pre_test_get_first_attempt_grade(QUIZSCOREJSON_PATH):
         columns=['data448_id', 'quiz_id', 'percentage', 'module']
     )
 
-    QUIZ_POINTS_POSSIBLE = 'quiz_points_possible'
-
-    for i in os.listdir(QUIZSCOREJSON_PATH):
+    for i in os.listdir(QUIZ_SCORE_JSON_PATH):
         if i.endswith('.json'):
-            full_path = os.path.join(QUIZSCOREJSON_PATH, i)
+            full_path = os.path.join(QUIZ_SCORE_JSON_PATH, i)
             with open(full_path, 'r') as f:
                 _gradebook = f.read()
                 json_file = json.loads(_gradebook)
@@ -54,14 +54,12 @@ def pre_test_get_first_attempt_grade(QUIZSCOREJSON_PATH):
                                                                                ignore_index=True)
                                     # except KeyError:
                                     #     print('nan')
-    return first_attempt_grade_df
-
-
-def pre_test_first_attempt_grade_average(QUIZSCOREJSON_PATH, data448ids):
-    students_df = pre_test_get_first_attempt_grade(QUIZSCOREJSON_PATH, data448ids)
-    modules = students_df['module'].unique()
-    module_average_grade = []
+    modules = first_attempt_grade_df['module'].unique()
+    pre_test_student_average_dict = {}
 
     for module in modules:
-        module_average = np.mean(students_df[students_df['module'] == module]['percentage'])
-        module_average_grade.append(module_average)
+        module_num = module.split(" ")[1]
+        module_df = first_attempt_grade_df[first_attempt_grade_df['module'] == module][['data448_id', 'percentage']]
+        pre_test_student_average_dict[module_num] = module_df
+
+    return pre_test_student_average_dict

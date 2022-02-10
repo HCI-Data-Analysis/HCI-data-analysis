@@ -16,3 +16,4 @@ from .reading_logs import analyze_num_paragraphs, parse_reading_logs_module, par
 from .content_quiz_analysis.analysis_on_content_quiz import *
 from .missing_reading_log_calculation.missing_reading_logs import number_of_reading_log_per_student
 from .pre_test_reading_behaviour_analysis import pre_test_reading_behaviour_analysis
+from .pre_test import pre_test_first_attempt_grade

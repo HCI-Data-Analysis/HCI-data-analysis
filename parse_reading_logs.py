@@ -1,5 +1,4 @@
 import os
-
 import dill
 
 from scripts import parse_reading_logs_all, parse_reading_logs_module
