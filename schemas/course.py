@@ -11,7 +11,7 @@ class CourseSchema:
         11: [1, 2, 3, 4, 5]  # All
     }
 
-    AVERAGE_READING_SPEED = 75
+    AVERAGE_READING_SPEED = 200 # (250 + 149)/2 from https://catalog.shepherd.edu/mime/media/12/913/SU+Credit+Hour+Policy+Appendix+B.pdf
 
     MODULE_NUM_KEY = {
         741711: 0,
