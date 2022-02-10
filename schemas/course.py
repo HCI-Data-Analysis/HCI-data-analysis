@@ -11,7 +11,7 @@ class CourseSchema:
         11: [1, 2, 3, 4, 5]  # All
     }
 
-    AVERAGE_READING_SPEED = 75
+    AVERAGE_READING_SPEED = 200 # (250 + 149)/2 from https://catalog.shepherd.edu/mime/media/12/913/SU+Credit+Hour+Policy+Appendix+B.pdf
 
     MODULE_NUM_KEY = {
         741711: 0,
@@ -29,7 +29,7 @@ class CourseSchema:
     }
 
     OUTLIER_DATA448_IDS = [
-        1838508, 2409463, 6078374, 6257926, 6393986, 6609618, 7801377, 8145375, 8799357, 9002921, 9810479
+        5810166, 6078374, 6257926, 6393986, 6609618, 7801377, 8145375, 9002921, 9810479
     ]
 
     @staticmethod

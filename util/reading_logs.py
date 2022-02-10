@@ -265,6 +265,10 @@ def ms_to_minutes(duration_ms: float):
 
 def aggregate_and_sd(values: [], mean=True) -> (float, float):
     values_list = list(values)
+
+    if not values_list:
+        return 0, None
+    
     if len(values_list) > 1:
         sd = np.std(values_list)
     else:
