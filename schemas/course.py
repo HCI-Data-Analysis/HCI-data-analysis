@@ -11,7 +11,7 @@ class CourseSchema:
         11: [1, 2, 3, 4, 5]  # All
     }
 
-    AVERAGE_READING_SPEED = 300
+    AVERAGE_READING_SPEED = 200 # (250 + 149)/2 from https://catalog.shepherd.edu/mime/media/12/913/SU+Credit+Hour+Policy+Appendix+B.pdf
 
     MODULE_NUM_KEY = {
         741711: 0,
@@ -29,11 +29,16 @@ class CourseSchema:
     }
 
     OUTLIER_DATA448_IDS = [
-        1838508, 2409463, 6078374, 6257926, 6393986, 6609618, 7801377, 8145375, 8799357, 9002921, 9810479
+        5810166, 6078374, 6257926, 6393986, 6609618, 7801377, 8145375, 9002921, 9810479
     ]
 
     @staticmethod
     def page_is_valid(module_num: int, page_num: int) -> bool:
+        if isinstance(module_num, str):
+            module_num = int(module_num)
+        if isinstance(page_num, str):
+            page_num = int(page_num)
+
         if module_num in CourseSchema.CANCELLED_MODULES or \
                 module_num in CourseSchema.OPTIONAL_MODULES or \
                 module_num in CourseSchema.SUMMARY_MODULES:

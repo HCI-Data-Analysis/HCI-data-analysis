@@ -1,9 +1,8 @@
 import json
 import os
-import statistics
 
 import dill
-import pandas as pd
+import numpy as np
 
 from schemas import CourseSchema
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, CACHE_FOLDER
@@ -187,6 +186,18 @@ class ReadingLogsData:
         module_paragraphs = self.get_module_paragraphs_dict()
         return len(module_paragraphs[str(module_num)])
 
+    def average_words_per_paragraphs_on_page(self, module_num: int, page_num: int) -> (float, float):
+        page_paragraph_list = self.get_paragraph_list(module_num, page_num)
+        num_words_in_each_paragraph = [len(paragraph.split(' ')) for paragraph in page_paragraph_list]
+
+        if not num_words_in_each_paragraph:
+            return None, None
+
+        if len(num_words_in_each_paragraph) == 1:
+            return num_words_in_each_paragraph[0], 0
+
+        return aggregate_and_sd(num_words_in_each_paragraph)
+
     def page_reading_duration(self, module_num: int, page_num: int, data448_id: int = None) -> (float, float):
         """
         Returns the page reading duration in minutes. Average of all students unless given a data_448 id.
@@ -259,7 +270,7 @@ def aggregate_and_sd(values: [], mean=True) -> (float, float):
         return 0, None
     
     if len(values_list) > 1:
-        sd = statistics.stdev(values_list)
+        sd = np.std(values_list)
     else:
         sd = 0
     if mean:
