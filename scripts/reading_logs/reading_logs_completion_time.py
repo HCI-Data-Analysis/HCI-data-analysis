@@ -40,7 +40,7 @@ def _get_expected_module_durations(reading_logs):
     for module_num, page_dict in module_paragraphs_dict.items():
         page_lengths = []
         for page_num, page_data in page_dict.items():
-            if not CourseSchema.page_is_valid(module_num, page_data):
+            if not CourseSchema.page_is_valid(module_num, page_num):
                 continue
             page_lengths.append(reading_logs.get_page_word_count(module_num, page_num))
         module_reading_duration[module_num] = (sum(page_lengths) / CourseSchema.AVERAGE_READING_SPEED)
