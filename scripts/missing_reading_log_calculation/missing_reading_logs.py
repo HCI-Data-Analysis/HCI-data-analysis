@@ -33,7 +33,5 @@ def upper_bound_threshold(module_paragraphs_dict, reading_dict, data448id):
     list_of_student_with_enough_reading_log_df = missing_reading_log_df[missing_reading_log_df['num_of_reading_log_submitted'] >= threshold]
     list_of_student_with_enough_reading_log = list_of_student_with_enough_reading_log_df.index.values
     
-    print(len(list_of_student_with_enough_reading_log))
-    print(threshold)
     
     return list_of_student_with_enough_reading_log
