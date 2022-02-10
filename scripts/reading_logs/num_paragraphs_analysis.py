@@ -53,8 +53,8 @@ def analyze_num_paragraphs():
     ax2.errorbar(num_paragraphs_list_mod, num_attempts, ls='none', yerr=n_err, capsize=2, elinewidth=0.4,
                  marker='.', markersize=4)
     plt.xlabel('Number of paragraphs')
-    plt.ylabel('Content Quiz Attempt Number')
-    plt.title('\n'.join(wrap('Content quiz attempt number as a function of page paragraph count')))
+    plt.ylabel('Extra Attempts Ratio')
+    plt.title('\n'.join(wrap('Extra attempts ratio as a function of page paragraph count')))
     plt.xlim(0, max(num_paragraphs_list_mod) + 2)
 
     plot_best_fit(num_paragraphs_list_mod, num_attempts)
