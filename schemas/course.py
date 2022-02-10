@@ -8,7 +8,6 @@ class CourseSchema:
         4: [11],
         6: [7],
         7: [7],
-        8: [5],
         11: [1, 2, 3, 4, 5]  # All
     }
 
@@ -35,6 +34,11 @@ class CourseSchema:
 
     @staticmethod
     def page_is_valid(module_num: int, page_num: int) -> bool:
+        if isinstance(module_num, str):
+            module_num = int(module_num)
+        if isinstance(page_num, str):
+            page_num = int(page_num)
+
         if module_num in CourseSchema.CANCELLED_MODULES or \
                 module_num in CourseSchema.OPTIONAL_MODULES or \
                 module_num in CourseSchema.SUMMARY_MODULES:
