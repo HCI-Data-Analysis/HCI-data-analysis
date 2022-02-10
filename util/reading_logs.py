@@ -1,9 +1,10 @@
 import json
 import os
-import statistics
 
 import dill
+import numpy as np
 
+from schemas import CourseSchema
 from util import MODULE_PARAGRAPHS_OUTPUT_FILEPATH, CACHE_FOLDER
 
 START_TIME_KEY = 'start_time'
@@ -16,6 +17,21 @@ class ReadingLogsData:
     reading_duration_dict = None
     content_quiz_performance_dict = None
 
+    def exclude_outliers(self):
+        """
+        Utility method to remove outliers from the class instance versions of the reading/content quiz dictionaries.
+        Modifies these dictionaries so each DataFrame within them removes the ignored ids. This method is called within
+        self.get_parsed_reading_log_data() so all further analysis factors it in inherently.
+        """
+        excluded_ids = [f'{i}' for i in CourseSchema.OUTLIER_DATA448_IDS]  # DF indexes are strings
+        dicts_of_dfs = [self.reading_duration_dict, self.content_quiz_performance_dict]
+        for dict_df in dicts_of_dfs:
+            for _, df in dict_df.items():
+                try:
+                    df.drop(excluded_ids, inplace=True)
+                except KeyError:
+                    continue
+
     def get_module_paragraphs_dict(self) -> dict:
         if self.module_paragraphs_dict:
             return self.module_paragraphs_dict
@@ -27,7 +43,7 @@ class ReadingLogsData:
 
         module_paragraphs = json.load(f)
         self.module_paragraphs_dict = module_paragraphs
-        return module_paragraphs
+        return self.module_paragraphs_dict
 
     def get_parsed_reading_log_data(self) -> (dict, dict):
         if not self.reading_duration_dict or not self.content_quiz_performance_dict:
@@ -38,6 +54,7 @@ class ReadingLogsData:
                     self.content_quiz_performance_dict = dill.load(f)
             except FileNotFoundError as e:
                 raise FileNotFoundError(f'{e}\nRun "python parse_reading_logs.py" first.')
+            self.exclude_outliers()
 
         return self.reading_duration_dict, self.content_quiz_performance_dict
 
@@ -133,7 +150,7 @@ class ReadingLogsData:
             count = 0
             for q_response_set in zip(*q_response_lists):
                 if list(q_response_set) == all_correct:
-                    return count
+                    return count / len(q_response_lists)
                 else:
                     count += 1
 
@@ -169,6 +186,18 @@ class ReadingLogsData:
         module_paragraphs = self.get_module_paragraphs_dict()
         return len(module_paragraphs[str(module_num)])
 
+    def average_words_per_paragraphs_on_page(self, module_num: int, page_num: int) -> (float, float):
+        page_paragraph_list = self.get_paragraph_list(module_num, page_num)
+        num_words_in_each_paragraph = [len(paragraph.split(' ')) for paragraph in page_paragraph_list]
+
+        if not num_words_in_each_paragraph:
+            return None, None
+
+        if len(num_words_in_each_paragraph) == 1:
+            return num_words_in_each_paragraph[0], 0
+
+        return aggregate_and_sd(num_words_in_each_paragraph)
+
     def page_reading_duration(self, module_num: int, page_num: int, data448_id: int = None) -> (float, float):
         """
         Returns the page reading duration in minutes. Average of all students unless given a data_448 id.
@@ -179,7 +208,8 @@ class ReadingLogsData:
 
         # Retrieve the correct DataFrame for the requested page.
         reading_duration_df = reading_duration_dict[f'{module_num}-{page_num}']
-        reading_duration_df[DURATION_KEY] = reading_duration_df[END_TIME_KEY] - reading_duration_df[START_TIME_KEY]
+        end_time_key = self.get_last_non_review_section_name(module_num, page_num)
+        reading_duration_df[DURATION_KEY] = reading_duration_df[end_time_key] - reading_duration_df[START_TIME_KEY]
 
         if data448_id:
             duration_ms = reading_duration_df[DURATION_KEY][f'{data448_id}']
@@ -196,7 +226,8 @@ class ReadingLogsData:
 
         # Retrieve the correct DataFrame for the requested page.
         reading_duration_df = reading_duration_dict[f'{module_num}-{page_num}']
-        reading_duration_df[DURATION_KEY] = reading_duration_df[END_TIME_KEY] - reading_duration_df[START_TIME_KEY]
+        end_time_key = self.get_last_non_review_section_name(module_num, page_num)
+        reading_duration_df[DURATION_KEY] = reading_duration_df[end_time_key] - reading_duration_df[START_TIME_KEY]
         all_durations = [ms_to_minutes(d) for d in reading_duration_df[DURATION_KEY]]
 
         return all_durations
@@ -218,6 +249,15 @@ class ReadingLogsData:
 
         return aggregate_and_sd(page_durations, mean)
 
+    def get_last_non_review_section_name(self, module_num: int, page_num: int) -> str:
+        module_sections_dict = self.get_module_paragraphs_dict()[f'{module_num}'][f'{page_num}']['sections']
+
+        last_section_title = list(module_sections_dict.values())[-1]
+        if last_section_title == 'Review Form':
+            last_section_title = list(module_sections_dict.values())[-2]
+
+        return last_section_title['title']
+
 
 def ms_to_minutes(duration_ms: float):
     return duration_ms / 1000 / 60
@@ -226,7 +266,7 @@ def ms_to_minutes(duration_ms: float):
 def aggregate_and_sd(values: [], mean=True) -> (float, float):
     values_list = list(values)
     if len(values_list) > 1:
-        sd = statistics.stdev(values_list)
+        sd = np.std(values_list)
     else:
         sd = 0
     if mean:
