@@ -40,17 +40,18 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
                    data=processed_module_speed_data,
                    col_wrap=5, ci=None, palette="muted", height=4,
                    scatter_kws={"s": 50, "alpha": 1})
-    g.set_axis_labels("Difficulty (100-Flesch)", "Reading Speed (words/minute)")
+    g.set_axis_labels("Difficulty (100-Flesch)", "Reading Speed (WPM)")
     plt.show()
     g = sns.lmplot(x="difficulty", y="speed",
                    data=processed_module_speed_data)
-    g.set_axis_labels("Difficulty (100-Flesch)", "Reading Speed (words/minute)")
+    g.set_axis_labels("Difficulty (100-Flesch)", "Reading Speed (WPM)")
     plt.show()
 
     print('Speed vs difficulty correlation coefficient')
-    print(np.corrcoef(processed_module_speed_data['difficulty'], processed_module_speed_data['speed']))
+    corr = np.corrcoef(processed_module_speed_data['difficulty'], processed_module_speed_data['speed'])
+    print(corr)
     print('R^2')
-    print(np.square(0.17327886))
+    print(corr[0][1]**2)
     print('-----------')
     print('Speed vs difficulty averages')
     print('Speed:', np.average(processed_module_speed_data['speed']))
@@ -61,11 +62,11 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
                    data=processed_module_speed_data,
                    col_wrap=5, ci=None, palette="muted", height=4,
                    scatter_kws={"s": 50, "alpha": 1})
-    g.set_axis_labels("Difficulty (100-Flesch)", "Content Quiz Performance (Extra attempts)")
+    g.set_axis_labels("Difficulty (100-Flesch)", "Content Quiz Performance (Extra attempt ratio)")
     plt.show()
     g = sns.lmplot(x="difficulty", y="content_quiz_perf",
                    data=processed_module_speed_data)
-    g.set_axis_labels("Difficulty (100-Flesch)", "Content Quiz Performance (Extra attempts)")
+    g.set_axis_labels("Difficulty (100-Flesch)", "Content Quiz Performance (Extra attempt ratio)")
     plt.show()
 
     qp = []
@@ -76,9 +77,10 @@ def graph_average_module_paragraph_reading_speed(pages_difficulty_length_path):
             df.append(processed_module_speed_data['difficulty'][i])
 
     print('Quiz perf vs difficulty correlation coefficient')
-    print(np.corrcoef(df, qp))
+    corr = np.corrcoef(df, qp)
+    print(corr)
     print('R^2')
-    print(np.square(-0.0956516))
+    print(corr[0][1]**2)
     print('-----------')
     print('Quiz perf vs difficulty averages')
     print('Quiz perf:', np.average(qp))

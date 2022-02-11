@@ -62,10 +62,10 @@ def pre_test_reading_behaviour_analysis(QUIZSCOREJSON_PATH):
     g = sns.lmplot(x="percentage", y="reading_speed", col="module", hue="module", data=df_first_attempt,
                    col_wrap=4, ci=None, palette="muted", height=4,
                    scatter_kws={"s": 50, "alpha": 1})
-    g.set_axis_labels("First Attempt Pre Test Score (%)", "Reading Speed (words/minute)")
+    g.set_axis_labels("First Attempt Pre Test Score (%)", "Reading Speed (WPM)")
     plt.show()
     g = sns.lmplot(x="percentage", y="reading_speed", data=df_first_attempt)
-    g.set_axis_labels("First Attempt Pre Test Score (%)", "Reading Speed (words/minute)")
+    g.set_axis_labels("First Attempt Pre Test Score (%)", "Reading Speed (WPM)")
     plt.show()
 
     for quiz_id in pre_test_quiz_ids.keys():
@@ -83,9 +83,15 @@ def pre_test_reading_behaviour_analysis(QUIZSCOREJSON_PATH):
     for quiz_id in pre_test_quiz_ids.keys():
         temp_df = df_first_attempt[df_first_attempt['quiz_id'] == quiz_id]
         print(pre_test_quiz_ids[quiz_id][1], 'correlations:')
-        print(np.corrcoef(temp_df['reading_speed'], temp_df['percentage']))
+        corr = np.corrcoef(temp_df['reading_speed'], temp_df['percentage'])
+        print(corr)
+        print('R^2:')
+        print(corr[0][1]**2)
         print('-------')
 
     print('Overall correlations:')
-    print(np.corrcoef(df_first_attempt['reading_speed'], df_first_attempt['percentage']))
+    corr = np.corrcoef(df_first_attempt['reading_speed'], df_first_attempt['percentage'])
+    print(corr)
+    print('R^2:')
+    print(corr[0][1]**2)
     print('-------')
